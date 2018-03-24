@@ -4,10 +4,10 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-import br.com.gda.employee.info.EmpWtimeInfo;
+import br.com.gda.employee.info.EmpWTimeInfo;
 
 public class EmpWorkTimeBuilderSelectTest {
-	private EmpWtimeInfo workingTime;
+	private EmpWTimeInfo workingTime;
 	private EmpWtimeBuilderSelect builder;
 	
 	
@@ -24,7 +24,7 @@ public class EmpWorkTimeBuilderSelectTest {
 	
 	
 	private void initializeOrdinaryUsage() {
-		workingTime = new EmpWtimeInfo();
+		workingTime = new EmpWTimeInfo();
 		workingTime.codOwner = 8;
 		workingTime.codStore = 15;
 		workingTime.codEmployee = 54;
@@ -42,7 +42,7 @@ public class EmpWorkTimeBuilderSelectTest {
 	
 	
 	private void initializeNullArgumentSchemaName() {
-		workingTime = new EmpWtimeInfo();
+		workingTime = new EmpWTimeInfo();
 		workingTime.codOwner = 10;
 		workingTime.codStore = 9;
 		workingTime.codEmployee = 8;
@@ -60,7 +60,7 @@ public class EmpWorkTimeBuilderSelectTest {
 	
 	
 	private void initializeNullWorkingTime() {
-		workingTime = new EmpWtimeInfo();
+		workingTime = new EmpWTimeInfo();
 		workingTime.codOwner = 10;
 		workingTime.codStore = 9;
 		workingTime.codEmployee = 8;
@@ -83,7 +83,7 @@ public class EmpWorkTimeBuilderSelectTest {
 	
 	
 	private void initializeDefaultWorkingTime() {
-		workingTime = new EmpWtimeInfo();		
+		workingTime = new EmpWTimeInfo();		
 		builder = new EmpWtimeBuilderSelect(Common.SCHEMA_NAME, workingTime);
 	}
 }

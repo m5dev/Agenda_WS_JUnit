@@ -12,7 +12,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 
-import br.com.gda.employee.info.EmpWtimeInfo;
+import br.com.gda.employee.info.EmpWTimeInfo;
 import br.com.gda.sql.SqlStmt;
 
 import static org.mockito.Mockito.*;
@@ -25,7 +25,7 @@ public class EmpWorkTimeStmtInsertTest {
 	@Mock private PreparedStatement invalidStmt;
 	@Mock private ResultSet rs;
 	private EmpStmtOption option;
-	private EmpWtimeInfo workingTime;
+	private EmpWTimeInfo workingTime;
 	
 	
 	@Before
@@ -57,7 +57,7 @@ public class EmpWorkTimeStmtInsertTest {
 	@Test
 	public void ordinaryUsage() throws SQLException {
 		initializeToPass();
-		SqlStmt<EmpWtimeInfo> insertStatement = new EmpWtimeStmtInsert(this.option);
+		SqlStmt<EmpWTimeInfo> insertStatement = new EmpWtimeStmtInsert(this.option);
 		
 		assertTrue(insertStatement.checkStmtGeneration());
 		insertStatement.generateStmt();
@@ -66,7 +66,7 @@ public class EmpWorkTimeStmtInsertTest {
 	
 	
 	private void initializeToPass() {
-		workingTime = new EmpWtimeInfo();
+		workingTime = new EmpWTimeInfo();
 		workingTime.codOwner = 10;
 		workingTime.codStore = 9;
 		workingTime.codEmployee = 8;
@@ -75,7 +75,7 @@ public class EmpWorkTimeStmtInsertTest {
 		this.option = new EmpStmtOption();
 		option.conn = this.validConn;
 		option.schemaName = Common.SCHEMA_NAME;
-		option.workingTime = this.workingTime;
+		option.recordInfo = this.workingTime;
 	}
 	
 	
@@ -83,7 +83,7 @@ public class EmpWorkTimeStmtInsertTest {
 	@Test (expected = NullPointerException.class)
 	public void testNullArgumentOption() throws SQLException {
 		initializeToFailNullArgumentOption();		
-		SqlStmt<EmpWtimeInfo> insertStatement = new EmpWtimeStmtInsert(this.option);
+		SqlStmt<EmpWTimeInfo> insertStatement = new EmpWtimeStmtInsert(this.option);
 		
 		assertFalse(insertStatement.checkStmtGeneration());
 		insertStatement.generateStmt();
@@ -92,7 +92,7 @@ public class EmpWorkTimeStmtInsertTest {
 	
 	
 	private void initializeToFailNullArgumentOption() {
-		workingTime = new EmpWtimeInfo();
+		workingTime = new EmpWTimeInfo();
 		workingTime.codOwner = 10;
 		workingTime.codStore = 9;
 		workingTime.codEmployee = 8;
@@ -106,7 +106,7 @@ public class EmpWorkTimeStmtInsertTest {
 	@Test (expected = NullPointerException.class)
 	public void testNullArgumentOptionConn() throws SQLException {
 		initializeToFailNullArgumentOptionConn();		
-		SqlStmt<EmpWtimeInfo> insertStatement = new EmpWtimeStmtInsert(this.option);
+		SqlStmt<EmpWTimeInfo> insertStatement = new EmpWtimeStmtInsert(this.option);
 		
 		assertFalse(insertStatement.checkStmtGeneration());
 		insertStatement.generateStmt();
@@ -115,7 +115,7 @@ public class EmpWorkTimeStmtInsertTest {
 	
 	
 	private void initializeToFailNullArgumentOptionConn() {
-		workingTime = new EmpWtimeInfo();
+		workingTime = new EmpWTimeInfo();
 		workingTime.codOwner = 10;
 		workingTime.codStore = 9;
 		workingTime.codEmployee = 8;
@@ -123,7 +123,7 @@ public class EmpWorkTimeStmtInsertTest {
 		
 		this.option = new EmpStmtOption();
 		option.schemaName = Common.SCHEMA_NAME;
-		option.workingTime = this.workingTime;
+		option.recordInfo = this.workingTime;
 	}
 	
 	
@@ -131,7 +131,7 @@ public class EmpWorkTimeStmtInsertTest {
 	@Test (expected = SQLException.class)
 	public void testInvalidArgumentOptionConn() throws SQLException {
 		initializeToFailInvalidArgumentOptionConn();		
-		SqlStmt<EmpWtimeInfo> insertStatement = new EmpWtimeStmtInsert(this.option);
+		SqlStmt<EmpWTimeInfo> insertStatement = new EmpWtimeStmtInsert(this.option);
 		
 		assertFalse(insertStatement.checkStmtGeneration());
 		insertStatement.generateStmt();
@@ -140,7 +140,7 @@ public class EmpWorkTimeStmtInsertTest {
 	
 	
 	private void initializeToFailInvalidArgumentOptionConn() {
-		workingTime = new EmpWtimeInfo();
+		workingTime = new EmpWTimeInfo();
 		workingTime.codOwner = 10;
 		workingTime.codStore = 9;
 		workingTime.codEmployee = 8;
@@ -148,7 +148,7 @@ public class EmpWorkTimeStmtInsertTest {
 		
 		this.option = new EmpStmtOption();
 		option.schemaName = Common.SCHEMA_NAME;
-		option.workingTime = this.workingTime;
+		option.recordInfo = this.workingTime;
 		option.conn = invalidConnWithoutStmt;
 	}
 	
@@ -166,7 +166,7 @@ public class EmpWorkTimeStmtInsertTest {
 	
 	
 	private void initializeToFailInvalidArgumentOptionConnStmt() {
-		workingTime = new EmpWtimeInfo();
+		workingTime = new EmpWTimeInfo();
 		workingTime.codOwner = 10;
 		workingTime.codStore = 9;
 		workingTime.codEmployee = 8;
@@ -174,7 +174,7 @@ public class EmpWorkTimeStmtInsertTest {
 		
 		this.option = new EmpStmtOption();
 		option.schemaName = Common.SCHEMA_NAME;
-		option.workingTime = this.workingTime;
+		option.recordInfo = this.workingTime;
 		option.conn = invalidConnWithStmt;
 	}
 	
@@ -192,7 +192,7 @@ public class EmpWorkTimeStmtInsertTest {
 	
 	
 	private void initializeToFailNullArgumentOptionSchemaName() {
-		workingTime = new EmpWtimeInfo();
+		workingTime = new EmpWTimeInfo();
 		workingTime.codOwner = 10;
 		workingTime.codStore = 9;
 		workingTime.codEmployee = 8;
@@ -201,7 +201,7 @@ public class EmpWorkTimeStmtInsertTest {
 		this.option = new EmpStmtOption();
 		option.conn = this.validConn;
 		option.schemaName = null;
-		option.workingTime = this.workingTime;
+		option.recordInfo = this.workingTime;
 	}
 
 }

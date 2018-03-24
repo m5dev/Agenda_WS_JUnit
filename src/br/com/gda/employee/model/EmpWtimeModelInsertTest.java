@@ -25,6 +25,9 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import br.com.gda.common.DbConnection;
+import br.com.gda.employee.info.EmpWTimeInfo;
+import br.com.gda.model.ModelAbstract;
+
 import javax.ws.rs.core.Response;
 
 
@@ -41,7 +44,7 @@ public class EmpWtimeModelInsertTest {
 	@Mock private ResultSet validRs;
 	@Mock private ResultSet emptyRs;
 	
-	private EmpWtimeModelAbstract model;
+	private ModelAbstract<EmpWTimeInfo> model;
 	
 	
 	

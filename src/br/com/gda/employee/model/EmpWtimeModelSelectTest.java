@@ -25,7 +25,7 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import br.com.gda.common.DbConnection;
-import br.com.gda.employee.info.EmpWtimeInfo;
+import br.com.gda.employee.info.EmpWTimeInfo;
 
 import javax.ws.rs.core.Response;
 
@@ -43,7 +43,7 @@ public class EmpWtimeModelSelectTest {
 	@Mock private ResultSet emptyRs;
 	
 	private EmpWtimeModelSelect model;
-	private EmpWtimeInfo infoRecord;
+	private EmpWTimeInfo infoRecord;
 	
 	
 	
@@ -104,7 +104,7 @@ public class EmpWtimeModelSelectTest {
 	protected void initializeOrdinaryUsageFullKey() {
 		PowerMockito.when(DbConnection.getConnection()).thenReturn(validConn);
 		
-		infoRecord = new EmpWtimeInfo();
+		infoRecord = new EmpWTimeInfo();
 		infoRecord.codOwner = 1;
 		infoRecord.codStore = 1;
 		infoRecord.codEmployee = 1;
@@ -141,9 +141,9 @@ public class EmpWtimeModelSelectTest {
 		initializeOrdinaryUsageEmpNotFound();
 		model.executeRequest();
 		Response response = model.getResponse();
-		assertTrue(response.getStatus() == Response.Status.NOT_FOUND.getStatusCode());
+		assertTrue(response.getStatus() == Response.Status.BAD_REQUEST.getStatusCode());
 		
-		String responseBody = "{\"selectCode\":404,\"selectMessage\":\"Employee's data not found\",\"results\":{\"codOwner\":-1,\"codStore\":-1,\"codEmployee\":-1,\"weekday\":-1}}";
+		String responseBody = "{\"selectCode\":400,\"selectMessage\":\"Employee's data not found\",\"results\":{\"codOwner\":-1,\"codStore\":-1,\"codEmployee\":-1,\"weekday\":-1}}";
 		assertTrue(response.getEntity().equals(responseBody));
 		
 		}
@@ -153,7 +153,7 @@ public class EmpWtimeModelSelectTest {
 	protected void initializeOrdinaryUsageEmpNotFound() {
 		PowerMockito.when(DbConnection.getConnection()).thenReturn(emptyConn);
 		
-		infoRecord = new EmpWtimeInfo();
+		infoRecord = new EmpWTimeInfo();
 		infoRecord.codOwner = 1;
 		infoRecord.codStore = 1;
 		infoRecord.codEmployee = 1;
@@ -239,14 +239,13 @@ public class EmpWtimeModelSelectTest {
 		assertTrue(response.getEntity().equals(responseBody));
 		
 	}
-	
-	
+		
 	
 	
 	protected void initializeInvalidConnection() {
 		PowerMockito.when(DbConnection.getConnection()).thenReturn(invalidConn);
 		
-		infoRecord = new EmpWtimeInfo();
+		infoRecord = new EmpWTimeInfo();
 		infoRecord.codOwner = 1;
 		infoRecord.codStore = 1;
 		infoRecord.codEmployee = 1;

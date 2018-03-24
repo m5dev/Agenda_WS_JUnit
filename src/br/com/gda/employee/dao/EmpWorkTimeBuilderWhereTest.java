@@ -4,11 +4,11 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-import br.com.gda.employee.info.EmpWtimeInfo;
+import br.com.gda.employee.info.EmpWTimeInfo;
 
 
 public class EmpWorkTimeBuilderWhereTest {
-	private EmpWtimeInfo workingTime;
+	private EmpWTimeInfo workingTime;
 	private EmpWtimeBuilderWhere builder;
 	
 	@Test
@@ -32,7 +32,7 @@ public class EmpWorkTimeBuilderWhereTest {
 	
 	
 	private void initializeToPass() {
-		workingTime = new EmpWtimeInfo();
+		workingTime = new EmpWTimeInfo();
 		workingTime.codOwner = 10;
 		workingTime.codStore = 9;
 		workingTime.codEmployee = 8;

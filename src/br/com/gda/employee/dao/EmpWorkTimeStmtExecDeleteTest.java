@@ -21,7 +21,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 
-import br.com.gda.employee.info.EmpWtimeInfo;
+import br.com.gda.employee.info.EmpWTimeInfo;
 import br.com.gda.sql.SqlStmtExecutor;
 
 public class EmpWorkTimeStmtExecDeleteTest {
@@ -30,9 +30,9 @@ public class EmpWorkTimeStmtExecDeleteTest {
 	@Mock private PreparedStatement validStmt;
 	@Mock private ResultSet rs;
 	
-	private List<EmpWtimeInfo> workingTimes = new ArrayList<>();
-	private List<EmpStmtOption> sqlStatemetOptions = new ArrayList<>();
-	private SqlStmtExecutor<EmpWtimeInfo> sqlStatemetExecutor;
+	private List<EmpWTimeInfo> workingTimes = new ArrayList<>();
+	private List<EmpStmtOption<EmpWTimeInfo>> sqlStatemetOptions = new ArrayList<>();
+	private SqlStmtExecutor<EmpWTimeInfo> sqlStatemetExecutor;
 	
 	
 	
@@ -64,11 +64,11 @@ public class EmpWorkTimeStmtExecDeleteTest {
 	private void initializeOrdinaryUsage() {
 		initializeWorkingTime();			
 			
-		for (EmpWtimeInfo eachInfo : this.workingTimes) {
-			EmpStmtOption oneOption = new EmpStmtOption();		
+		for (EmpWTimeInfo eachInfo : this.workingTimes) {
+			EmpStmtOption<EmpWTimeInfo> oneOption = new EmpStmtOption<>();		
 			oneOption.conn = this.validConn;
 			oneOption.schemaName = Common.SCHEMA_NAME;
-			oneOption.workingTime = eachInfo;
+			oneOption.recordInfo = eachInfo;
 			this.sqlStatemetOptions.add(oneOption);
 		}		
 		
@@ -88,11 +88,11 @@ public class EmpWorkTimeStmtExecDeleteTest {
 	private void initializeNullSchema() {
 		initializeWorkingTime();			
 			
-		for (EmpWtimeInfo eachInfo : this.workingTimes) {
-			EmpStmtOption oneOption = new EmpStmtOption();		
+		for (EmpWTimeInfo eachInfo : this.workingTimes) {
+			EmpStmtOption<EmpWTimeInfo> oneOption = new EmpStmtOption<>();		
 			oneOption.conn = this.validConn;
 			oneOption.schemaName = null;
-			oneOption.workingTime = eachInfo;
+			oneOption.recordInfo = eachInfo;
 			this.sqlStatemetOptions.add(oneOption);
 		}		
 		
@@ -112,11 +112,11 @@ public class EmpWorkTimeStmtExecDeleteTest {
 	private void initializeNullConnection() {
 		initializeWorkingTime();			
 			
-		for (EmpWtimeInfo eachInfo : this.workingTimes) {
-			EmpStmtOption oneOption = new EmpStmtOption();		
+		for (EmpWTimeInfo eachInfo : this.workingTimes) {
+			EmpStmtOption<EmpWTimeInfo> oneOption = new EmpStmtOption<>();	
 			oneOption.conn = null;
 			oneOption.schemaName = Common.SCHEMA_NAME;
-			oneOption.workingTime = eachInfo;
+			oneOption.recordInfo = eachInfo;
 			this.sqlStatemetOptions.add(oneOption);
 		}		
 		
@@ -137,11 +137,11 @@ public class EmpWorkTimeStmtExecDeleteTest {
 	private void initializeNullWorkingTime() {
 		initializeWorkingTime();			
 			
-		for (EmpWtimeInfo eachInfo : this.workingTimes) {
-			EmpStmtOption oneOption = new EmpStmtOption();		
+		for (EmpWTimeInfo eachInfo : this.workingTimes) {
+			EmpStmtOption<EmpWTimeInfo> oneOption = new EmpStmtOption<>();	
 			oneOption.conn = this.validConn;
 			oneOption.schemaName = Common.SCHEMA_NAME;
-			oneOption.workingTime = null;
+			oneOption.recordInfo = null;
 			this.sqlStatemetOptions.add(oneOption);
 		}		
 		
@@ -177,11 +177,11 @@ public class EmpWorkTimeStmtExecDeleteTest {
 	private void initializeInvalidConnection() {
 		initializeWorkingTime();			
 			
-		for (EmpWtimeInfo eachInfo : this.workingTimes) {
-			EmpStmtOption oneOption = new EmpStmtOption();		
+		for (EmpWTimeInfo eachInfo : this.workingTimes) {
+			EmpStmtOption<EmpWTimeInfo> oneOption = new EmpStmtOption<>();	
 			oneOption.conn = this.invalidConn;
 			oneOption.schemaName = Common.SCHEMA_NAME;
-			oneOption.workingTime = eachInfo;
+			oneOption.recordInfo = eachInfo;
 			this.sqlStatemetOptions.add(oneOption);
 		}		
 		
@@ -192,7 +192,7 @@ public class EmpWorkTimeStmtExecDeleteTest {
 	
 	private void initializeWorkingTime() {
 		try {
-			EmpWtimeInfo workingTime = new EmpWtimeInfo();
+			EmpWTimeInfo workingTime = new EmpWTimeInfo();
 			workingTime.codOwner = 8;
 			workingTime.codStore = 15;
 			workingTime.codEmployee = 54;
@@ -200,21 +200,21 @@ public class EmpWorkTimeStmtExecDeleteTest {
 			workingTime.beginTime = LocalTime.of(9, 00);
 			workingTime.endTime = LocalTime.of(18, 00);
 			
-			EmpWtimeInfo clone = (EmpWtimeInfo) workingTime.clone();;
+			EmpWTimeInfo clone = (EmpWTimeInfo) workingTime.clone();;
 			this.workingTimes.add(clone);
 			
 			
 			workingTime.weekday = 2;
 			workingTime.beginTime = LocalTime.of(9, 00);
 			workingTime.endTime = LocalTime.of(13, 00);
-			clone = (EmpWtimeInfo) workingTime.clone();;
+			clone = (EmpWTimeInfo) workingTime.clone();;
 			this.workingTimes.add(clone);
 			
 			
 			workingTime.weekday = 3;
 			workingTime.beginTime = LocalTime.of(13, 00);
 			workingTime.endTime = LocalTime.of(20, 00);
-			clone = (EmpWtimeInfo) workingTime.clone();;
+			clone = (EmpWTimeInfo) workingTime.clone();;
 			this.workingTimes.add(clone);	
 
 		} catch (CloneNotSupportedException e) {

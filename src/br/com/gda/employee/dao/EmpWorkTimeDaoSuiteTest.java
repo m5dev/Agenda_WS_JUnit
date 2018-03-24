@@ -15,6 +15,6 @@ import org.junit.runners.Suite.SuiteClasses;
 	            EmpWorkTimeStmtExecUpdateTest.class,
 	            EmpWorkTimeBuilderDeleteTest.class,
 	            EmpWorkTimeStmtExecDeleteTest.class})
-public class EmpWorkTimeSuiteTest {
+public class EmpWorkTimeDaoSuiteTest {
 
 }
