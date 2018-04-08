@@ -22,7 +22,8 @@ import org.junit.Test;
 import org.mockito.Mock;
 
 import br.com.gda.employee.info.EmpWTimeInfo;
-import br.com.gda.sql.SqlStmtExecutor;
+import br.com.gda.sql.SqlStmtExecOption;
+import br.com.gda.sql.SqlStmtExec;
 
 public class EmpWorkTimeStmtExecDeleteTest {
 	@Mock private Connection validConn;
@@ -31,8 +32,8 @@ public class EmpWorkTimeStmtExecDeleteTest {
 	@Mock private ResultSet rs;
 	
 	private List<EmpWTimeInfo> workingTimes = new ArrayList<>();
-	private List<EmpStmtOption<EmpWTimeInfo>> sqlStatemetOptions = new ArrayList<>();
-	private SqlStmtExecutor<EmpWTimeInfo> sqlStatemetExecutor;
+	private List<SqlStmtExecOption<EmpWTimeInfo>> sqlStatemetOptions = new ArrayList<>();
+	private SqlStmtExec<EmpWTimeInfo> sqlStatemetExecutor;
 	
 	
 	
@@ -65,7 +66,7 @@ public class EmpWorkTimeStmtExecDeleteTest {
 		initializeWorkingTime();			
 			
 		for (EmpWTimeInfo eachInfo : this.workingTimes) {
-			EmpStmtOption<EmpWTimeInfo> oneOption = new EmpStmtOption<>();		
+			SqlStmtExecOption<EmpWTimeInfo> oneOption = new SqlStmtExecOption<>();		
 			oneOption.conn = this.validConn;
 			oneOption.schemaName = Common.SCHEMA_NAME;
 			oneOption.recordInfo = eachInfo;
@@ -77,7 +78,7 @@ public class EmpWorkTimeStmtExecDeleteTest {
 	
 	
 	
-	@Test (expected = IllegalStateException.class)
+	@Test (expected = NullPointerException.class)
 	public void nullSchema() throws SQLException {
 		initializeNullSchema();
 		this.sqlStatemetExecutor.executeStmt();
@@ -89,7 +90,7 @@ public class EmpWorkTimeStmtExecDeleteTest {
 		initializeWorkingTime();			
 			
 		for (EmpWTimeInfo eachInfo : this.workingTimes) {
-			EmpStmtOption<EmpWTimeInfo> oneOption = new EmpStmtOption<>();		
+			SqlStmtExecOption<EmpWTimeInfo> oneOption = new SqlStmtExecOption<>();		
 			oneOption.conn = this.validConn;
 			oneOption.schemaName = null;
 			oneOption.recordInfo = eachInfo;
@@ -101,7 +102,7 @@ public class EmpWorkTimeStmtExecDeleteTest {
 	
 	
 	
-	@Test (expected = IllegalStateException.class)
+	@Test (expected = NullPointerException.class)
 	public void nullConnection() throws SQLException {
 		initializeNullConnection();
 		this.sqlStatemetExecutor.executeStmt();
@@ -113,7 +114,7 @@ public class EmpWorkTimeStmtExecDeleteTest {
 		initializeWorkingTime();			
 			
 		for (EmpWTimeInfo eachInfo : this.workingTimes) {
-			EmpStmtOption<EmpWTimeInfo> oneOption = new EmpStmtOption<>();	
+			SqlStmtExecOption<EmpWTimeInfo> oneOption = new SqlStmtExecOption<>();	
 			oneOption.conn = null;
 			oneOption.schemaName = Common.SCHEMA_NAME;
 			oneOption.recordInfo = eachInfo;
@@ -138,7 +139,7 @@ public class EmpWorkTimeStmtExecDeleteTest {
 		initializeWorkingTime();			
 			
 		for (EmpWTimeInfo eachInfo : this.workingTimes) {
-			EmpStmtOption<EmpWTimeInfo> oneOption = new EmpStmtOption<>();	
+			SqlStmtExecOption<EmpWTimeInfo> oneOption = new SqlStmtExecOption<>();	
 			oneOption.conn = this.validConn;
 			oneOption.schemaName = Common.SCHEMA_NAME;
 			oneOption.recordInfo = null;
@@ -166,7 +167,7 @@ public class EmpWorkTimeStmtExecDeleteTest {
 	
 	
 	
-	@Test (expected = IllegalStateException.class)
+	@Test (expected = SQLException.class)
 	public void invalidConnection() throws SQLException {
 		initializeInvalidConnection();
 		this.sqlStatemetExecutor.executeStmt();
@@ -178,7 +179,7 @@ public class EmpWorkTimeStmtExecDeleteTest {
 		initializeWorkingTime();			
 			
 		for (EmpWTimeInfo eachInfo : this.workingTimes) {
-			EmpStmtOption<EmpWTimeInfo> oneOption = new EmpStmtOption<>();	
+			SqlStmtExecOption<EmpWTimeInfo> oneOption = new SqlStmtExecOption<>();	
 			oneOption.conn = this.invalidConn;
 			oneOption.schemaName = Common.SCHEMA_NAME;
 			oneOption.recordInfo = eachInfo;

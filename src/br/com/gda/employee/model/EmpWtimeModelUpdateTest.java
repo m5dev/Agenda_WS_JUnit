@@ -94,7 +94,7 @@ public class EmpWtimeModelUpdateTest {
 		Response response = model.getResponse();
 		assertTrue(response.getStatus() == Response.Status.OK.getStatusCode());
 		
-		String responseBody = "{\"selectCode\":200,\"selectMessage\":\"The list was returned successfully\",\"results\":[{\"codOwner\":8,\"codStore\":15,\"codEmployee\":54,\"weekday\":1,\"beginTime\":{\"hour\":9,\"minute\":0,\"second\":0,\"nano\":0},\"endTime\":{\"hour\":18,\"minute\":0,\"second\":0,\"nano\":0}}]}";
+		String responseBody = "{\"selectCode\":200,\"selectMessage\":\"The list was returned successfully\",\"results\":[{\"codOwner\":8,\"codStore\":15,\"codEmployee\":54,\"weekday\":1,\"beginTime\":{\"hour\":9,\"minute\":0,\"second\":0,\"nano\":0},\"endTime\":{\"hour\":18,\"minute\":0,\"second\":0,\"nano\":0},\"recordMode\":\" \"}]}";
 		assertTrue(response.getEntity().equals(responseBody));		
 	}
 		
@@ -114,7 +114,7 @@ public class EmpWtimeModelUpdateTest {
 		Response response = model.getResponse();
 		assertTrue(response.getStatus() == Response.Status.BAD_REQUEST.getStatusCode());
 		
-		String responseBody = "{\"selectCode\":1001,\"selectMessage\":\"Employee's working time data don't exist on DB\",\"results\":{\"codOwner\":-1,\"codStore\":-1,\"codEmployee\":-1,\"weekday\":-1}}";
+		String responseBody = "{\"selectCode\":1001,\"selectMessage\":\"Employee's working time data don't exist on DB\",\"results\":{\"codOwner\":-1,\"codStore\":-1,\"codEmployee\":-1,\"weekday\":-1,\"recordMode\":\" \"}}";
 		assertTrue(response.getEntity().equals(responseBody));		
 	}
 		
@@ -140,7 +140,7 @@ public class EmpWtimeModelUpdateTest {
 		Response response = model.getResponse();
 		assertTrue(response.getStatus() == Response.Status.BAD_REQUEST.getStatusCode());
 		
-		String responseBody = "{\"selectCode\":1,\"selectMessage\":\"Mandatory field is empty\",\"results\":{\"codOwner\":-1,\"codStore\":-1,\"codEmployee\":-1,\"weekday\":-1}}";
+		String responseBody = "{\"selectCode\":1,\"selectMessage\":\"Mandatory field is empty\",\"results\":{\"codOwner\":-1,\"codStore\":-1,\"codEmployee\":-1,\"weekday\":-1,\"recordMode\":\" \"}}";
 		assertTrue(response.getEntity().equals(responseBody));		
 	}
 	
@@ -165,7 +165,7 @@ public class EmpWtimeModelUpdateTest {
 		Response response = model.getResponse();
 		assertTrue(response.getStatus() == Response.Status.BAD_REQUEST.getStatusCode());
 		
-		String responseBody = "{\"selectCode\":1,\"selectMessage\":\"Mandatory field is empty\",\"results\":{\"codOwner\":-1,\"codStore\":-1,\"codEmployee\":-1,\"weekday\":-1}}";
+		String responseBody = "{\"selectCode\":1,\"selectMessage\":\"Mandatory field is empty\",\"results\":{\"codOwner\":-1,\"codStore\":-1,\"codEmployee\":-1,\"weekday\":-1,\"recordMode\":\" \"}}";
 		assertTrue(response.getEntity().equals(responseBody));		
 	}
 	
@@ -191,7 +191,7 @@ public class EmpWtimeModelUpdateTest {
 		Response response = model.getResponse();
 		assertTrue(response.getStatus() == Response.Status.BAD_REQUEST.getStatusCode());
 		
-		String responseBody = "{\"selectCode\":1,\"selectMessage\":\"Mandatory field is empty\",\"results\":{\"codOwner\":-1,\"codStore\":-1,\"codEmployee\":-1,\"weekday\":-1}}";
+		String responseBody = "{\"selectCode\":1,\"selectMessage\":\"Mandatory field is empty\",\"results\":{\"codOwner\":-1,\"codStore\":-1,\"codEmployee\":-1,\"weekday\":-1,\"recordMode\":\" \"}}";
 		assertTrue(response.getEntity().equals(responseBody));		
 	}
 	
@@ -217,7 +217,7 @@ public class EmpWtimeModelUpdateTest {
 		Response response = model.getResponse();
 		assertTrue(response.getStatus() == Response.Status.BAD_REQUEST.getStatusCode());
 		
-		String responseBody = "{\"selectCode\":1,\"selectMessage\":\"Mandatory field is empty\",\"results\":{\"codOwner\":-1,\"codStore\":-1,\"codEmployee\":-1,\"weekday\":-1}}";
+		String responseBody = "{\"selectCode\":1,\"selectMessage\":\"Mandatory field is empty\",\"results\":{\"codOwner\":-1,\"codStore\":-1,\"codEmployee\":-1,\"weekday\":-1,\"recordMode\":\" \"}}";
 		assertTrue(response.getEntity().equals(responseBody));		
 	}
 	
@@ -243,7 +243,7 @@ public class EmpWtimeModelUpdateTest {
 		Response response = model.getResponse();
 		assertTrue(response.getStatus() == Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
 		
-		String responseBody = "{\"selectCode\":500,\"selectMessage\":\"Ops... something went wrong\",\"results\":{\"codOwner\":-1,\"codStore\":-1,\"codEmployee\":-1,\"weekday\":-1}}";
+		String responseBody = "{\"selectCode\":500,\"selectMessage\":\"Ops... something went wrong\",\"results\":{\"codOwner\":-1,\"codStore\":-1,\"codEmployee\":-1,\"weekday\":-1,\"recordMode\":\" \"}}";
 		assertTrue(response.getEntity().equals(responseBody));		
 	}
 		
