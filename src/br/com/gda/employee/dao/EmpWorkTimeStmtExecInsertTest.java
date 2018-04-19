@@ -46,6 +46,7 @@ public class EmpWorkTimeStmtExecInsertTest {
 		when(rs.next()).thenReturn(false);
 		when(validConn.prepareStatement(any(String.class))).thenReturn(validStmt);
 		when(validStmt.executeQuery()).thenReturn(rs);
+		when(validStmt.executeUpdate()).thenReturn(1);
 		when(invalidConn.prepareStatement(anyString())).thenThrow(new SQLException());
 		doNothing().when(validStmt).setString(anyInt(), anyString());
 		doNothing().when(validStmt).setLong(anyInt(), anyLong());

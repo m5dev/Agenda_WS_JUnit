@@ -143,7 +143,7 @@ public class EmpWtimeModelSelectTest {
 		Response response = model.getResponse();
 		assertTrue(response.getStatus() == Response.Status.BAD_REQUEST.getStatusCode());
 		
-		String responseBody = "{\"selectCode\":400,\"selectMessage\":\"Employee's data not found\",\"results\":{}}";
+		String responseBody = "{\"selectCode\":400,\"selectMessage\":\"Data not found\",\"results\":{}}";
 		assertTrue(response.getEntity().equals(responseBody));
 		
 		}

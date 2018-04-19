@@ -63,7 +63,9 @@ public class EmpWtimeModelInsertTest {
 		
 		when(validConn.prepareStatement(any(String.class))).thenReturn(validStmt);	
 		when(emptyConn.prepareStatement(any(String.class))).thenReturn(emptyStmt);
+		when(emptyStmt.executeUpdate()).thenReturn(1);
 		when(validStmt.executeQuery()).thenReturn(validRs);
+		when(validStmt.executeUpdate()).thenReturn(0);
 		when(emptyStmt.executeQuery()).thenReturn(emptyRs);
 		doNothing().when(validStmt).setString(anyInt(), anyString());
 		doNothing().when(validStmt).setLong(anyInt(), anyLong());
