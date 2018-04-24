@@ -32,14 +32,14 @@ import javax.ws.rs.core.Response;
 @PrepareForTest({DbConnection.class})
 @RunWith(PowerMockRunner.class)
 public class EmpWtimeModelUpdateTest {
-	@Mock private Connection validConn;
-	@Mock private Connection emptyConn;
+	@Mock private Connection updateConn;
+	@Mock private Connection empDontExistConn;
 	@Mock private Connection invalidConn;
-	@Mock private PreparedStatement validStmt;
-	@Mock private PreparedStatement emptyStmt;
+	@Mock private PreparedStatement updateStmt;
+	@Mock private PreparedStatement empDontExistStmt;
 	@Mock private PreparedStatement invalidStmt;
-	@Mock private ResultSet validRs;
-	@Mock private ResultSet emptyRs;
+	@Mock private ResultSet updateRs;
+	@Mock private ResultSet empDontExistRs;
 	
 	private Model model;
 	
@@ -49,45 +49,65 @@ public class EmpWtimeModelUpdateTest {
 	public void initializeMockObjects() throws SQLException {
 		PowerMockito.mockStatic(DbConnection.class);
 		
-		validStmt = mock(PreparedStatement.class);
-		emptyStmt = mock(PreparedStatement.class);
-		invalidStmt = mock(PreparedStatement.class);
-		validRs = mock(ResultSet.class);		
-		emptyRs = mock(ResultSet.class);
-		validConn = mock(Connection.class);
-		emptyConn = mock(Connection.class);
+		initializeScenarioUpdate();
+		initializeScenarioEmpDontExist();
+		initializeScenarioInvalidConnection();
+	}
+	
+	
+	
+	private void initializeScenarioUpdate() throws SQLException {
+		updateStmt = mock(PreparedStatement.class);
+		updateRs = mock(ResultSet.class);
+		updateConn = mock(Connection.class);
+		
+		when(updateConn.prepareStatement(any(String.class))).thenReturn(updateStmt);	
+		doNothing().when(updateStmt).setString(anyInt(), anyString());
+		doNothing().when(updateStmt).setLong(anyInt(), anyLong());
+		doNothing().when(updateStmt).setTime(anyInt(), any(Time.class));		
+		
+		when(updateStmt.executeUpdate()).thenReturn(1);		
+
+		when(updateStmt.executeQuery()).thenReturn(updateRs);
+		when(updateRs.next()).thenReturn(true).thenReturn(false).thenReturn(true).thenReturn(false);
+		when(updateRs.getLong(any(String.class))).thenReturn(new Long(1));
+		when(updateRs.getInt(any(String.class))).thenReturn(new Integer(1));
+		when(updateRs.getString(any(String.class))).thenReturn(" ");
+		when(updateRs.getTime(any(String.class))).thenReturn(Time.valueOf("11:22:33"));
+	}
+	
+	
+	
+	private void initializeScenarioEmpDontExist() throws SQLException {
+		empDontExistStmt = mock(PreparedStatement.class);
+		empDontExistRs = mock(ResultSet.class);		
+		empDontExistConn = mock(Connection.class);
+		
+		when(empDontExistConn.prepareStatement(any(String.class))).thenReturn(empDontExistStmt);
+
+		when(empDontExistStmt.executeQuery()).thenReturn(empDontExistRs);
+		when(empDontExistRs.next()).thenReturn(false);
+	}
+	
+	
+	
+	private void initializeScenarioInvalidConnection() throws SQLException {
+		invalidStmt = mock(PreparedStatement.class);	
 		invalidConn = mock(Connection.class);
 		
 		when(invalidConn.prepareStatement(anyString())).thenThrow(new SQLException());
-		
-		when(validConn.prepareStatement(any(String.class))).thenReturn(validStmt);	
-		when(emptyConn.prepareStatement(any(String.class))).thenReturn(emptyStmt);
-		when(validStmt.executeQuery()).thenReturn(validRs);
-		when(validStmt.executeUpdate()).thenReturn(1);
-		when(emptyStmt.executeQuery()).thenReturn(emptyRs);
-		doNothing().when(validStmt).setString(anyInt(), anyString());
-		doNothing().when(validStmt).setLong(anyInt(), anyLong());
-		doNothing().when(validStmt).setTime(anyInt(), any(Time.class));
-		
-		when(invalidStmt.executeQuery()).thenThrow(new SQLException());
 		doThrow(new SQLException()).when(invalidStmt).setString(anyInt(), anyString());
 		doThrow(new SQLException()).when(invalidStmt).setLong(anyInt(), anyLong());
 		doThrow(new SQLException()).when(invalidStmt).setTime(anyInt(), any(Time.class)); 
 		
-		
-		when(emptyRs.next()).thenReturn(true).thenReturn(false);
-		when(validRs.next()).thenReturn(true).thenReturn(false).thenReturn(true).thenReturn(false);
-		when(validRs.getLong(any(String.class))).thenReturn(new Long(1));
-		when(validRs.getInt(any(String.class))).thenReturn(new Integer(1));
-		when(validRs.getString(any(String.class))).thenReturn(" ");
-		when(validRs.getTime(any(String.class))).thenReturn(Time.valueOf("11:22:33"));
+		when(invalidStmt.executeQuery()).thenThrow(new SQLException());
 	}
 	
 	
 	
 	@Test
-	public void ordinaryUsage() {
-		initializeOrdinaryUsage();
+	public void updateEmpWtime() {
+		initializeUpdateEmpWtime();
 		model.executeRequest();
 		Response response = model.getResponse();
 		assertTrue(response.getStatus() == Response.Status.OK.getStatusCode());
@@ -98,16 +118,16 @@ public class EmpWtimeModelUpdateTest {
 		
 	
 	
-	protected void initializeOrdinaryUsage() {
-		PowerMockito.when(DbConnection.getConnection()).thenReturn(validConn);
-		model = new EmpWtimeModelUpdate(incomingDataOrdinaryUsage());
+	protected void initializeUpdateEmpWtime() {
+		PowerMockito.when(DbConnection.getConnection()).thenReturn(updateConn);
+		model = new EmpWtimeModelUpdate(incomingDataUpdateEmpWtimeUsage());
 	}
 	
 	
 	
 	@Test
-	public void ordinaryUsageEmpDontExist() {
-		initializeOrdinaryUsageEmpDontExist();
+	public void empDontExist() {
+		initializeEmpDontExist();
 		model.executeRequest();
 		Response response = model.getResponse();
 		assertTrue(response.getStatus() == Response.Status.BAD_REQUEST.getStatusCode());
@@ -118,22 +138,22 @@ public class EmpWtimeModelUpdateTest {
 		
 	
 	
-	protected void initializeOrdinaryUsageEmpDontExist() {
-		PowerMockito.when(DbConnection.getConnection()).thenReturn(emptyConn);
-		model = new EmpWtimeModelUpdate(incomingDataOrdinaryUsage());
+	protected void initializeEmpDontExist() {
+		PowerMockito.when(DbConnection.getConnection()).thenReturn(empDontExistConn);
+		model = new EmpWtimeModelUpdate(incomingDataUpdateEmpWtimeUsage());
 	}
 	
 	
 	
-	protected String incomingDataOrdinaryUsage() {
+	protected String incomingDataUpdateEmpWtimeUsage() {
 		return "[	{	\"codOwner\": 8,	\"codStore\": 15,	\"codEmployee\": 54,	\"weekday\": 1, 	\"beginTime\": {\"hour\": 9, \"minute\": 0}, 	\"endTime\": {\"hour\": 18, \"minute\": 0}	}]";
 	}
 	
 	
 	
 	@Test
-	public void mandatoryField1() {
-		initializeMandatoryField1();
+	public void missingMandatoryField1() {
+		initializeMissingMandatoryField1();
 		model.executeRequest();
 		Response response = model.getResponse();
 		assertTrue(response.getStatus() == Response.Status.BAD_REQUEST.getStatusCode());
@@ -144,8 +164,8 @@ public class EmpWtimeModelUpdateTest {
 	
 		
 	
-	protected void initializeMandatoryField1() {
-		PowerMockito.when(DbConnection.getConnection()).thenReturn(emptyConn);		
+	protected void initializeMissingMandatoryField1() {
+		PowerMockito.when(DbConnection.getConnection()).thenReturn(empDontExistConn);		
 		model = new EmpWtimeModelUpdate(incomingDataMandatoryField1());
 	}	
 	
@@ -157,8 +177,8 @@ public class EmpWtimeModelUpdateTest {
 	
 	
 	@Test
-	public void mandatoryField2() {
-		initializeMandatoryField2();
+	public void missingMandatoryField2() {
+		initializeMissingMandatoryField2();
 		model.executeRequest();
 		Response response = model.getResponse();
 		assertTrue(response.getStatus() == Response.Status.BAD_REQUEST.getStatusCode());
@@ -169,8 +189,8 @@ public class EmpWtimeModelUpdateTest {
 	
 		
 	
-	protected void initializeMandatoryField2() {
-		PowerMockito.when(DbConnection.getConnection()).thenReturn(emptyConn);		
+	protected void initializeMissingMandatoryField2() {
+		PowerMockito.when(DbConnection.getConnection()).thenReturn(empDontExistConn);		
 		model = new EmpWtimeModelUpdate(incomingDataMandatoryField2());
 	}	
 	
@@ -183,8 +203,8 @@ public class EmpWtimeModelUpdateTest {
 	
 	
 	@Test
-	public void mandatoryField3() {
-		initializeMandatoryField3();
+	public void missingMandatoryField3() {
+		initializeMissingMandatoryField3();
 		model.executeRequest();
 		Response response = model.getResponse();
 		assertTrue(response.getStatus() == Response.Status.BAD_REQUEST.getStatusCode());
@@ -195,8 +215,8 @@ public class EmpWtimeModelUpdateTest {
 	
 		
 	
-	protected void initializeMandatoryField3() {
-		PowerMockito.when(DbConnection.getConnection()).thenReturn(emptyConn);		
+	protected void initializeMissingMandatoryField3() {
+		PowerMockito.when(DbConnection.getConnection()).thenReturn(empDontExistConn);		
 		model = new EmpWtimeModelUpdate(incomingDataMandatoryField3());
 	}	
 	
@@ -209,8 +229,8 @@ public class EmpWtimeModelUpdateTest {
 	
 	
 	@Test
-	public void mandatoryField4() {
-		initializeMandatoryField4();
+	public void missingMandatoryField4() {
+		initializeMissingMandatoryField4();
 		model.executeRequest();
 		Response response = model.getResponse();
 		assertTrue(response.getStatus() == Response.Status.BAD_REQUEST.getStatusCode());
@@ -221,8 +241,8 @@ public class EmpWtimeModelUpdateTest {
 	
 		
 	
-	protected void initializeMandatoryField4() {
-		PowerMockito.when(DbConnection.getConnection()).thenReturn(emptyConn);		
+	protected void initializeMissingMandatoryField4() {
+		PowerMockito.when(DbConnection.getConnection()).thenReturn(empDontExistConn);		
 		model = new EmpWtimeModelUpdate(incomingDataMandatoryField4());
 	}	
 	
@@ -249,6 +269,6 @@ public class EmpWtimeModelUpdateTest {
 	
 	protected void initializeinvalidConnection() {
 		PowerMockito.when(DbConnection.getConnection()).thenReturn(invalidConn);
-		model = new EmpWtimeModelUpdate(incomingDataOrdinaryUsage());
+		model = new EmpWtimeModelUpdate(incomingDataUpdateEmpWtimeUsage());
 	}
 }

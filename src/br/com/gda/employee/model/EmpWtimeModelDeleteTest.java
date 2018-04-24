@@ -36,14 +36,14 @@ import javax.ws.rs.core.Response;
 public class EmpWtimeModelDeleteTest {
 	
 	
-	@Mock private Connection validConn;
-	@Mock private Connection emptyConn;
+	@Mock private Connection deleteConn;
+	@Mock private Connection empNotFoundConn;
 	@Mock private Connection invalidConn;
-	@Mock private PreparedStatement validStmt;
-	@Mock private PreparedStatement emptyStmt;
+	@Mock private PreparedStatement deleteStmt;
+	@Mock private PreparedStatement empNotFoundStmt;
 	@Mock private PreparedStatement invalidStmt;
-	@Mock private ResultSet validRs;
-	@Mock private ResultSet emptyRs;
+	@Mock private ResultSet deleteRs;
+	@Mock private ResultSet empNotFoundRs;
 	
 	private Model model;
 	private EmpWTimeInfo infoRecord;
@@ -54,45 +54,64 @@ public class EmpWtimeModelDeleteTest {
 	public void initializeMockObjects() throws SQLException {
 		PowerMockito.mockStatic(DbConnection.class);
 		
-		validStmt = mock(PreparedStatement.class);
-		emptyStmt = mock(PreparedStatement.class);
+		initializeScenarioDelete();
+		initializeScenarioEmpNotFound();
+		initializeScenarioInvalidConnection();
+	}
+	
+	
+	
+	private void initializeScenarioDelete() throws SQLException {
+		deleteConn = mock(Connection.class);
+		deleteStmt = mock(PreparedStatement.class);
+		deleteRs = mock(ResultSet.class);
+		
+		when(deleteConn.prepareStatement(any(String.class))).thenReturn(deleteStmt);			
+		doNothing().when(deleteStmt).setString(anyInt(), anyString());
+		doNothing().when(deleteStmt).setLong(anyInt(), anyLong());
+		doNothing().when(deleteStmt).setTime(anyInt(), any(Time.class));		
+		
+		when(deleteStmt.executeUpdate()).thenReturn(1);
+		
+		when(deleteStmt.executeQuery()).thenReturn(deleteRs);		
+		when(deleteRs.next()).thenReturn(true).thenReturn(false);
+		when(deleteRs.getLong(any(String.class))).thenReturn(new Long(1));
+		when(deleteRs.getInt(any(String.class))).thenReturn(new Integer(1));
+		when(deleteRs.getString(any(String.class))).thenReturn(" ");
+		when(deleteRs.getTime(any(String.class))).thenReturn(Time.valueOf("11:22:33"));
+	}
+	
+	
+	
+	private void initializeScenarioEmpNotFound() throws SQLException {
+		empNotFoundStmt = mock(PreparedStatement.class);
+		empNotFoundRs = mock(ResultSet.class);		
+		empNotFoundConn = mock(Connection.class);
+		
+		when(empNotFoundConn.prepareStatement(any(String.class))).thenReturn(empNotFoundStmt);
+		when(empNotFoundStmt.executeQuery()).thenReturn(empNotFoundRs);		
+		when(empNotFoundRs.next()).thenReturn(false);
+	}
+	
+	
+	
+	private void initializeScenarioInvalidConnection() throws SQLException {
 		invalidStmt = mock(PreparedStatement.class);
-		validRs = mock(ResultSet.class);		
-		emptyRs = mock(ResultSet.class);
-		validConn = mock(Connection.class);
-		emptyConn = mock(Connection.class);
 		invalidConn = mock(Connection.class);
 		
 		when(invalidConn.prepareStatement(anyString())).thenThrow(new SQLException());
-		
-		when(validConn.prepareStatement(any(String.class))).thenReturn(validStmt);	
-		when(emptyConn.prepareStatement(any(String.class))).thenReturn(emptyStmt);
-		when(validStmt.executeQuery()).thenReturn(validRs);
-		when(validStmt.executeUpdate()).thenReturn(1);
-		when(emptyStmt.executeQuery()).thenReturn(emptyRs);
-		doNothing().when(validStmt).setString(anyInt(), anyString());
-		doNothing().when(validStmt).setLong(anyInt(), anyLong());
-		doNothing().when(validStmt).setTime(anyInt(), any(Time.class));
-		
 		when(invalidStmt.executeQuery()).thenThrow(new SQLException());
+		
 		doThrow(new SQLException()).when(invalidStmt).setString(anyInt(), anyString());
 		doThrow(new SQLException()).when(invalidStmt).setLong(anyInt(), anyLong());
 		doThrow(new SQLException()).when(invalidStmt).setTime(anyInt(), any(Time.class)); 
-		
-		
-		when(emptyRs.next()).thenReturn(true).thenReturn(false);
-		when(validRs.next()).thenReturn(true).thenReturn(false);
-		when(validRs.getLong(any(String.class))).thenReturn(new Long(1));
-		when(validRs.getInt(any(String.class))).thenReturn(new Integer(1));
-		when(validRs.getString(any(String.class))).thenReturn(" ");
-		when(validRs.getTime(any(String.class))).thenReturn(Time.valueOf("11:22:33"));
 	}
 	
 	
 
 	@Test
-	public void ordinaryUsage() {
-		initializeOrdinaryUsage();
+	public void deleteEmpWtime() {
+		initializeDeleteEmpWtime();
 		model.executeRequest();
 		Response response = model.getResponse();
 		assertTrue(response.getStatus() == Response.Status.OK.getStatusCode());
@@ -103,8 +122,8 @@ public class EmpWtimeModelDeleteTest {
 		
 	
 	
-	protected void initializeOrdinaryUsage() {
-		PowerMockito.when(DbConnection.getConnection()).thenReturn(validConn);
+	protected void initializeDeleteEmpWtime() {
+		PowerMockito.when(DbConnection.getConnection()).thenReturn(deleteConn);
 		
 		infoRecord = new EmpWTimeInfo();
 		infoRecord.codOwner = 1;
@@ -118,8 +137,8 @@ public class EmpWtimeModelDeleteTest {
 	
 	
 	@Test
-	public void OrdinaryUsageEmpNotFound() {
-		initializeOrdinaryUsageEmpNotFound();
+	public void empNotFound() {
+		initializeEmpNotFound();
 		model.executeRequest();
 		Response response = model.getResponse();
 		assertTrue(response.getStatus() == Response.Status.BAD_REQUEST.getStatusCode());
@@ -131,8 +150,8 @@ public class EmpWtimeModelDeleteTest {
 	
 	
 	
-	protected void initializeOrdinaryUsageEmpNotFound() {
-		PowerMockito.when(DbConnection.getConnection()).thenReturn(emptyConn);
+	protected void initializeEmpNotFound() {
+		PowerMockito.when(DbConnection.getConnection()).thenReturn(empNotFoundConn);
 		
 		infoRecord = new EmpWTimeInfo();
 		infoRecord.codOwner = 1;
@@ -146,8 +165,8 @@ public class EmpWtimeModelDeleteTest {
 	
 	
 	@Test
-	public void mandatoryField1() {
-		initializeMandatoryField1();
+	public void missingMandatoryField1() {
+		initializeMissingMandatoryField1();
 		model.executeRequest();
 		Response response = model.getResponse();
 		assertTrue(response.getStatus() == Response.Status.BAD_REQUEST.getStatusCode());
@@ -159,16 +178,16 @@ public class EmpWtimeModelDeleteTest {
 	
 	
 	
-	protected void initializeMandatoryField1() {
-		initializeOrdinaryUsageFullKey();
+	protected void initializeMissingMandatoryField1() {
+		initializeMantadoryField();
 		infoRecord.codEmployee = -1;
 	}
 	
 	
 	
 	@Test
-	public void MandatoryField2() {
-		initializeMandatoryField2();
+	public void missingMandatoryField2() {
+		initializeMissingMandatoryField2();
 		model.executeRequest();
 		Response response = model.getResponse();
 		assertTrue(response.getStatus() == Response.Status.BAD_REQUEST.getStatusCode());
@@ -180,16 +199,16 @@ public class EmpWtimeModelDeleteTest {
 	
 	
 	
-	protected void initializeMandatoryField2() {
-		initializeOrdinaryUsageFullKey();
+	protected void initializeMissingMandatoryField2() {
+		initializeMantadoryField();
 		infoRecord.codStore = -1;
 	}
 	
 	
 	
 	@Test
-	public void MandatoryField3() {
-		initializeMandatoryField2();
+	public void missingMandatoryField3() {
+		initializeMissingMandatoryField3();
 		model.executeRequest();
 		Response response = model.getResponse();
 		assertTrue(response.getStatus() == Response.Status.BAD_REQUEST.getStatusCode());
@@ -201,16 +220,16 @@ public class EmpWtimeModelDeleteTest {
 	
 	
 	
-	protected void initializeMandatoryField3() {
-		initializeOrdinaryUsageFullKey();
+	protected void initializeMissingMandatoryField3() {
+		initializeMantadoryField();
 		infoRecord.codOwner = -1;
 	}
 	
 	
 	
 	@Test
-	public void mandatoryField4() {
-		initializeMandatoryField4();
+	public void missingMandatoryField4() {
+		initializeMissingMandatoryField4();
 		model.executeRequest();
 		Response response = model.getResponse();
 		assertTrue(response.getStatus() == Response.Status.BAD_REQUEST.getStatusCode());
@@ -222,19 +241,15 @@ public class EmpWtimeModelDeleteTest {
 	
 	
 	
-	protected void initializeMandatoryField4() {
-		initializeOrdinaryUsageFullKey();
+	protected void initializeMissingMandatoryField4() {
+		initializeMantadoryField();
 		infoRecord.weekday = -1;
 	}
 	
 	
-	
-	
-	
-	
-	
-	protected void initializeOrdinaryUsageFullKey() {
-		PowerMockito.when(DbConnection.getConnection()).thenReturn(validConn);
+		
+	protected void initializeMantadoryField() {
+		PowerMockito.when(DbConnection.getConnection()).thenReturn(deleteConn);
 		
 		infoRecord = new EmpWTimeInfo();
 		infoRecord.codOwner = 1;

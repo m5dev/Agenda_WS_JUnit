@@ -68,9 +68,9 @@ public class EmpWtimeModelInsertTest {
 		when(insertStmt.executeUpdate()).thenReturn(1);
 		
 		when(insertStmt.executeQuery()).thenReturn(insertRs);
-		when(insertRs.next()).thenReturn(false).thenReturn(false).thenReturn(true).thenReturn(false)
-		                     .thenReturn(false).thenReturn(false).thenReturn(true).thenReturn(false)
-		                     .thenReturn(false).thenReturn(false).thenReturn(true).thenReturn(false)
+		when(insertRs.next()).thenReturn(true).thenReturn(false).thenReturn(false).thenReturn(false).thenReturn(true).thenReturn(false)
+							 .thenReturn(true).thenReturn(false).thenReturn(false).thenReturn(false).thenReturn(true).thenReturn(false)
+							 .thenReturn(true).thenReturn(false).thenReturn(false).thenReturn(false).thenReturn(true).thenReturn(false)
 		                     .thenReturn(false);
 		when(insertRs.getLong(any(String.class))).thenReturn(new Long(1));
 		when(insertRs.getInt(any(String.class))).thenReturn(new Integer(1));
@@ -90,9 +90,9 @@ public class EmpWtimeModelInsertTest {
 		
 		
 		when(updateStmt.executeQuery()).thenReturn(updateRs);
-		when(updateRs.next()).thenReturn(false).thenReturn(true).thenReturn(false).thenReturn(true).thenReturn(false)
-		                     .thenReturn(false).thenReturn(true).thenReturn(false).thenReturn(true).thenReturn(false)
-		                     .thenReturn(false).thenReturn(true).thenReturn(false).thenReturn(true).thenReturn(false)
+		when(updateRs.next()).thenReturn(true).thenReturn(false).thenReturn(false).thenReturn(true).thenReturn(false).thenReturn(true).thenReturn(false)
+							 .thenReturn(true).thenReturn(false).thenReturn(false).thenReturn(true).thenReturn(false).thenReturn(true).thenReturn(false)
+							 .thenReturn(true).thenReturn(false).thenReturn(false).thenReturn(true).thenReturn(false).thenReturn(true).thenReturn(false)
 		                     .thenReturn(false);
 		when(updateRs.getLong(any(String.class))).thenReturn(new Long(1));
 		when(updateRs.getInt(any(String.class))).thenReturn(new Integer(1));
@@ -115,7 +115,7 @@ public class EmpWtimeModelInsertTest {
 		doNothing().when(alreadyExistStmt).setTime(anyInt(), any(Time.class));
 		
 		when(alreadyExistStmt.executeQuery()).thenReturn(alreadyExistRs);				
-		when(alreadyExistRs.next()).thenReturn(true).thenReturn(false);
+		when(alreadyExistRs.next()).thenReturn(true).thenReturn(false).thenReturn(true).thenReturn(false);
 		when(alreadyExistRs.getLong(any(String.class))).thenReturn(new Long(1));
 		when(alreadyExistRs.getInt(any(String.class))).thenReturn(new Integer(1));
 		when(alreadyExistRs.getString(any(String.class))).thenReturn(" ");
@@ -198,8 +198,8 @@ public class EmpWtimeModelInsertTest {
 		
 	
 	@Test
-	public void mandatoryField1() {
-		initializeMandatoryField1();
+	public void missingMandatoryField1() {
+		initializeMissingMandatoryField1();
 		model.executeRequest();
 		Response response = model.getResponse();
 		assertTrue(response.getStatus() == Response.Status.BAD_REQUEST.getStatusCode());
@@ -210,7 +210,7 @@ public class EmpWtimeModelInsertTest {
 	
 		
 	
-	protected void initializeMandatoryField1() {
+	protected void initializeMissingMandatoryField1() {
 		PowerMockito.when(DbConnection.getConnection()).thenReturn(insertConn);		
 		model = new EmpWtimeModelInsert(incomingDataMandatoryField1());
 	}	
@@ -224,8 +224,8 @@ public class EmpWtimeModelInsertTest {
 	
 	
 	@Test
-	public void mandatoryField2() {
-		initializeMandatoryField2();
+	public void missingMandatoryField2() {
+		initializeMissingMandatoryField2();
 		model.executeRequest();
 		Response response = model.getResponse();
 		assertTrue(response.getStatus() == Response.Status.BAD_REQUEST.getStatusCode());
@@ -236,7 +236,7 @@ public class EmpWtimeModelInsertTest {
 	
 		
 	
-	protected void initializeMandatoryField2() {
+	protected void initializeMissingMandatoryField2() {
 		PowerMockito.when(DbConnection.getConnection()).thenReturn(insertConn);		
 		model = new EmpWtimeModelInsert(incomingDataMandatoryField2());
 	}	
@@ -250,8 +250,8 @@ public class EmpWtimeModelInsertTest {
 	
 	
 	@Test
-	public void mandatoryField3() {
-		initializeMandatoryField3();
+	public void missingMandatoryField3() {
+		initializeMissingMandatoryField3();
 		model.executeRequest();
 		Response response = model.getResponse();
 		assertTrue(response.getStatus() == Response.Status.BAD_REQUEST.getStatusCode());
@@ -262,7 +262,7 @@ public class EmpWtimeModelInsertTest {
 	
 		
 	
-	protected void initializeMandatoryField3() {
+	protected void initializeMissingMandatoryField3() {
 		PowerMockito.when(DbConnection.getConnection()).thenReturn(insertConn);		
 		model = new EmpWtimeModelInsert(incomingDataMandatoryField3());
 	}	
@@ -276,8 +276,8 @@ public class EmpWtimeModelInsertTest {
 	
 	
 	@Test
-	public void mandatoryField4() {
-		initializeMandatoryField4();
+	public void missingMandatoryField4() {
+		initializeMissingMandatoryField4();
 		model.executeRequest();
 		Response response = model.getResponse();
 		assertTrue(response.getStatus() == Response.Status.BAD_REQUEST.getStatusCode());
@@ -288,7 +288,7 @@ public class EmpWtimeModelInsertTest {
 	
 		
 	
-	protected void initializeMandatoryField4() {
+	protected void initializeMissingMandatoryField4() {
 		PowerMockito.when(DbConnection.getConnection()).thenReturn(insertConn);		
 		model = new EmpWtimeModelInsert(incomingDataMandatoryField4());
 	}	
