@@ -175,6 +175,7 @@ public class EmpModelSelectTest {
 	
 	protected void initializeMissingMandatoryField() {
 		initializeSelectWithFullKey();
+		infoRecord.codOwner = -1;
 		infoRecord.codEmployee = -1;
 	}
 	

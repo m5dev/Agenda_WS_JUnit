@@ -1,12 +1,11 @@
-package br.com.gda.employee;
+package br.com.gda.model.checker;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
-@SuiteClasses({EmpSuiteTest.class,
-			   EmpWorkTimeSuiteTest.class})
-public class AllSuiteTest {
+@SuiteClasses({ModelCheckerCpfTest.class})
+public class CheckerSuiteTest {
 
 }
