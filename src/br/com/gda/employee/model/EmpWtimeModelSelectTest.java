@@ -24,8 +24,9 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import br.com.gda.businessModel.employee.info.EmpWTimeInfo;
+import br.com.gda.businessModel.employee.model.EmpWtimeModelSelect;
 import br.com.gda.common.DbConnection;
-import br.com.gda.employee.info.EmpWTimeInfo;
 
 import javax.ws.rs.core.Response;
 

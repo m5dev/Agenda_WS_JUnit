@@ -12,8 +12,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 
-import br.com.gda.employee.info.EmpWTimeInfo;
 import br.com.gda.sql.SqlStmtExecOption;
+import br.com.gda.businessModel.employee.dao.EmpWtimeStmtInsert;
+import br.com.gda.businessModel.employee.info.EmpWTimeInfo;
 import br.com.gda.sql.SqlStmt;
 
 import static org.mockito.Mockito.*;

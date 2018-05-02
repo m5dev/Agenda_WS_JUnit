@@ -4,7 +4,8 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-import br.com.gda.employee.info.EmpWTimeInfo;
+import br.com.gda.businessModel.employee.info.EmpWTimeInfo;
+import br.com.gda.businessModel.employee.model.checker.CheckerEmpWtimeMandatoryRead;
 
 public class CheckerEmpWtimeMandatoryReadTest {
 	protected CheckerEmpWtimeMandatoryRead checker;

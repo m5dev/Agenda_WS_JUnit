@@ -21,8 +21,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 
-import br.com.gda.employee.info.EmpWTimeInfo;
 import br.com.gda.sql.SqlStmtExecOption;
+import br.com.gda.businessModel.employee.dao.EmpWtimeStmtExecDelete;
+import br.com.gda.businessModel.employee.info.EmpWTimeInfo;
 import br.com.gda.sql.SqlStmtExec;
 
 public class EmpWorkTimeStmtExecDeleteTest {

@@ -26,6 +26,7 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import br.com.gda.businessModel.employee.model.EmpModelUpdate;
 import br.com.gda.common.DbConnection;
 import br.com.gda.model.Model;
 
