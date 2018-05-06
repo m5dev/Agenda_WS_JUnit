@@ -1,4 +1,4 @@
-package br.com.gda.employee.model;
+package br.com.gda.business.store.model;
 
 import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -26,27 +26,26 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import br.com.gda.businessModel.employee.model.EmpModelUpdate;
 import br.com.gda.common.DbConnection;
 import br.com.gda.model.Model;
 
 @PrepareForTest({DbConnection.class})
 @RunWith(PowerMockRunner.class)
-public class EmpModelUpdateTest {
+public class StoreModelUpdateTest {
 	@Mock private Connection updateConn;
 	@Mock private Connection updateConstraintConn;
 	@Mock private Connection invalidConstraintConn;
-	@Mock private Connection empDontExistConn;
+	@Mock private Connection storeDontExistConn;
 	@Mock private Connection invalidConn;
 	@Mock private PreparedStatement updateStmt;
 	@Mock private PreparedStatement updateConstraintStmt;
 	@Mock private PreparedStatement invalidConstraintStmt;
-	@Mock private PreparedStatement empDontExistStmt;
+	@Mock private PreparedStatement storeDontExistStmt;
 	@Mock private PreparedStatement invalidStmt;
 	@Mock private ResultSet updateRs;
 	@Mock private ResultSet updateConstraintRs;
 	@Mock private ResultSet invalidConstraintRs;
-	@Mock private ResultSet empDontExistRs;
+	@Mock private ResultSet storeDontExistRs;
 	
 	private Model model;
 	
@@ -59,7 +58,7 @@ public class EmpModelUpdateTest {
 		initializeScenarioUpdate();
 		initializeScenarioUpdateConstraint();
 		initializeScenarioInvalidConstraint();
-		initializeScenarioEmpDontExist();
+		initializeScenarioStoreDontExist();
 		initializeScenarioInvalidConnection();
 	}
 	
@@ -131,15 +130,15 @@ public class EmpModelUpdateTest {
 	
 	
 	
-	private void initializeScenarioEmpDontExist() throws SQLException {
-		empDontExistStmt = mock(PreparedStatement.class);
-		empDontExistRs = mock(ResultSet.class);		
-		empDontExistConn = mock(Connection.class);
+	private void initializeScenarioStoreDontExist() throws SQLException {
+		storeDontExistStmt = mock(PreparedStatement.class);
+		storeDontExistRs = mock(ResultSet.class);		
+		storeDontExistConn = mock(Connection.class);
 		
-		when(empDontExistConn.prepareStatement(any(String.class))).thenReturn(empDontExistStmt);
+		when(storeDontExistConn.prepareStatement(any(String.class))).thenReturn(storeDontExistStmt);
 
-		when(empDontExistStmt.executeQuery()).thenReturn(empDontExistRs);
-		when(empDontExistRs.next()).thenReturn(false);
+		when(storeDontExistStmt.executeQuery()).thenReturn(storeDontExistRs);
+		when(storeDontExistRs.next()).thenReturn(false);
 	}
 	
 	
@@ -157,50 +156,44 @@ public class EmpModelUpdateTest {
 	}
 	
 	
-	
-	
+
 	@Test
-	public void updateEmp() {
-		initializeUpdateEmp();
+	public void updateStore() {
+		initializeUpdateStore();
 		model.executeRequest();
 		Response response = model.getResponse();
 		assertTrue(response.getStatus() == Response.Status.OK.getStatusCode());
 		
-		String responseBody = "{\"selectCode\":200,\"selectMessage\":\"The list was returned successfully\",\"results\":[{\"codOwner\":1,\"codEmployee\":1,\"stores\":[],\"cpf\":\" \",\"name\":\" \",\"codGender\":1,\"txtGender\":\" \",\"email\":\" \",\"address1\":\" \",\"address2\":\" \",\"postalCode\":1,\"city\":\" \",\"codCountry\":\" \",\"txtCountry\":\" \",\"stateProvince\":\" \",\"phone\":\" \",\"beginTime\":{\"hour\":11,\"minute\":22,\"second\":33,\"nano\":0},\"endTime\":{\"hour\":11,\"minute\":22,\"second\":33,\"nano\":0},\"codPosition\":1,\"txtPosition\":\" \",\"codLanguage\":\"PT\",\"recordMode\":\" \"}]}";
+		String responseBody = "{\"selectCode\":200,\"selectMessage\":\"The list was returned successfully\",\"results\":[{\"codOwner\":1,\"codStore\":1,\"cnpj\":\" \",\"inscrMun\":\" \",\"inscrEst\":\" \",\"razaoSocial\":\" \",\"name\":\" \",\"address1\":\" \",\"address2\":\" \",\"postalCode\":1,\"city\":\" \",\"codCountry\":\" \",\"txtCountry\":\" \",\"stateProvince\":\" \",\"phone\":\" \",\"codCurr\":\" \",\"codPayment\":\" \",\"latitude\":0.0,\"longitude\":0.0,\"codLanguage\":\"PT\",\"recordMode\":\" \"}]}";
 		assertTrue(response.getEntity().equals(responseBody));		
 	}
 		
 	
 	
-	protected void initializeUpdateEmp() {
+	protected void initializeUpdateStore() {
 		PowerMockito.when(DbConnection.getConnection()).thenReturn(updateConn);
-		model = new EmpModelUpdate(incomingDataUpdateEmp());
+		model = new StoreModelUpdate(incomingDataUpdateStore());
 	}
 	
 	
 	
+	
 	@Test
-	public void updateEmpConstraintCheck() {
-		initializeUpdateEmpConstraintCheck();
+	public void updateStoreConstraintCheck() {
+		initializeUpdateStoreConstraintCheck();
 		model.executeRequest();
 		Response response = model.getResponse();
 		assertTrue(response.getStatus() == Response.Status.OK.getStatusCode());
 		
-		String responseBody = "{\"selectCode\":200,\"selectMessage\":\"The list was returned successfully\",\"results\":[{\"codOwner\":1,\"codEmployee\":1,\"stores\":[],\"cpf\":\" \",\"name\":\" \",\"codGender\":1,\"txtGender\":\" \",\"email\":\" \",\"address1\":\" \",\"address2\":\" \",\"postalCode\":1,\"city\":\" \",\"codCountry\":\" \",\"txtCountry\":\" \",\"stateProvince\":\" \",\"phone\":\" \",\"beginTime\":{\"hour\":11,\"minute\":22,\"second\":33,\"nano\":0},\"endTime\":{\"hour\":11,\"minute\":22,\"second\":33,\"nano\":0},\"codPosition\":1,\"txtPosition\":\" \",\"codLanguage\":\"PT\",\"recordMode\":\" \"}]}";
+		String responseBody = "{\"selectCode\":200,\"selectMessage\":\"The list was returned successfully\",\"results\":[{\"codOwner\":1,\"codStore\":1,\"cnpj\":\" \",\"inscrMun\":\" \",\"inscrEst\":\" \",\"razaoSocial\":\" \",\"name\":\" \",\"address1\":\" \",\"address2\":\" \",\"postalCode\":1,\"city\":\" \",\"codCountry\":\" \",\"txtCountry\":\" \",\"stateProvince\":\" \",\"phone\":\" \",\"codCurr\":\" \",\"codPayment\":\" \",\"latitude\":0.0,\"longitude\":0.0,\"codLanguage\":\"PT\",\"recordMode\":\" \"}]}";
 		assertTrue(response.getEntity().equals(responseBody));		
 	}
 		
 	
 	
-	protected void initializeUpdateEmpConstraintCheck() {
+	protected void initializeUpdateStoreConstraintCheck() {
 		PowerMockito.when(DbConnection.getConnection()).thenReturn(updateConstraintConn);
-		model = new EmpModelUpdate(incomingDataUpdateEmp());
-	}
-	
-	
-	
-	protected String incomingDataUpdateEmp() {
-		return "[{\"codOwner\": 8,\"codEmployee\": 56,\"cpf\": \"15717068603\",\"password\": \"eer2\",\"name\": \"Ricardo Dummy #3\",\"codPosition\": 2,\"codGender\": 2,\"bornDate\": {\"year\": 1984, \"month\": 8, \"day\": 16},\"email\": \"dummy03@dummy.com\",\"address1\": \"Rua Dummy\",\"address2\": \"Ap 100\",\"postalcode\": 20735060,\"city\": \"Rio de Janeiro\",\"country\": \"BR\",\"state\": \"RJ\",\"phone\": \"2125922592\",\"beginTime\": {\"hour\": 9, \"minute\": 0},\"endTime\": {\"hour\": 18, \"minute\": 0},\"recordMode\": \" \"}]";
+		model = new StoreModelUpdate(incomingDataUpdateStore());
 	}
 	
 	
@@ -212,7 +205,7 @@ public class EmpModelUpdateTest {
 		Response response = model.getResponse();
 		assertTrue(response.getStatus() == Response.Status.BAD_REQUEST.getStatusCode());
 		
-		String responseBody = "{\"selectCode\":1055,\"selectMessage\":\"Employee's CPF already exist on DB\",\"results\":{}}";
+		String responseBody = "{\"selectCode\":1100,\"selectMessage\":\"Store's CNPJ already exist on DB\",\"results\":{}}";
 		assertTrue(response.getEntity().equals(responseBody));		
 	}
 		
@@ -220,7 +213,13 @@ public class EmpModelUpdateTest {
 	
 	protected void initializeInvalidConstraintCheck() {
 		PowerMockito.when(DbConnection.getConnection()).thenReturn(invalidConstraintConn);
-		model = new EmpModelUpdate(incomingDataUpdateEmp());
+		model = new StoreModelUpdate(incomingDataUpdateStore());
+	}
+	
+	
+	
+	protected String incomingDataUpdateStore() {
+		return "[   {	\"codOwner\": \"8\",	\"codStore\": \"16\",	\"cnpj\": \"02357537000139\", 	\"inscEstadual\": \"83739029\", 	\"inscMunicipal\": \"873787620999\", 	\"razaoSocial\": \"Loja DEF LTDA\",	\"name\": \"ABC Coiffeur - Filial B\",	\"address1\": \"Rua 123 de Oliveira 4, Centro\",	\"address2\": \"Loja A\",	\"postalcode\": \"20735060\",	\"city\": \"Rio de Janeiro\",	\"state\": \"RJ\",	\"country\": \"BR\",	\"phone\": \"21-2592-2592\",	\"codCurr\": \"BRL\",	\"codPayment\": \"MPA-BF17622CF63C\"   }]";
 	}
 	
 	
@@ -239,40 +238,40 @@ public class EmpModelUpdateTest {
 		
 	
 	protected void initializeMissingFieldCodOwner() {
-		PowerMockito.when(DbConnection.getConnection()).thenReturn(empDontExistConn);		
-		model = new EmpModelUpdate(incomingDataMissingFieldCodOwner());
+		PowerMockito.when(DbConnection.getConnection()).thenReturn(storeDontExistConn);		
+		model = new StoreModelUpdate(incomingDataMissingFieldCodOwner());
 	}	
 	
 	
 	
 	protected String incomingDataMissingFieldCodOwner() {
-		return "[{\"codEmployee\": 56,\"cpf\": \"15717068603\",\"password\": \"eer2\",\"name\": \"Ricardo Dummy #3\",\"codPosition\": 2,\"codGender\": 2,\"bornDate\": {\"year\": 1984, \"month\": 8, \"day\": 16},\"email\": \"dummy03@dummy.com\",\"address1\": \"Rua Dummy\",\"address2\": \"Ap 100\",\"postalcode\": 20735060,\"city\": \"Rio de Janeiro\",\"country\": \"BR\",\"state\": \"RJ\",\"phone\": \"2125922592\",\"beginTime\": {\"hour\": 9, \"minute\": 0},\"endTime\": {\"hour\": 18, \"minute\": 0},\"recordMode\": \" \"}]";
+		return "[   {\"codStore\": \"16\",	\"cnpj\": \"02357537000139\", 	\"inscEstadual\": \"83739029\", 	\"inscMunicipal\": \"873787620999\", 	\"razaoSocial\": \"Loja DEF LTDA\",	\"name\": \"ABC Coiffeur - Filial B\",	\"address1\": \"Rua 123 de Oliveira 4, Centro\",	\"address2\": \"Loja A\",	\"postalcode\": \"20735060\",	\"city\": \"Rio de Janeiro\",	\"state\": \"RJ\",	\"country\": \"BR\",	\"phone\": \"21-2592-2592\",	\"codCurr\": \"BRL\",	\"codPayment\": \"MPA-BF17622CF63C\"   }]";
 	}
 	
 	
 	
 	@Test
-	public void missingFieldCodEmployee() {
-		initializeMissingFieldCodEmployee();
+	public void missingFieldCodStore() {
+		initializeMissingFieldCodStore();
 		model.executeRequest();
 		Response response = model.getResponse();
 		assertTrue(response.getStatus() == Response.Status.BAD_REQUEST.getStatusCode());
 		
-		String responseBody = "{\"selectCode\":1058,\"selectMessage\":\"Key field should not be null\",\"results\":{}}";
+		String responseBody = "{\"selectCode\":6,\"selectMessage\":\"Key field should not be null\",\"results\":{}}";
 		assertTrue(response.getEntity().equals(responseBody));		
 	}
 	
 		
 	
-	protected void initializeMissingFieldCodEmployee() {
-		PowerMockito.when(DbConnection.getConnection()).thenReturn(empDontExistConn);		
-		model = new EmpModelUpdate(incomingDataMissingFieldCodEmployee());
+	protected void initializeMissingFieldCodStore() {
+		PowerMockito.when(DbConnection.getConnection()).thenReturn(storeDontExistConn);		
+		model = new StoreModelUpdate(incomingDataMissingFieldCodStore());
 	}	
 	
 	
 	
-	protected String incomingDataMissingFieldCodEmployee() {
-		return "[{\"codOwner\": 8,\"cpf\": \"15717068603\",\"password\": \"eer2\",\"name\": \"Ricardo Dummy #3\",\"codPosition\": 2,\"codGender\": 2,\"bornDate\": {\"year\": 1984, \"month\": 8, \"day\": 16},\"email\": \"dummy03@dummy.com\",\"address1\": \"Rua Dummy\",\"address2\": \"Ap 100\",\"postalcode\": 20735060,\"city\": \"Rio de Janeiro\",\"country\": \"BR\",\"state\": \"RJ\",\"phone\": \"2125922592\",\"beginTime\": {\"hour\": 9, \"minute\": 0},\"endTime\": {\"hour\": 18, \"minute\": 0},\"recordMode\": \" \"}]";
+	protected String incomingDataMissingFieldCodStore() {
+		return "[   {	\"codOwner\": \"8\",\"cnpj\": \"02357537000139\", 	\"inscEstadual\": \"83739029\", 	\"inscMunicipal\": \"873787620999\", 	\"razaoSocial\": \"Loja DEF LTDA\",	\"name\": \"ABC Coiffeur - Filial B\",	\"address1\": \"Rua 123 de Oliveira 4, Centro\",	\"address2\": \"Loja A\",	\"postalcode\": \"20735060\",	\"city\": \"Rio de Janeiro\",	\"state\": \"RJ\",	\"country\": \"BR\",	\"phone\": \"21-2592-2592\",	\"codCurr\": \"BRL\",	\"codPayment\": \"MPA-BF17622CF63C\"   }]";
 	}
 	
 	
@@ -291,21 +290,21 @@ public class EmpModelUpdateTest {
 		
 	
 	protected void initializeMissingFieldName() {
-		PowerMockito.when(DbConnection.getConnection()).thenReturn(empDontExistConn);		
-		model = new EmpModelUpdate(incomingDataMissingFieldName());
+		PowerMockito.when(DbConnection.getConnection()).thenReturn(storeDontExistConn);		
+		model = new StoreModelUpdate(incomingDataMissingFieldName());
 	}	
 	
 	
 	
 	protected String incomingDataMissingFieldName() {
-		return "[{\"codOwner\": 8,\"codEmployee\": 56,\"cpf\": \"15717068603\",\"password\": \"eer2\",\"codPosition\": 2,\"codGender\": 2,\"bornDate\": {\"year\": 1984, \"month\": 8, \"day\": 16},\"email\": \"dummy03@dummy.com\",\"address1\": \"Rua Dummy\",\"address2\": \"Ap 100\",\"postalcode\": 20735060,\"city\": \"Rio de Janeiro\",\"country\": \"BR\",\"state\": \"RJ\",\"phone\": \"2125922592\",\"beginTime\": {\"hour\": 9, \"minute\": 0},\"endTime\": {\"hour\": 18, \"minute\": 0},\"recordMode\": \" \"}]";
+		return "[   {	\"codOwner\": \"8\",	\"codStore\": \"16\",	\"cnpj\": \"02357537000139\", 	\"inscEstadual\": \"83739029\", 	\"inscMunicipal\": \"873787620999\", 	\"razaoSocial\": \"Loja DEF LTDA\",	\"address1\": \"Rua 123 de Oliveira 4, Centro\",	\"address2\": \"Loja A\",	\"postalcode\": \"20735060\",	\"city\": \"Rio de Janeiro\",	\"state\": \"RJ\",	\"country\": \"BR\",	\"phone\": \"21-2592-2592\",	\"codCurr\": \"BRL\",	\"codPayment\": \"MPA-BF17622CF63C\"   }]";
 	}
 	
 	
 	
 	@Test
-	public void missingFieldCpf() {
-		initializeMissingFieldCpf();
+	public void missingFieldCnpj() {
+		initializeMissingFieldCnpj();
 		model.executeRequest();
 		Response response = model.getResponse();
 		assertTrue(response.getStatus() == Response.Status.BAD_REQUEST.getStatusCode());
@@ -316,39 +315,39 @@ public class EmpModelUpdateTest {
 	
 		
 	
-	protected void initializeMissingFieldCpf() {
-		PowerMockito.when(DbConnection.getConnection()).thenReturn(empDontExistConn);		
-		model = new EmpModelUpdate(incomingDataMissingFieldCpf());
+	protected void initializeMissingFieldCnpj() {
+		PowerMockito.when(DbConnection.getConnection()).thenReturn(storeDontExistConn);		
+		model = new StoreModelUpdate(incomingDataMissingFieldCnpj());
 	}	
 	
 	
-	protected String incomingDataMissingFieldCpf() {
-		return "[{\"codOwner\": 8,\"codEmployee\": 56,\"password\": \"eer2\",\"name\": \"Ricardo Dummy #3\",\"codPosition\": 2,\"codGender\": 2,\"bornDate\": {\"year\": 1984, \"month\": 8, \"day\": 16},\"email\": \"dummy03@dummy.com\",\"address1\": \"Rua Dummy\",\"address2\": \"Ap 100\",\"postalcode\": 20735060,\"city\": \"Rio de Janeiro\",\"country\": \"BR\",\"state\": \"RJ\",\"phone\": \"2125922592\",\"beginTime\": {\"hour\": 9, \"minute\": 0},\"endTime\": {\"hour\": 18, \"minute\": 0},\"recordMode\": \" \"}]";
+	protected String incomingDataMissingFieldCnpj() {
+		return "[   {	\"codOwner\": \"8\",	\"codStore\": \"16\", 	\"inscEstadual\": \"83739029\", 	\"inscMunicipal\": \"873787620999\", 	\"razaoSocial\": \"Loja DEF LTDA\",	\"name\": \"ABC Coiffeur - Filial B\",	\"address1\": \"Rua 123 de Oliveira 4, Centro\",	\"address2\": \"Loja A\",	\"postalcode\": \"20735060\",	\"city\": \"Rio de Janeiro\",	\"state\": \"RJ\",	\"country\": \"BR\",	\"phone\": \"21-2592-2592\",	\"codCurr\": \"BRL\",	\"codPayment\": \"MPA-BF17622CF63C\"   }]";
 	}
 	
 	
 	
 	@Test
-	public void invalidCpf() {
-		initializeInvalidCpf();
+	public void invalidCnpj() {
+		initializeInvalidCnpj();
 		model.executeRequest();
 		Response response = model.getResponse();
 		assertTrue(response.getStatus() == Response.Status.BAD_REQUEST.getStatusCode());
 		
-		String responseBody = "{\"selectCode\":3,\"selectMessage\":\"CPF is invalid\",\"results\":{}}";
+		String responseBody = "{\"selectCode\":4,\"selectMessage\":\"CNPJ is invalid\",\"results\":{}}";
 		assertTrue(response.getEntity().equals(responseBody));		
 	}
 	
 		
 	
-	protected void initializeInvalidCpf() {
-		PowerMockito.when(DbConnection.getConnection()).thenReturn(empDontExistConn);		
-		model = new EmpModelUpdate(incomingDataInvalidCpf());
+	protected void initializeInvalidCnpj() {
+		PowerMockito.when(DbConnection.getConnection()).thenReturn(storeDontExistConn);		
+		model = new StoreModelUpdate(incomingDataInvalidCnpj());
 	}	
 	
 	
-	protected String incomingDataInvalidCpf() {
-		return "[{\"codOwner\": 8,\"codEmployee\": 56,\"cpf\": \"15717068600\",\"password\": \"eer2\",\"name\": \"Ricardo Dummy #3\",\"codPosition\": 2,\"codGender\": 2,\"bornDate\": {\"year\": 1984, \"month\": 8, \"day\": 16},\"email\": \"dummy03@dummy.com\",\"address1\": \"Rua Dummy\",\"address2\": \"Ap 100\",\"postalcode\": 20735060,\"city\": \"Rio de Janeiro\",\"country\": \"BR\",\"state\": \"RJ\",\"phone\": \"2125922592\",\"beginTime\": {\"hour\": 9, \"minute\": 0},\"endTime\": {\"hour\": 18, \"minute\": 0},\"recordMode\": \" \"}]";
+	protected String incomingDataInvalidCnpj() {
+		return "[   {	\"codOwner\": \"8\",	\"codStore\": \"16\",	\"cnpj\": \"02357537000130\", 	\"inscEstadual\": \"83739029\", 	\"inscMunicipal\": \"873787620999\", 	\"razaoSocial\": \"Loja DEF LTDA\",	\"name\": \"ABC Coiffeur - Filial B\",	\"address1\": \"Rua 123 de Oliveira 4, Centro\",	\"address2\": \"Loja A\",	\"postalcode\": \"20735060\",	\"city\": \"Rio de Janeiro\",	\"state\": \"RJ\",	\"country\": \"BR\",	\"phone\": \"21-2592-2592\",	\"codCurr\": \"BRL\",	\"codPayment\": \"MPA-BF17622CF63C\"   }]";
 	}
 	
 	
@@ -368,6 +367,7 @@ public class EmpModelUpdateTest {
 	
 	protected void initializeinvalidConnection() {
 		PowerMockito.when(DbConnection.getConnection()).thenReturn(invalidConn);
-		model = new EmpModelUpdate(incomingDataUpdateEmp());
+		model = new StoreModelUpdate(incomingDataUpdateStore());
 	}
+
 }

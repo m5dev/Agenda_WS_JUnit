@@ -1,4 +1,4 @@
-package br.com.gda.employee.dao;
+package br.com.gda.business.employee.dao;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -22,8 +22,8 @@ import org.junit.Test;
 import org.mockito.Mock;
 
 import br.com.gda.sql.SqlStmtExecOption;
-import br.com.gda.businessModel.employee.dao.EmpWtimeStmtExecInsert;
-import br.com.gda.businessModel.employee.info.EmpWTimeInfo;
+import br.com.gda.business.employee.dao.EmpWtimeStmtExecInsert;
+import br.com.gda.business.employee.info.EmpWTimeInfo;
 import br.com.gda.sql.SqlStmtExec;
 
 public class EmpWorkTimeStmtExecInsertTest {

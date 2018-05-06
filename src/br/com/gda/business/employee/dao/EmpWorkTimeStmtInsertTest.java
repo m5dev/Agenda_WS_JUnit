@@ -1,4 +1,4 @@
-package br.com.gda.employee.dao;
+package br.com.gda.business.employee.dao;
 
 import static org.junit.Assert.*;
 
@@ -13,8 +13,8 @@ import org.junit.Test;
 import org.mockito.Mock;
 
 import br.com.gda.sql.SqlStmtExecOption;
-import br.com.gda.businessModel.employee.dao.EmpWtimeStmtInsert;
-import br.com.gda.businessModel.employee.info.EmpWTimeInfo;
+import br.com.gda.business.employee.dao.EmpWtimeStmtInsert;
+import br.com.gda.business.employee.info.EmpWTimeInfo;
 import br.com.gda.sql.SqlStmt;
 
 import static org.mockito.Mockito.*;

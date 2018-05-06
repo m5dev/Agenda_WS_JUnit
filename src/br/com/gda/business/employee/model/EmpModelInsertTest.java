@@ -1,4 +1,4 @@
-package br.com.gda.employee.model;
+package br.com.gda.business.employee.model;
 
 import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -22,7 +22,7 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import br.com.gda.businessModel.employee.model.EmpModelInsert;
+import br.com.gda.business.employee.model.EmpModelInsert;
 import br.com.gda.common.DbConnection;
 import br.com.gda.model.Model;
 
@@ -228,7 +228,7 @@ public class EmpModelInsertTest {
 		Response response = model.getResponse();
 		assertTrue(response.getStatus() == Response.Status.BAD_REQUEST.getStatusCode());
 		
-		String responseBody = "{\"selectCode\":1059,\"selectMessage\":\"Auto generated fields should not be passed\",\"results\":{}}";
+		String responseBody = "{\"selectCode\":1057,\"selectMessage\":\"Auto generated fields should not be passed\",\"results\":{}}";
 		assertTrue(response.getEntity().equals(responseBody));		
 	}
 	
@@ -275,7 +275,7 @@ public class EmpModelInsertTest {
 	
 	@Test
 	public void invalidConnection() {
-		initializeinvalidConnection();
+		initializeInvalidConnection();
 		model.executeRequest();
 		Response response = model.getResponse();
 		assertTrue(response.getStatus() == Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
@@ -286,7 +286,7 @@ public class EmpModelInsertTest {
 		
 	
 	
-	protected void initializeinvalidConnection() {
+	protected void initializeInvalidConnection() {
 		PowerMockito.when(DbConnection.getConnection()).thenReturn(invalidConn);
 		model = new EmpModelInsert(incomingDataOrdinaryUsage());
 	}

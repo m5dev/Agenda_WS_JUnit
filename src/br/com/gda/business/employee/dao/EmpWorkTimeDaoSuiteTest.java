@@ -1,4 +1,4 @@
-package br.com.gda.employee.dao;
+package br.com.gda.business.employee.dao;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;

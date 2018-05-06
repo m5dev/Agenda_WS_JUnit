@@ -5,7 +5,8 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
-@SuiteClasses({ModelCheckerCpfTest.class})
+@SuiteClasses({ModelCheckerCpfTest.class,
+			   ModelCheckerCnpjTest.class})
 public class CheckerSuiteTest {
 
 }

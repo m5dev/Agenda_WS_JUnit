@@ -1,4 +1,4 @@
-package br.com.gda.employee.model;
+package br.com.gda.business.store.model;
 
 import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -15,36 +15,36 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Time;
+
+import javax.ws.rs.core.Response;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
 import org.mockito.Mock;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import br.com.gda.businessModel.employee.info.EmpInfo;
-import br.com.gda.businessModel.employee.model.EmpModelSelect;
+import br.com.gda.business.store.info.StoreInfo;
 import br.com.gda.common.DbConnection;
-
-import javax.ws.rs.core.Response;
+import br.com.gda.model.Model;
 
 
 @PrepareForTest({DbConnection.class})
 @RunWith(PowerMockRunner.class)
-public class EmpModelSelectTest {
-	@Mock private Connection selectConn;
+public class StoreModelDeleteTest {
+	@Mock private Connection deleteConn;
 	@Mock private Connection empNotFoundConn;
 	@Mock private Connection invalidConn;
-	@Mock private PreparedStatement selectStmt;
+	@Mock private PreparedStatement deleteStmt;
 	@Mock private PreparedStatement empNotFoundStmt;
 	@Mock private PreparedStatement invalidStmt;
-	@Mock private ResultSet selectRs;
+	@Mock private ResultSet deleteRs;
 	@Mock private ResultSet empNotFoundRs;
 	
-	private EmpModelSelect model;
-	private EmpInfo infoRecord;
+	private Model model;
+	private StoreInfo infoRecord;
 	
 	
 	
@@ -52,40 +52,37 @@ public class EmpModelSelectTest {
 	public void initializeMockObjects() throws SQLException {
 		PowerMockito.mockStatic(DbConnection.class);
 		
-		initializeScenarioSelect();
-		initializeScenarioEmpNotFound();
+		initializeScenarioDelete();
+		initializeScenarioStoreNotFound();
 		initializeScenarioInvalidConnection();
 	}
 	
 	
 	
-	private void initializeScenarioSelect() throws SQLException {
-		selectStmt = mock(PreparedStatement.class);
-		selectRs = mock(ResultSet.class);
-		selectConn = mock(Connection.class);
+	private void initializeScenarioDelete() throws SQLException {
+		deleteConn = mock(Connection.class);
+		deleteStmt = mock(PreparedStatement.class);
+		deleteRs = mock(ResultSet.class);
 		
-		when(selectConn.prepareStatement(any(String.class))).thenReturn(selectStmt);
-		doNothing().when(selectStmt).setString(anyInt(), anyString());
-		doNothing().when(selectStmt).setLong(anyInt(), anyLong());
-		doNothing().when(selectStmt).setTime(anyInt(), any(Time.class));
+		when(deleteConn.prepareStatement(any(String.class))).thenReturn(deleteStmt);			
+		doNothing().when(deleteStmt).setString(anyInt(), anyString());
+		doNothing().when(deleteStmt).setLong(anyInt(), anyLong());
+		doNothing().when(deleteStmt).setTime(anyInt(), any(Time.class));		
 		
-		when(selectStmt.executeQuery()).thenReturn(selectRs);
-		when(selectRs.next()).thenReturn(true).thenReturn(false);
-		when(selectRs.getLong(any(String.class))).thenReturn(new Long(1));
-		when(selectRs.getInt(any(String.class))).thenReturn(new Integer(1));
-		when(selectRs.getString(any(String.class))).thenReturn(" ");
-		when(selectRs.getTime(any(String.class))).thenReturn(Time.valueOf("11:22:33"));
+		when(deleteStmt.executeUpdate()).thenReturn(1);
+		
+		when(deleteStmt.executeQuery()).thenReturn(deleteRs);		
+		when(deleteRs.next()).thenReturn(true).thenReturn(false);
 	}
 	
 	
 	
-	private void initializeScenarioEmpNotFound() throws SQLException {
-		empNotFoundStmt = mock(PreparedStatement.class);						
+	private void initializeScenarioStoreNotFound() throws SQLException {
+		empNotFoundStmt = mock(PreparedStatement.class);
 		empNotFoundRs = mock(ResultSet.class);		
 		empNotFoundConn = mock(Connection.class);
 		
-		when(empNotFoundConn.prepareStatement(any(String.class))).thenReturn(empNotFoundStmt);	
-		
+		when(empNotFoundConn.prepareStatement(any(String.class))).thenReturn(empNotFoundStmt);
 		when(empNotFoundStmt.executeQuery()).thenReturn(empNotFoundRs);		
 		when(empNotFoundRs.next()).thenReturn(false);
 	}
@@ -97,87 +94,113 @@ public class EmpModelSelectTest {
 		invalidConn = mock(Connection.class);
 		
 		when(invalidConn.prepareStatement(anyString())).thenThrow(new SQLException());
+		when(invalidStmt.executeQuery()).thenThrow(new SQLException());
+		
 		doThrow(new SQLException()).when(invalidStmt).setString(anyInt(), anyString());
 		doThrow(new SQLException()).when(invalidStmt).setLong(anyInt(), anyLong());
 		doThrow(new SQLException()).when(invalidStmt).setTime(anyInt(), any(Time.class)); 
-		
-		when(invalidStmt.executeQuery()).thenThrow(new SQLException());
 	}
 	
 	
 	
-	
 	@Test
-	public void selectWithFullKey() {
-		initializeSelectWithFullKey();
+	public void deleteStore() {
+		initializeDeleteStore();
 		model.executeRequest();
 		Response response = model.getResponse();
 		assertTrue(response.getStatus() == Response.Status.OK.getStatusCode());
 		
-		String responseBody = "{\"selectCode\":200,\"selectMessage\":\"The list was returned successfully\",\"results\":[{\"codOwner\":1,\"codEmployee\":1,\"stores\":[],\"cpf\":\" \",\"name\":\" \",\"codGender\":1,\"txtGender\":\" \",\"email\":\" \",\"address1\":\" \",\"address2\":\" \",\"postalCode\":1,\"city\":\" \",\"codCountry\":\" \",\"txtCountry\":\" \",\"stateProvince\":\" \",\"phone\":\" \",\"beginTime\":{\"hour\":11,\"minute\":22,\"second\":33,\"nano\":0},\"endTime\":{\"hour\":11,\"minute\":22,\"second\":33,\"nano\":0},\"codPosition\":1,\"txtPosition\":\" \",\"codLanguage\":\"PT\",\"recordMode\":\" \"}]}";
+		String responseBody = "{\"selectCode\":200,\"selectMessage\":\"The list was returned successfully\",\"results\":[{\"codOwner\":-1,\"codStore\":-1,\"postalCode\":-1,\"latitude\":0.0,\"longitude\":0.0,\"codLanguage\":\"PT\",\"recordMode\":\" \"}]}";
 		assertTrue(response.getEntity().equals(responseBody));		
 	}
 	
 	
 	
-	
-	protected void initializeSelectWithFullKey() {
-		PowerMockito.when(DbConnection.getConnection()).thenReturn(selectConn);
+	protected void initializeDeleteStore() {
+		PowerMockito.when(DbConnection.getConnection()).thenReturn(deleteConn);
 		
-		infoRecord = new EmpInfo();
+		infoRecord = new StoreInfo();
 		infoRecord.codOwner = 1;
-		infoRecord.codEmployee = 1;
+		infoRecord.codStore = 1;
 		
-		model = new EmpModelSelect(infoRecord);
+		model = new StoreModelDelete(infoRecord);
 	}
 	
 	
 	
 	@Test
-	public void empNotFound() {
-		initializeEmpNotFound();
+	public void storeNotFound() {
+		initializeStoreNotFound();
 		model.executeRequest();
 		Response response = model.getResponse();
 		assertTrue(response.getStatus() == Response.Status.BAD_REQUEST.getStatusCode());
 		
-		String responseBody = "{\"selectCode\":400,\"selectMessage\":\"Data not found\",\"results\":{}}";
-		assertTrue(response.getEntity().equals(responseBody));
-		
-		}
+		String responseBody = "{\"selectCode\":1103,\"selectMessage\":\"Store's data don't exist on DB\",\"results\":{}}";
+		assertTrue(response.getEntity().equals(responseBody));		
+	}
 	
 	
 	
-	protected void initializeEmpNotFound() {
+	protected void initializeStoreNotFound() {
 		PowerMockito.when(DbConnection.getConnection()).thenReturn(empNotFoundConn);
 		
-		infoRecord = new EmpInfo();
+		infoRecord = new StoreInfo();
 		infoRecord.codOwner = 1;
-		infoRecord.codEmployee = 1;
+		infoRecord.codStore = 1;
 		
-		model = new EmpModelSelect(infoRecord);
+		model = new StoreModelDelete(infoRecord);
 	}
 	
 	
 	
-	
 	@Test
-	public void missingMandatoryField() {
-		initializeMissingMandatoryField();
+	public void missingFieldCodStore() {
+		initializeMissingFieldCodStore();
 		model.executeRequest();
 		Response response = model.getResponse();
 		assertTrue(response.getStatus() == Response.Status.BAD_REQUEST.getStatusCode());
 		
-		String responseBody = "{\"selectCode\":1,\"selectMessage\":\"Mandatory field is empty\",\"results\":{}}";
+		String responseBody = "{\"selectCode\":6,\"selectMessage\":\"Key field should not be null\",\"results\":{}}";
 		assertTrue(response.getEntity().equals(responseBody));
 	}
 	
 	
 	
 	
-	protected void initializeMissingMandatoryField() {
-		initializeSelectWithFullKey();
+	protected void initializeMissingFieldCodStore() {
+		PowerMockito.when(DbConnection.getConnection()).thenReturn(deleteConn);
+		
+		infoRecord = new StoreInfo();
+		infoRecord.codOwner = 1;
+		infoRecord.codStore = -1;
+		
+		model = new StoreModelDelete(infoRecord);
+	}
+	
+	
+	
+	@Test
+	public void missingFieldCodOwner() {
+		initializeMissingFieldCodOwner();
+		model.executeRequest();
+		Response response = model.getResponse();
+		assertTrue(response.getStatus() == Response.Status.BAD_REQUEST.getStatusCode());
+		
+		String responseBody = "{\"selectCode\":6,\"selectMessage\":\"Key field should not be null\",\"results\":{}}";
+		assertTrue(response.getEntity().equals(responseBody));
+	}
+	
+	
+	
+	
+	protected void initializeMissingFieldCodOwner() {
+		PowerMockito.when(DbConnection.getConnection()).thenReturn(deleteConn);
+		
+		infoRecord = new StoreInfo();
 		infoRecord.codOwner = -1;
-		infoRecord.codEmployee = -1;
+		infoRecord.codStore = 1;
+		
+		model = new StoreModelDelete(infoRecord);		
 	}
 	
 	
@@ -199,10 +222,11 @@ public class EmpModelSelectTest {
 	protected void initializeInvalidConnection() {
 		PowerMockito.when(DbConnection.getConnection()).thenReturn(invalidConn);
 		
-		infoRecord = new EmpInfo();
+		infoRecord = new StoreInfo();
 		infoRecord.codOwner = 1;
-		infoRecord.codEmployee = 1;
+		infoRecord.codStore = 1;
 		
-		model = new EmpModelSelect(infoRecord);
+		model = new StoreModelDelete(infoRecord);
 	}
+
 }

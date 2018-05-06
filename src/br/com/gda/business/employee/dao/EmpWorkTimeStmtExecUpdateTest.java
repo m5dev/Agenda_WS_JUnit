@@ -1,4 +1,4 @@
-package br.com.gda.employee.dao;
+package br.com.gda.business.employee.dao;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -22,11 +22,11 @@ import org.junit.Test;
 import org.mockito.Mock;
 
 import br.com.gda.sql.SqlStmtExecOption;
-import br.com.gda.businessModel.employee.dao.EmpWtimeStmtExecSelect;
-import br.com.gda.businessModel.employee.info.EmpWTimeInfo;
+import br.com.gda.business.employee.dao.EmpWtimeStmtExecUpdate;
+import br.com.gda.business.employee.info.EmpWTimeInfo;
 import br.com.gda.sql.SqlStmtExec;
 
-public class EmpWorkTimeStmtExecSelectTest {
+public class EmpWorkTimeStmtExecUpdateTest {
 	@Mock private Connection validConn;
 	@Mock private Connection invalidConn;
 	@Mock private PreparedStatement validStmt;
@@ -37,14 +37,17 @@ public class EmpWorkTimeStmtExecSelectTest {
 	private SqlStmtExec<EmpWTimeInfo> sqlStatemetExecutor;
 	
 	
+	
 	@Before
 	public void initializeMockObjects() throws SQLException {
 		validConn = mock(Connection.class);
 		validStmt = mock(PreparedStatement.class);
 		invalidConn = mock(Connection.class);
 		rs = mock(ResultSet.class);
+		when(rs.next()).thenReturn(false);
 		when(validConn.prepareStatement(any(String.class))).thenReturn(validStmt);
 		when(validStmt.executeQuery()).thenReturn(rs);
+		when(validStmt.executeUpdate()).thenReturn(1);
 		when(invalidConn.prepareStatement(anyString())).thenThrow(new SQLException());
 		doNothing().when(validStmt).setString(anyInt(), anyString());
 		doNothing().when(validStmt).setLong(anyInt(), anyLong());
@@ -64,14 +67,14 @@ public class EmpWorkTimeStmtExecSelectTest {
 		initializeWorkingTime();			
 			
 		for (EmpWTimeInfo eachInfo : this.workingTimes) {
-			SqlStmtExecOption<EmpWTimeInfo> oneOption = new SqlStmtExecOption<>();		
+			SqlStmtExecOption<EmpWTimeInfo> oneOption = new SqlStmtExecOption<>();			
 			oneOption.conn = this.validConn;
 			oneOption.schemaName = Common.SCHEMA_NAME;
 			oneOption.recordInfo = eachInfo;
 			this.sqlStatemetOptions.add(oneOption);
 		}		
 		
-		this.sqlStatemetExecutor = new EmpWtimeStmtExecSelect(this.sqlStatemetOptions);
+		this.sqlStatemetExecutor = new EmpWtimeStmtExecUpdate(this.sqlStatemetOptions);
 	}
 	
 	
@@ -88,14 +91,14 @@ public class EmpWorkTimeStmtExecSelectTest {
 		initializeWorkingTime();			
 			
 		for (EmpWTimeInfo eachInfo : this.workingTimes) {
-			SqlStmtExecOption<EmpWTimeInfo> oneOption = new SqlStmtExecOption<>();		
+			SqlStmtExecOption<EmpWTimeInfo> oneOption = new SqlStmtExecOption<>();			
 			oneOption.conn = this.validConn;
 			oneOption.schemaName = null;
 			oneOption.recordInfo = eachInfo;
 			this.sqlStatemetOptions.add(oneOption);
 		}		
 		
-		this.sqlStatemetExecutor = new EmpWtimeStmtExecSelect(this.sqlStatemetOptions);
+		this.sqlStatemetExecutor = new EmpWtimeStmtExecUpdate(this.sqlStatemetOptions);
 	}
 	
 	
@@ -112,14 +115,14 @@ public class EmpWorkTimeStmtExecSelectTest {
 		initializeWorkingTime();			
 			
 		for (EmpWTimeInfo eachInfo : this.workingTimes) {
-			SqlStmtExecOption<EmpWTimeInfo> oneOption = new SqlStmtExecOption<>();		
+			SqlStmtExecOption<EmpWTimeInfo> oneOption = new SqlStmtExecOption<>();			
 			oneOption.conn = null;
 			oneOption.schemaName = Common.SCHEMA_NAME;
 			oneOption.recordInfo = eachInfo;
 			this.sqlStatemetOptions.add(oneOption);
 		}		
 		
-		this.sqlStatemetExecutor = new EmpWtimeStmtExecSelect(this.sqlStatemetOptions);
+		this.sqlStatemetExecutor = new EmpWtimeStmtExecUpdate(this.sqlStatemetOptions);
 	}
 	
 	
@@ -137,14 +140,14 @@ public class EmpWorkTimeStmtExecSelectTest {
 		initializeWorkingTime();			
 			
 		for (EmpWTimeInfo eachInfo : this.workingTimes) {
-			SqlStmtExecOption<EmpWTimeInfo> oneOption = new SqlStmtExecOption<>();		
+			SqlStmtExecOption<EmpWTimeInfo> oneOption = new SqlStmtExecOption<>();			
 			oneOption.conn = this.validConn;
 			oneOption.schemaName = Common.SCHEMA_NAME;
 			oneOption.recordInfo = null;
 			this.sqlStatemetOptions.add(oneOption);
 		}		
 		
-		this.sqlStatemetExecutor = new EmpWtimeStmtExecSelect(this.sqlStatemetOptions);
+		this.sqlStatemetExecutor = new EmpWtimeStmtExecUpdate(this.sqlStatemetOptions);
 	}
 	
 	
@@ -160,7 +163,7 @@ public class EmpWorkTimeStmtExecSelectTest {
 	private void initializeEmptyStatementOption() {
 		initializeWorkingTime();
 		
-		this.sqlStatemetExecutor = new EmpWtimeStmtExecSelect(this.sqlStatemetOptions);
+		this.sqlStatemetExecutor = new EmpWtimeStmtExecUpdate(this.sqlStatemetOptions);
 	}
 	
 	
@@ -177,14 +180,14 @@ public class EmpWorkTimeStmtExecSelectTest {
 		initializeWorkingTime();			
 			
 		for (EmpWTimeInfo eachInfo : this.workingTimes) {
-			SqlStmtExecOption<EmpWTimeInfo> oneOption = new SqlStmtExecOption<>();		
+			SqlStmtExecOption<EmpWTimeInfo> oneOption = new SqlStmtExecOption<>();			
 			oneOption.conn = this.invalidConn;
 			oneOption.schemaName = Common.SCHEMA_NAME;
 			oneOption.recordInfo = eachInfo;
 			this.sqlStatemetOptions.add(oneOption);
 		}		
 		
-		this.sqlStatemetExecutor = new EmpWtimeStmtExecSelect(this.sqlStatemetOptions);
+		this.sqlStatemetExecutor = new EmpWtimeStmtExecUpdate(this.sqlStatemetOptions);
 	}
 	
 	

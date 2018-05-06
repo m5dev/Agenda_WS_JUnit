@@ -1,11 +1,11 @@
-package br.com.gda.employee;
+package br.com.gda.business.employee;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
-import br.com.gda.employee.dao.EmpWorkTimeDaoSuiteTest;
-import br.com.gda.employee.model.EmpWorkTimeModelSuiteTest;
+import br.com.gda.business.employee.dao.EmpWorkTimeDaoSuiteTest;
+import br.com.gda.business.employee.model.EmpWorkTimeModelSuiteTest;
 
 @RunWith(Suite.class)
 @SuiteClasses({EmpWorkTimeModelSuiteTest.class,

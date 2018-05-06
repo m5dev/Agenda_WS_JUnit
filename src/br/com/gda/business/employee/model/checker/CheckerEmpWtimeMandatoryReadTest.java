@@ -1,11 +1,11 @@
-package br.com.gda.employee.model.checker;
+package br.com.gda.business.employee.model.checker;
 
 import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-import br.com.gda.businessModel.employee.info.EmpWTimeInfo;
-import br.com.gda.businessModel.employee.model.checker.CheckerEmpWtimeMandatoryRead;
+import br.com.gda.business.employee.info.EmpWTimeInfo;
+import br.com.gda.business.employee.model.checker.CheckerEmpWtimeMandatoryRead;
 
 public class CheckerEmpWtimeMandatoryReadTest {
 	protected CheckerEmpWtimeMandatoryRead checker;
