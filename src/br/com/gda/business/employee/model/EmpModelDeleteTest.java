@@ -110,7 +110,7 @@ public class EmpModelDeleteTest {
 		Response response = model.getResponse();
 		assertTrue(response.getStatus() == Response.Status.OK.getStatusCode());
 		
-		String responseBody = "{\"selectCode\":200,\"selectMessage\":\"The list was returned successfully\",\"results\":[{\"codOwner\":-1,\"codEmployee\":-1,\"stores\":[],\"codGender\":-1,\"postalCode\":-1,\"codPosition\":-1,\"codLanguage\":\"PT\",\"recordMode\":\" \"}]}";
+		String responseBody = "{\"selectCode\":200,\"selectMessage\":\"The list was returned successfully\",\"results\":[{\"codOwner\":-1,\"codEmployee\":-1,\"stores\":[],\"codGender\":-1,\"postalCode\":-1,\"codPosition\":-1,\"codLanguage\":\"PT\"}]}";
 		assertTrue(response.getEntity().equals(responseBody));		
 	}
 		
