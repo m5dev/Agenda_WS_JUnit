@@ -158,8 +158,8 @@ public class StoreModelSelectTest {
 	
 	
 	@Test
-	public void missingMandatoryField() {
-		initializeMissingMandatoryField();
+	public void missingFieldCodStore() {
+		initializeMissingFieldCodStore();
 		model.executeRequest();
 		Response response = model.getResponse();
 		assertTrue(response.getStatus() == Response.Status.BAD_REQUEST.getStatusCode());
@@ -171,7 +171,7 @@ public class StoreModelSelectTest {
 	
 	
 	
-	protected void initializeMissingMandatoryField() {
+	protected void initializeMissingFieldCodStore() {
 		PowerMockito.when(DbConnection.getConnection()).thenReturn(selectConn);
 		
 		infoRecord = new StoreInfo();

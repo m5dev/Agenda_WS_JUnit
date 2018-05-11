@@ -95,8 +95,7 @@ public class EmpModelInsertTest {
 	}
 	
 	
-	
-	
+		
 	@Test
 	public void insertNewEmp() {
 		initializeInsertNewEmp();

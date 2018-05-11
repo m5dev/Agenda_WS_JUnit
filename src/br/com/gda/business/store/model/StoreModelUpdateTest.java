@@ -369,5 +369,4 @@ public class StoreModelUpdateTest {
 		PowerMockito.when(DbConnection.getConnection()).thenReturn(invalidConn);
 		model = new StoreModelUpdate(incomingDataUpdateStore());
 	}
-
 }
