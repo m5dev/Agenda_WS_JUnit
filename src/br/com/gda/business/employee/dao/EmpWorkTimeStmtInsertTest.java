@@ -13,7 +13,7 @@ import org.junit.Test;
 import org.mockito.Mock;
 
 import br.com.gda.sql.SqlStmtExecOption;
-import br.com.gda.business.employee.dao.EmpWtimeStmtInsert;
+import br.com.gda.business.employee.dao.EmpWtimeInsert;
 import br.com.gda.business.employee.info.EmpWTimeInfo;
 import br.com.gda.sql.SqlStmt;
 
@@ -59,7 +59,7 @@ public class EmpWorkTimeStmtInsertTest {
 	@Test
 	public void ordinaryUsage() throws SQLException {
 		initializeToPass();
-		SqlStmt<EmpWTimeInfo> insertStatement = new EmpWtimeStmtInsert(option.conn, option.recordInfo, option.schemaName);
+		SqlStmt<EmpWTimeInfo> insertStatement = new EmpWtimeInsert(option.conn, option.recordInfo, option.schemaName);
 		
 		assertTrue(insertStatement.checkStmtGeneration());
 		insertStatement.generateStmt();
@@ -85,7 +85,7 @@ public class EmpWorkTimeStmtInsertTest {
 	@Test (expected = NullPointerException.class)
 	public void testNullArgumentOption() throws SQLException {
 		initializeToFailNullArgumentOption();		
-		SqlStmt<EmpWTimeInfo> insertStatement = new EmpWtimeStmtInsert(option.conn, option.recordInfo, option.schemaName);
+		SqlStmt<EmpWTimeInfo> insertStatement = new EmpWtimeInsert(option.conn, option.recordInfo, option.schemaName);
 		
 		assertFalse(insertStatement.checkStmtGeneration());
 		insertStatement.generateStmt();
@@ -108,7 +108,7 @@ public class EmpWorkTimeStmtInsertTest {
 	@Test (expected = NullPointerException.class)
 	public void testNullArgumentOptionConn() throws SQLException {
 		initializeToFailNullArgumentOptionConn();		
-		SqlStmt<EmpWTimeInfo> insertStatement = new EmpWtimeStmtInsert(option.conn, option.recordInfo, option.schemaName);
+		SqlStmt<EmpWTimeInfo> insertStatement = new EmpWtimeInsert(option.conn, option.recordInfo, option.schemaName);
 		
 		assertFalse(insertStatement.checkStmtGeneration());
 		insertStatement.generateStmt();
@@ -133,7 +133,7 @@ public class EmpWorkTimeStmtInsertTest {
 	@Test (expected = SQLException.class)
 	public void testInvalidArgumentOptionConn() throws SQLException {
 		initializeToFailInvalidArgumentOptionConn();		
-		SqlStmt<EmpWTimeInfo> insertStatement = new EmpWtimeStmtInsert(option.conn, option.recordInfo, option.schemaName);
+		SqlStmt<EmpWTimeInfo> insertStatement = new EmpWtimeInsert(option.conn, option.recordInfo, option.schemaName);
 		
 		assertFalse(insertStatement.checkStmtGeneration());
 		insertStatement.generateStmt();
@@ -159,7 +159,7 @@ public class EmpWorkTimeStmtInsertTest {
 	@Test (expected = SQLException.class)
 	public void testInvalidArgumentOptionConnStmt() throws SQLException {
 		initializeToFailInvalidArgumentOptionConnStmt();		
-		EmpWtimeStmtInsert insertStatement = new EmpWtimeStmtInsert(option.conn, option.recordInfo, option.schemaName);
+		EmpWtimeInsert insertStatement = new EmpWtimeInsert(option.conn, option.recordInfo, option.schemaName);
 		
 		assertTrue(insertStatement.checkStmtGeneration());
 		insertStatement.generateStmt();
@@ -185,7 +185,7 @@ public class EmpWorkTimeStmtInsertTest {
 	@Test (expected = NullPointerException.class)
 	public void testNullArgumentOptionSchemaName() throws SQLException {
 		initializeToFailNullArgumentOptionSchemaName();		
-		EmpWtimeStmtInsert insertStatement = new EmpWtimeStmtInsert(option.conn, option.recordInfo, option.schemaName);
+		EmpWtimeInsert insertStatement = new EmpWtimeInsert(option.conn, option.recordInfo, option.schemaName);
 		
 		assertFalse(insertStatement.checkStmtGeneration());
 		insertStatement.generateStmt();

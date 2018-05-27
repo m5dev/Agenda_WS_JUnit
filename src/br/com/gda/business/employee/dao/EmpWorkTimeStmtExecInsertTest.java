@@ -22,7 +22,7 @@ import org.junit.Test;
 import org.mockito.Mock;
 
 import br.com.gda.sql.SqlStmtExecOption;
-import br.com.gda.business.employee.dao.EmpWtimeStmtExecInsert;
+import br.com.gda.business.employee.dao.EmpWtimeInsertExec;
 import br.com.gda.business.employee.info.EmpWTimeInfo;
 import br.com.gda.sql.SqlStmtExec;
 
@@ -75,7 +75,7 @@ public class EmpWorkTimeStmtExecInsertTest {
 			this.sqlStatemetOptions.add(oneOption);
 		}		
 		
-		this.sqlStatemetExecutor = new EmpWtimeStmtExecInsert(this.sqlStatemetOptions);
+		this.sqlStatemetExecutor = new EmpWtimeInsertExec(this.sqlStatemetOptions);
 	}
 	
 	
@@ -133,7 +133,7 @@ public class EmpWorkTimeStmtExecInsertTest {
 			this.sqlStatemetOptions.add(oneOption);
 		}		
 		
-		this.sqlStatemetExecutor = new EmpWtimeStmtExecInsert(this.sqlStatemetOptions);
+		this.sqlStatemetExecutor = new EmpWtimeInsertExec(this.sqlStatemetOptions);
 	}
 	
 	
@@ -157,7 +157,7 @@ public class EmpWorkTimeStmtExecInsertTest {
 			this.sqlStatemetOptions.add(oneOption);
 		}		
 		
-		this.sqlStatemetExecutor = new EmpWtimeStmtExecInsert(this.sqlStatemetOptions);
+		this.sqlStatemetExecutor = new EmpWtimeInsertExec(this.sqlStatemetOptions);
 	}
 	
 	
@@ -182,7 +182,7 @@ public class EmpWorkTimeStmtExecInsertTest {
 			this.sqlStatemetOptions.add(oneOption);
 		}		
 		
-		this.sqlStatemetExecutor = new EmpWtimeStmtExecInsert(this.sqlStatemetOptions);
+		this.sqlStatemetExecutor = new EmpWtimeInsertExec(this.sqlStatemetOptions);
 	}
 	
 	
@@ -198,7 +198,7 @@ public class EmpWorkTimeStmtExecInsertTest {
 	private void initializeEmptyStatementOption() {
 		initializeWorkingTime();
 		
-		this.sqlStatemetExecutor = new EmpWtimeStmtExecInsert(this.sqlStatemetOptions);
+		this.sqlStatemetExecutor = new EmpWtimeInsertExec(this.sqlStatemetOptions);
 	}
 	
 	
@@ -222,6 +222,6 @@ public class EmpWorkTimeStmtExecInsertTest {
 			this.sqlStatemetOptions.add(oneOption);
 		}		
 		
-		this.sqlStatemetExecutor = new EmpWtimeStmtExecInsert(this.sqlStatemetOptions);
+		this.sqlStatemetExecutor = new EmpWtimeInsertExec(this.sqlStatemetOptions);
 	}
 }

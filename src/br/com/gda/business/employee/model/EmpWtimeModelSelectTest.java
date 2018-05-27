@@ -70,7 +70,7 @@ public class EmpWtimeModelSelectTest {
 		doNothing().when(selectStmt).setTime(anyInt(), any(Time.class));
 		
 		when(selectStmt.executeQuery()).thenReturn(selectRs);
-		when(selectRs.next()).thenReturn(true).thenReturn(false);
+		when(selectRs.next()).thenReturn(true).thenReturn(true).thenReturn(false);
 		when(selectRs.getLong(any(String.class))).thenReturn(new Long(1));
 		when(selectRs.getInt(any(String.class))).thenReturn(new Integer(1));
 		when(selectRs.getString(any(String.class))).thenReturn(" ");
@@ -186,8 +186,8 @@ public class EmpWtimeModelSelectTest {
 	
 	
 	@Test
-	public void missingMandatoryField1() {
-		initializeMissingMandatoryField1();
+	public void missingFieldCodEmployee() {
+		initializeMissingFieldCodEmployee();
 		model.executeRequest();
 		Response response = model.getResponse();
 		assertTrue(response.getStatus() == Response.Status.BAD_REQUEST.getStatusCode());
@@ -199,7 +199,7 @@ public class EmpWtimeModelSelectTest {
 	
 	
 	
-	protected void initializeMissingMandatoryField1() {
+	protected void initializeMissingFieldCodEmployee() {
 		initializeSelectWithFullKey();
 		infoRecord.codEmployee = -1;
 	}
@@ -207,8 +207,8 @@ public class EmpWtimeModelSelectTest {
 	
 	
 	@Test
-	public void missingMandatoryField2() {
-		initializeMissingMandatoryField2();
+	public void missingFieldCodStore() {
+		initializeMissingFieldCodStore();
 		model.executeRequest();
 		Response response = model.getResponse();
 		assertTrue(response.getStatus() == Response.Status.BAD_REQUEST.getStatusCode());
@@ -220,7 +220,7 @@ public class EmpWtimeModelSelectTest {
 	
 	
 	
-	protected void initializeMissingMandatoryField2() {
+	protected void initializeMissingFieldCodStore() {
 		initializeSelectWithFullKey();
 		infoRecord.codStore = -1;
 	}
@@ -228,8 +228,8 @@ public class EmpWtimeModelSelectTest {
 	
 	
 	@Test
-	public void missingMandatoryField3() {
-		initializeMissingMandatoryField2();
+	public void missingFieldCodOwner() {
+		initializeMissingFieldCodOwner();
 		model.executeRequest();
 		Response response = model.getResponse();
 		assertTrue(response.getStatus() == Response.Status.BAD_REQUEST.getStatusCode());
@@ -241,7 +241,7 @@ public class EmpWtimeModelSelectTest {
 	
 	
 	
-	protected void initializeMissingMandatoryField3() {
+	protected void initializeMissingFieldCodOwner() {
 		initializeSelectWithFullKey();
 		infoRecord.codOwner = -1;
 	}

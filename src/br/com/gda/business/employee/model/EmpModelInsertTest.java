@@ -61,7 +61,7 @@ public class EmpModelInsertTest {
 		when(insertStmt.executeUpdate()).thenReturn(1);
 		
 		when(insertStmt.executeQuery()).thenReturn(insertRs);
-		when(insertRs.next()).thenReturn(false).thenReturn(true).thenReturn(false);
+		when(insertRs.next()).thenReturn(false).thenReturn(false).thenReturn(true).thenReturn(true).thenReturn(true).thenReturn(false);
 		when(insertRs.getLong(any(String.class))).thenReturn(new Long(1));
 		when(insertRs.getInt(any(String.class))).thenReturn(new Integer(1));
 		when(insertRs.getString(any(String.class))).thenReturn(" ");
@@ -80,7 +80,7 @@ public class EmpModelInsertTest {
 		
 		
 		when(cpfAlreadyExistStmt.executeQuery()).thenReturn(cpfAlreadyExistRs);
-		when(cpfAlreadyExistRs.next()).thenReturn(true).thenReturn(false);
+		when(cpfAlreadyExistRs.next()).thenReturn(false).thenReturn(true).thenReturn(false);
 		when(cpfAlreadyExistRs.getLong(any(String.class))).thenReturn(new Long(1));
 		when(cpfAlreadyExistRs.getInt(any(String.class))).thenReturn(new Integer(1));
 		when(cpfAlreadyExistRs.getString(any(String.class))).thenReturn(" ");

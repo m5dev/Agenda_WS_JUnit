@@ -72,7 +72,7 @@ public class StoreModelDeleteTest {
 		when(deleteStmt.executeUpdate()).thenReturn(1);
 		
 		when(deleteStmt.executeQuery()).thenReturn(deleteRs);		
-		when(deleteRs.next()).thenReturn(true).thenReturn(false);
+		when(deleteRs.next()).thenReturn(true).thenReturn(true).thenReturn(false);
 	}
 	
 	
@@ -84,7 +84,7 @@ public class StoreModelDeleteTest {
 		
 		when(empNotFoundConn.prepareStatement(any(String.class))).thenReturn(empNotFoundStmt);
 		when(empNotFoundStmt.executeQuery()).thenReturn(empNotFoundRs);		
-		when(empNotFoundRs.next()).thenReturn(false);
+		when(empNotFoundRs.next()).thenReturn(true).thenReturn(false);
 	}
 	
 	
@@ -135,7 +135,7 @@ public class StoreModelDeleteTest {
 		Response response = model.getResponse();
 		assertTrue(response.getStatus() == Response.Status.BAD_REQUEST.getStatusCode());
 		
-		String responseBody = "{\"selectCode\":1103,\"selectMessage\":\"Store's data don't exist on DB\",\"results\":{}}";
+		String responseBody = "{\"selectCode\":1103,\"selectMessage\":\"Store's data not found on DB\",\"results\":{}}";
 		assertTrue(response.getEntity().equals(responseBody));		
 	}
 	

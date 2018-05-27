@@ -34,18 +34,18 @@ import br.com.gda.model.Model;
 @RunWith(PowerMockRunner.class)
 public class EmpModelUpdateTest {
 	@Mock private Connection updateConn;
-	@Mock private Connection updateConstraintConn;
-	@Mock private Connection invalidConstraintConn;
+	@Mock private Connection updateCpfConn;
+	@Mock private Connection updateCpfAlreadyExistConn;
 	@Mock private Connection empDontExistConn;
 	@Mock private Connection invalidConn;
 	@Mock private PreparedStatement updateStmt;
-	@Mock private PreparedStatement updateConstraintStmt;
-	@Mock private PreparedStatement invalidConstraintStmt;
+	@Mock private PreparedStatement updateCpfStmt;
+	@Mock private PreparedStatement updateCpfAlreadyExistStmt;
 	@Mock private PreparedStatement empDontExistStmt;
 	@Mock private PreparedStatement invalidStmt;
 	@Mock private ResultSet updateRs;
-	@Mock private ResultSet updateConstraintRs;
-	@Mock private ResultSet invalidConstraintRs;
+	@Mock private ResultSet updateCpfRs;
+	@Mock private ResultSet updateCpfAlreadyExitRs;
 	@Mock private ResultSet empDontExistRs;
 	
 	private Model model;
@@ -57,8 +57,8 @@ public class EmpModelUpdateTest {
 		PowerMockito.mockStatic(DbConnection.class);
 		
 		initializeScenarioUpdate();
-		initializeScenarioUpdateConstraint();
-		initializeScenarioInvalidConstraint();
+		initializeScenarioUpdateCpf();
+		initializeScenarioUpdateCpfAlreadyExist();
 		initializeScenarioEmpDontExist();
 		initializeScenarioInvalidConnection();
 	}
@@ -78,7 +78,10 @@ public class EmpModelUpdateTest {
 		when(updateStmt.executeUpdate()).thenReturn(1);		
 
 		when(updateStmt.executeQuery()).thenReturn(updateRs);
-		when(updateRs.next()).thenReturn(true).thenReturn(false).thenReturn(true).thenReturn(false).thenReturn(true).thenReturn(false);
+		when(updateRs.next()).thenReturn(true).thenReturn(true).thenReturn(false)
+							 .thenReturn(true).thenReturn(true).thenReturn(false)
+							 .thenReturn(true)
+							 .thenReturn(true).thenReturn(true).thenReturn(false);
 		when(updateRs.getLong(any(String.class))).thenReturn(new Long(1));
 		when(updateRs.getInt(any(String.class))).thenReturn(new Integer(1));
 		when(updateRs.getString(any(String.class))).thenReturn(" ");
@@ -87,46 +90,53 @@ public class EmpModelUpdateTest {
 	
 	
 	
-	private void initializeScenarioUpdateConstraint() throws SQLException {
-		updateConstraintStmt = mock(PreparedStatement.class);
-		updateConstraintRs = mock(ResultSet.class);
-		updateConstraintConn = mock(Connection.class);
+	private void initializeScenarioUpdateCpf() throws SQLException {
+		updateCpfStmt = mock(PreparedStatement.class);
+		updateCpfRs = mock(ResultSet.class);
+		updateCpfConn = mock(Connection.class);
 		
-		when(updateConstraintConn.prepareStatement(any(String.class))).thenReturn(updateConstraintStmt);	
-		doNothing().when(updateConstraintStmt).setString(anyInt(), anyString());
-		doNothing().when(updateConstraintStmt).setLong(anyInt(), anyLong());
-		doNothing().when(updateConstraintStmt).setTime(anyInt(), any(Time.class));		
+		when(updateCpfConn.prepareStatement(any(String.class))).thenReturn(updateCpfStmt);	
+		doNothing().when(updateCpfStmt).setString(anyInt(), anyString());
+		doNothing().when(updateCpfStmt).setLong(anyInt(), anyLong());
+		doNothing().when(updateCpfStmt).setTime(anyInt(), any(Time.class));		
 		
-		when(updateConstraintStmt.executeUpdate()).thenReturn(1);		
+		when(updateCpfStmt.executeUpdate()).thenReturn(1);		
 
-		when(updateConstraintStmt.executeQuery()).thenReturn(updateConstraintRs);
-		when(updateConstraintRs.next()).thenReturn(true).thenReturn(false).thenReturn(false).thenReturn(false).thenReturn(true).thenReturn(false);
-		when(updateConstraintRs.getLong(any(String.class))).thenReturn(new Long(1));
-		when(updateConstraintRs.getInt(any(String.class))).thenReturn(new Integer(1));
-		when(updateConstraintRs.getString(any(String.class))).thenReturn(" ");
-		when(updateConstraintRs.getTime(any(String.class))).thenReturn(Time.valueOf("11:22:33"));
+		when(updateCpfStmt.executeQuery()).thenReturn(updateCpfRs);
+		when(updateCpfRs.next()).thenReturn(true).thenReturn(true).thenReturn(false)
+								.thenReturn(true).thenReturn(false)
+								.thenReturn(true).thenReturn(false)
+								.thenReturn(false)
+								.thenReturn(true).thenReturn(true).thenReturn(false);
+		when(updateCpfRs.getLong(any(String.class))).thenReturn(new Long(1));
+		when(updateCpfRs.getInt(any(String.class))).thenReturn(new Integer(1));
+		when(updateCpfRs.getString(any(String.class))).thenReturn(" ");
+		when(updateCpfRs.getTime(any(String.class))).thenReturn(Time.valueOf("11:22:33"));
 	}
 	
 	
 	
-	private void initializeScenarioInvalidConstraint() throws SQLException {
-		invalidConstraintStmt = mock(PreparedStatement.class);
-		invalidConstraintRs = mock(ResultSet.class);
-		invalidConstraintConn = mock(Connection.class);
+	private void initializeScenarioUpdateCpfAlreadyExist() throws SQLException {
+		updateCpfAlreadyExistStmt = mock(PreparedStatement.class);
+		updateCpfAlreadyExitRs = mock(ResultSet.class);
+		updateCpfAlreadyExistConn = mock(Connection.class);
 		
-		when(invalidConstraintConn.prepareStatement(any(String.class))).thenReturn(invalidConstraintStmt);	
-		doNothing().when(invalidConstraintStmt).setString(anyInt(), anyString());
-		doNothing().when(invalidConstraintStmt).setLong(anyInt(), anyLong());
-		doNothing().when(invalidConstraintStmt).setTime(anyInt(), any(Time.class));		
+		when(updateCpfAlreadyExistConn.prepareStatement(any(String.class))).thenReturn(updateCpfAlreadyExistStmt);	
+		doNothing().when(updateCpfAlreadyExistStmt).setString(anyInt(), anyString());
+		doNothing().when(updateCpfAlreadyExistStmt).setLong(anyInt(), anyLong());
+		doNothing().when(updateCpfAlreadyExistStmt).setTime(anyInt(), any(Time.class));		
 		
-		when(invalidConstraintStmt.executeUpdate()).thenReturn(1);		
+		when(updateCpfAlreadyExistStmt.executeUpdate()).thenReturn(1);		
 
-		when(invalidConstraintStmt.executeQuery()).thenReturn(invalidConstraintRs);
-		when(invalidConstraintRs.next()).thenReturn(true).thenReturn(false).thenReturn(false).thenReturn(true).thenReturn(false).thenReturn(true).thenReturn(false);
-		when(invalidConstraintRs.getLong(any(String.class))).thenReturn(new Long(1));
-		when(invalidConstraintRs.getInt(any(String.class))).thenReturn(new Integer(1));
-		when(invalidConstraintRs.getString(any(String.class))).thenReturn(" ");
-		when(invalidConstraintRs.getTime(any(String.class))).thenReturn(Time.valueOf("11:22:33"));
+		when(updateCpfAlreadyExistStmt.executeQuery()).thenReturn(updateCpfAlreadyExitRs);
+		when(updateCpfAlreadyExitRs.next()).thenReturn(true).thenReturn(true).thenReturn(false)
+										   .thenReturn(true).thenReturn(false)
+		                                   .thenReturn(true).thenReturn(true).thenReturn(false)
+		                                   .thenReturn(true).thenReturn(true).thenReturn(false);
+		when(updateCpfAlreadyExitRs.getLong(any(String.class))).thenReturn(new Long(1));
+		when(updateCpfAlreadyExitRs.getInt(any(String.class))).thenReturn(new Integer(1));
+		when(updateCpfAlreadyExitRs.getString(any(String.class))).thenReturn(" ");
+		when(updateCpfAlreadyExitRs.getTime(any(String.class))).thenReturn(Time.valueOf("11:22:33"));
 	}
 	
 	
@@ -180,8 +190,8 @@ public class EmpModelUpdateTest {
 	
 	
 	@Test
-	public void updateEmpConstraintCheck() {
-		initializeUpdateEmpConstraintCheck();
+	public void updateEmpCpf() {
+		initializeEmpUpdateCpf();
 		model.executeRequest();
 		Response response = model.getResponse();
 		assertTrue(response.getStatus() == Response.Status.OK.getStatusCode());
@@ -192,8 +202,8 @@ public class EmpModelUpdateTest {
 		
 	
 	
-	protected void initializeUpdateEmpConstraintCheck() {
-		PowerMockito.when(DbConnection.getConnection()).thenReturn(updateConstraintConn);
+	protected void initializeEmpUpdateCpf() {
+		PowerMockito.when(DbConnection.getConnection()).thenReturn(updateCpfConn);
 		model = new EmpModelUpdate(incomingDataUpdateEmp());
 	}
 	
@@ -206,8 +216,8 @@ public class EmpModelUpdateTest {
 	
 	
 	@Test
-	public void invalidConstraintCheck() {
-		initializeInvalidConstraintCheck();
+	public void updateCpfAlreadyExist() {
+		initializeUpdateCpfAlreadyExist();
 		model.executeRequest();
 		Response response = model.getResponse();
 		assertTrue(response.getStatus() == Response.Status.BAD_REQUEST.getStatusCode());
@@ -218,8 +228,8 @@ public class EmpModelUpdateTest {
 		
 	
 	
-	protected void initializeInvalidConstraintCheck() {
-		PowerMockito.when(DbConnection.getConnection()).thenReturn(invalidConstraintConn);
+	protected void initializeUpdateCpfAlreadyExist() {
+		PowerMockito.when(DbConnection.getConnection()).thenReturn(updateCpfAlreadyExistConn);
 		model = new EmpModelUpdate(incomingDataUpdateEmp());
 	}
 	

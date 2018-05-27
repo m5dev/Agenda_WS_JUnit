@@ -69,7 +69,7 @@ public class StoreEmpModelSelectTest {
 		doNothing().when(selectStmt).setTime(anyInt(), any(Time.class));
 		
 		when(selectStmt.executeQuery()).thenReturn(selectRs);
-		when(selectRs.next()).thenReturn(true).thenReturn(false);
+		when(selectRs.next()).thenReturn(true).thenReturn(true).thenReturn(false);
 		when(selectRs.getLong(any(String.class))).thenReturn(new Long(1));
 		when(selectRs.getInt(any(String.class))).thenReturn(new Integer(1));
 		when(selectRs.getString(any(String.class))).thenReturn(" ");

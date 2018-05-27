@@ -69,10 +69,23 @@ public class EmpWtimeModelInsertTest {
 		when(insertStmt.executeUpdate()).thenReturn(1);
 		
 		when(insertStmt.executeQuery()).thenReturn(insertRs);
-		when(insertRs.next()).thenReturn(true).thenReturn(false).thenReturn(false).thenReturn(false).thenReturn(true).thenReturn(false)
-							 .thenReturn(true).thenReturn(false).thenReturn(false).thenReturn(false).thenReturn(true).thenReturn(false)
-							 .thenReturn(true).thenReturn(false).thenReturn(false).thenReturn(false).thenReturn(true).thenReturn(false)
-		                     .thenReturn(false);
+		when(insertRs.next()).thenReturn(true).thenReturn(true).thenReturn(false)
+							 .thenReturn(true).thenReturn(false)
+							 .thenReturn(true).thenReturn(false)
+							 .thenReturn(true)
+							 .thenReturn(true).thenReturn(true).thenReturn(false)
+							 
+							 .thenReturn(true).thenReturn(true).thenReturn(false)
+							 .thenReturn(true).thenReturn(false)
+							 .thenReturn(true).thenReturn(false)
+							 .thenReturn(true)
+							 .thenReturn(true).thenReturn(true).thenReturn(false)
+							 
+							 .thenReturn(true).thenReturn(true).thenReturn(false)
+							 .thenReturn(true).thenReturn(false)
+							 .thenReturn(true).thenReturn(false)
+							 .thenReturn(true)
+							 .thenReturn(true).thenReturn(true).thenReturn(false);
 		when(insertRs.getLong(any(String.class))).thenReturn(new Long(1));
 		when(insertRs.getInt(any(String.class))).thenReturn(new Integer(1));
 		when(insertRs.getString(any(String.class))).thenReturn(" ");
@@ -91,10 +104,23 @@ public class EmpWtimeModelInsertTest {
 		
 		
 		when(updateStmt.executeQuery()).thenReturn(updateRs);
-		when(updateRs.next()).thenReturn(true).thenReturn(false).thenReturn(false).thenReturn(true).thenReturn(false).thenReturn(true).thenReturn(false)
-							 .thenReturn(true).thenReturn(false).thenReturn(false).thenReturn(true).thenReturn(false).thenReturn(true).thenReturn(false)
-							 .thenReturn(true).thenReturn(false).thenReturn(false).thenReturn(true).thenReturn(false).thenReturn(true).thenReturn(false)
-		                     .thenReturn(false);
+		when(updateRs.next()).thenReturn(true).thenReturn(true).thenReturn(false)
+						     .thenReturn(true).thenReturn(false)
+						     .thenReturn(true).thenReturn(true).thenReturn(false)
+						     .thenReturn(true)
+						     .thenReturn(true).thenReturn(true).thenReturn(false)
+						     
+						     .thenReturn(true).thenReturn(true).thenReturn(false)
+						     .thenReturn(true).thenReturn(false)
+						     .thenReturn(true).thenReturn(true).thenReturn(false)
+						     .thenReturn(true)
+						     .thenReturn(true).thenReturn(true).thenReturn(false)
+						     
+						     .thenReturn(true).thenReturn(true).thenReturn(false)
+						     .thenReturn(true).thenReturn(false)
+						     .thenReturn(true).thenReturn(true).thenReturn(false)
+						     .thenReturn(true)
+						     .thenReturn(true).thenReturn(true).thenReturn(false);
 		when(updateRs.getLong(any(String.class))).thenReturn(new Long(1));
 		when(updateRs.getInt(any(String.class))).thenReturn(new Integer(1));
 		when(updateRs.getString(any(String.class))).thenReturn(" ");
@@ -116,7 +142,8 @@ public class EmpWtimeModelInsertTest {
 		doNothing().when(alreadyExistStmt).setTime(anyInt(), any(Time.class));
 		
 		when(alreadyExistStmt.executeQuery()).thenReturn(alreadyExistRs);				
-		when(alreadyExistRs.next()).thenReturn(true).thenReturn(false).thenReturn(true).thenReturn(false);
+		when(alreadyExistRs.next()).thenReturn(true).thenReturn(true).thenReturn(false)
+								   .thenReturn(true).thenReturn(true).thenReturn(false);
 		when(alreadyExistRs.getLong(any(String.class))).thenReturn(new Long(1));
 		when(alreadyExistRs.getInt(any(String.class))).thenReturn(new Integer(1));
 		when(alreadyExistRs.getString(any(String.class))).thenReturn(" ");
@@ -199,8 +226,8 @@ public class EmpWtimeModelInsertTest {
 		
 	
 	@Test
-	public void missingMandatoryField1() {
-		initializeMissingMandatoryField1();
+	public void missingFieldCodOwner() {
+		initializeMissingFieldCodOwner();
 		model.executeRequest();
 		Response response = model.getResponse();
 		assertTrue(response.getStatus() == Response.Status.BAD_REQUEST.getStatusCode());
@@ -211,22 +238,22 @@ public class EmpWtimeModelInsertTest {
 	
 		
 	
-	protected void initializeMissingMandatoryField1() {
+	protected void initializeMissingFieldCodOwner() {
 		PowerMockito.when(DbConnection.getConnection()).thenReturn(insertConn);		
-		model = new EmpWtimeModelInsert(incomingDataMandatoryField1());
+		model = new EmpWtimeModelInsert(incomingDataMissingFieldCodOwner());
 	}	
 	
 	
 	
-	protected String incomingDataMandatoryField1() {
+	protected String incomingDataMissingFieldCodOwner() {
 		return "[	{	\"codStore\": 15,	\"codEmployee\": 54,	\"weekday\": 1, 	\"beginTime\": {\"hour\": 9, \"minute\": 0}, 	\"endTime\": {\"hour\": 18, \"minute\": 0}	},	{	\"codOwner\": 8,	\"codStore\": 15,	\"codEmployee\": 54,	\"weekday\": 2, 	\"beginTime\": {\"hour\": 8, \"minute\": 0}, 	\"endTime\": {\"hour\": 17, \"minute\": 0}	},	{	\"codOwner\": 8,	\"codStore\": 15,	\"codEmployee\": 54,	\"weekday\": 3, 	\"beginTime\": {\"hour\": 8, \"minute\": 0}, 	\"endTime\": {\"hour\": 17, \"minute\": 0}	}]";
 	}
 	
 	
 	
 	@Test
-	public void missingMandatoryField2() {
-		initializeMissingMandatoryField2();
+	public void missingFieldCodStore() {
+		initializeMissingFieldCodStore();
 		model.executeRequest();
 		Response response = model.getResponse();
 		assertTrue(response.getStatus() == Response.Status.BAD_REQUEST.getStatusCode());
@@ -237,22 +264,22 @@ public class EmpWtimeModelInsertTest {
 	
 		
 	
-	protected void initializeMissingMandatoryField2() {
+	protected void initializeMissingFieldCodStore() {
 		PowerMockito.when(DbConnection.getConnection()).thenReturn(insertConn);		
-		model = new EmpWtimeModelInsert(incomingDataMandatoryField2());
+		model = new EmpWtimeModelInsert(incomingDataMissingFieldCodStore());
 	}	
 	
 	
 	
-	protected String incomingDataMandatoryField2() {
+	protected String incomingDataMissingFieldCodStore() {
 		return "[	{	\"codOwner\": 8,	\"codEmployee\": 54,	\"weekday\": 1, 	\"beginTime\": {\"hour\": 9, \"minute\": 0}, 	\"endTime\": {\"hour\": 18, \"minute\": 0}	},	{	\"codOwner\": 8,	\"codStore\": 15,	\"codEmployee\": 54,	\"weekday\": 2, 	\"beginTime\": {\"hour\": 8, \"minute\": 0}, 	\"endTime\": {\"hour\": 17, \"minute\": 0}	},	{	\"codOwner\": 8,	\"codStore\": 15,	\"codEmployee\": 54,	\"weekday\": 3, 	\"beginTime\": {\"hour\": 8, \"minute\": 0}, 	\"endTime\": {\"hour\": 17, \"minute\": 0}	}]";
 	}
 	
 	
 	
 	@Test
-	public void missingMandatoryField3() {
-		initializeMissingMandatoryField3();
+	public void missingFieldCodEmployee() {
+		initializeMissingFieldCodEmployee();
 		model.executeRequest();
 		Response response = model.getResponse();
 		assertTrue(response.getStatus() == Response.Status.BAD_REQUEST.getStatusCode());
@@ -263,22 +290,22 @@ public class EmpWtimeModelInsertTest {
 	
 		
 	
-	protected void initializeMissingMandatoryField3() {
+	protected void initializeMissingFieldCodEmployee() {
 		PowerMockito.when(DbConnection.getConnection()).thenReturn(insertConn);		
-		model = new EmpWtimeModelInsert(incomingDataMandatoryField3());
+		model = new EmpWtimeModelInsert(incomingDataMissingFieldCodEmployee());
 	}	
 	
 	
 	
-	protected String incomingDataMandatoryField3() {
+	protected String incomingDataMissingFieldCodEmployee() {
 		return "[	{	\"codOwner\": 8,	\"codStore\": 15,	\"weekday\": 1, 	\"beginTime\": {\"hour\": 9, \"minute\": 0}, 	\"endTime\": {\"hour\": 18, \"minute\": 0}	},	{	\"codOwner\": 8,	\"codStore\": 15,	\"codEmployee\": 54,	\"weekday\": 2, 	\"beginTime\": {\"hour\": 8, \"minute\": 0}, 	\"endTime\": {\"hour\": 17, \"minute\": 0}	},	{	\"codOwner\": 8,	\"codStore\": 15,	\"codEmployee\": 54,	\"weekday\": 3, 	\"beginTime\": {\"hour\": 8, \"minute\": 0}, 	\"endTime\": {\"hour\": 17, \"minute\": 0}	}]";
 	}
 	
 	
 	
 	@Test
-	public void missingMandatoryField4() {
-		initializeMissingMandatoryField4();
+	public void missingFieldWeekday() {
+		initializeMissingFieldWeekday();
 		model.executeRequest();
 		Response response = model.getResponse();
 		assertTrue(response.getStatus() == Response.Status.BAD_REQUEST.getStatusCode());
@@ -289,14 +316,14 @@ public class EmpWtimeModelInsertTest {
 	
 		
 	
-	protected void initializeMissingMandatoryField4() {
+	protected void initializeMissingFieldWeekday() {
 		PowerMockito.when(DbConnection.getConnection()).thenReturn(insertConn);		
-		model = new EmpWtimeModelInsert(incomingDataMandatoryField4());
+		model = new EmpWtimeModelInsert(incomingDataMissingFieldWeekday());
 	}	
 	
 	
 	
-	protected String incomingDataMandatoryField4() {
+	protected String incomingDataMissingFieldWeekday() {
 		return "[	{	\"codOwner\": 8,	\"codStore\": 15,	\"codEmployee\": 54,	\"weekday\": 1, 	\"beginTime\": {\"hour\": 9, \"minute\": 0}, 	\"endTime\": {\"hour\": 18, \"minute\": 0}	},	{	\"codOwner\": 8,	\"codStore\": 15,	\"codEmployee\": 54,	\"weekday\": 2, 	\"beginTime\": {\"hour\": 8, \"minute\": 0}, 	\"endTime\": {\"hour\": 17, \"minute\": 0}	},	{	\"codOwner\": 8,	\"codStore\": 15,	\"codEmployee\": 54, 	\"beginTime\": {\"hour\": 8, \"minute\": 0}, 	\"endTime\": {\"hour\": 17, \"minute\": 0}	}]";
 	}
 	

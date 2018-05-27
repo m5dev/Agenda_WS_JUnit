@@ -72,7 +72,7 @@ public class EmpModelDeleteTest {
 		when(deleteStmt.executeUpdate()).thenReturn(1);
 		
 		when(deleteStmt.executeQuery()).thenReturn(deleteRs);		
-		when(deleteRs.next()).thenReturn(true).thenReturn(false);
+		when(deleteRs.next()).thenReturn(true).thenReturn(true).thenReturn(false);
 	}
 	
 	
@@ -135,7 +135,7 @@ public class EmpModelDeleteTest {
 		Response response = model.getResponse();
 		assertTrue(response.getStatus() == Response.Status.BAD_REQUEST.getStatusCode());
 		
-		String responseBody = "{\"selectCode\":1051,\"selectMessage\":\"Employee's data don't exist on DB\",\"results\":{}}";
+		String responseBody = "{\"selectCode\":1051,\"selectMessage\":\"Employee's data not found on DB\",\"results\":{}}";
 		assertTrue(response.getEntity().equals(responseBody));		
 	}
 	

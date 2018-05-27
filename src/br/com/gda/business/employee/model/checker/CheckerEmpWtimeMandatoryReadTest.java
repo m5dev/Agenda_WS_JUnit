@@ -5,10 +5,10 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 
 import br.com.gda.business.employee.info.EmpWTimeInfo;
-import br.com.gda.business.employee.model.checker.CheckerEmpWtimeMandatoryRead;
+import br.com.gda.business.employee.model.checker.EmpWtimeCheckRead;
 
 public class CheckerEmpWtimeMandatoryReadTest {
-	protected CheckerEmpWtimeMandatoryRead checker;
+	protected EmpWtimeCheckRead checker;
 	protected EmpWTimeInfo recordInfo;
 	
 	@Test
@@ -41,7 +41,7 @@ public class CheckerEmpWtimeMandatoryReadTest {
 	
 	
 	protected void initializeForOrdinaryUsageSuccess() {
-		checker = new CheckerEmpWtimeMandatoryRead();
+		checker = new EmpWtimeCheckRead();
 		
 		recordInfo = new EmpWTimeInfo();
 		recordInfo.codOwner = 1;
@@ -109,7 +109,7 @@ public class CheckerEmpWtimeMandatoryReadTest {
 	
 	
 	protected void initializeForOrdinaryUsageFailure() {
-		checker = new CheckerEmpWtimeMandatoryRead();
+		checker = new EmpWtimeCheckRead();
 		
 		recordInfo = new EmpWTimeInfo();
 	}

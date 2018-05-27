@@ -60,7 +60,9 @@ public class StoreModelInsertTest {
 		when(insertStmt.executeUpdate()).thenReturn(1);
 		
 		when(insertStmt.executeQuery()).thenReturn(insertRs);
-		when(insertRs.next()).thenReturn(false).thenReturn(true).thenReturn(false);
+		when(insertRs.next()).thenReturn(true).thenReturn(false)
+		                     .thenReturn(true)
+		                     .thenReturn(true).thenReturn(true).thenReturn(false);
 		when(insertRs.getLong(any(String.class))).thenReturn(new Long(1));
 		when(insertRs.getInt(any(String.class))).thenReturn(new Integer(1));
 		when(insertRs.getString(any(String.class))).thenReturn(" ");
@@ -79,7 +81,7 @@ public class StoreModelInsertTest {
 		
 		
 		when(cnpjAlreadyExistStmt.executeQuery()).thenReturn(cnpjAlreadyExistRs);
-		when(cnpjAlreadyExistRs.next()).thenReturn(true).thenReturn(false);
+		when(cnpjAlreadyExistRs.next()).thenReturn(true).thenReturn(true).thenReturn(false);
 		when(cnpjAlreadyExistRs.getLong(any(String.class))).thenReturn(new Long(1));
 		when(cnpjAlreadyExistRs.getInt(any(String.class))).thenReturn(new Integer(1));
 		when(cnpjAlreadyExistRs.getString(any(String.class))).thenReturn(" ");

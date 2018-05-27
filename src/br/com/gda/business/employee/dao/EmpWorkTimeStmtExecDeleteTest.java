@@ -22,7 +22,7 @@ import org.junit.Test;
 import org.mockito.Mock;
 
 import br.com.gda.sql.SqlStmtExecOption;
-import br.com.gda.business.employee.dao.EmpWtimeStmtExecDelete;
+import br.com.gda.business.employee.dao.EmpWtimeDeleteExec;
 import br.com.gda.business.employee.info.EmpWTimeInfo;
 import br.com.gda.sql.SqlStmtExec;
 
@@ -75,7 +75,7 @@ public class EmpWorkTimeStmtExecDeleteTest {
 			this.sqlStatemetOptions.add(oneOption);
 		}		
 		
-		this.sqlStatemetExecutor = new EmpWtimeStmtExecDelete(this.sqlStatemetOptions);
+		this.sqlStatemetExecutor = new EmpWtimeDeleteExec(this.sqlStatemetOptions);
 	}
 	
 	
@@ -99,7 +99,7 @@ public class EmpWorkTimeStmtExecDeleteTest {
 			this.sqlStatemetOptions.add(oneOption);
 		}		
 		
-		this.sqlStatemetExecutor = new EmpWtimeStmtExecDelete(this.sqlStatemetOptions);
+		this.sqlStatemetExecutor = new EmpWtimeDeleteExec(this.sqlStatemetOptions);
 	}
 	
 	
@@ -123,7 +123,7 @@ public class EmpWorkTimeStmtExecDeleteTest {
 			this.sqlStatemetOptions.add(oneOption);
 		}		
 		
-		this.sqlStatemetExecutor = new EmpWtimeStmtExecDelete(this.sqlStatemetOptions);
+		this.sqlStatemetExecutor = new EmpWtimeDeleteExec(this.sqlStatemetOptions);
 	}
 	
 	
@@ -148,7 +148,7 @@ public class EmpWorkTimeStmtExecDeleteTest {
 			this.sqlStatemetOptions.add(oneOption);
 		}		
 		
-		this.sqlStatemetExecutor = new EmpWtimeStmtExecDelete(this.sqlStatemetOptions);
+		this.sqlStatemetExecutor = new EmpWtimeDeleteExec(this.sqlStatemetOptions);
 	}
 	
 	
@@ -164,7 +164,7 @@ public class EmpWorkTimeStmtExecDeleteTest {
 	private void initializeEmptyStatementOption() {
 		initializeWorkingTime();
 		
-		this.sqlStatemetExecutor = new EmpWtimeStmtExecDelete(this.sqlStatemetOptions);
+		this.sqlStatemetExecutor = new EmpWtimeDeleteExec(this.sqlStatemetOptions);
 	}
 	
 	
@@ -188,7 +188,7 @@ public class EmpWorkTimeStmtExecDeleteTest {
 			this.sqlStatemetOptions.add(oneOption);
 		}		
 		
-		this.sqlStatemetExecutor = new EmpWtimeStmtExecDelete(this.sqlStatemetOptions);
+		this.sqlStatemetExecutor = new EmpWtimeDeleteExec(this.sqlStatemetOptions);
 	}
 	
 	

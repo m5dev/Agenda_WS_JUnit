@@ -64,12 +64,13 @@ public class StoreEmpModelInsertTest {
 		when(insertStmt.executeUpdate()).thenReturn(1);
 		
 		when(insertStmt.executeQuery()).thenReturn(insertRs);
-		when(insertRs.next()).thenReturn(false)
+		when(insertRs.next()).thenReturn(true).thenReturn(false)
+		                     .thenReturn(true).thenReturn(true).thenReturn(false)
+		                     .thenReturn(true).thenReturn(true).thenReturn(false)
+		                     .thenReturn(true).thenReturn(true).thenReturn(false)
 		                     .thenReturn(true).thenReturn(false)
-		                     .thenReturn(true).thenReturn(false)
-		                     .thenReturn(true).thenReturn(false)
-		                     .thenReturn(false)
-		                     .thenReturn(true).thenReturn(false);
+		                     .thenReturn(true)
+		                     .thenReturn(true).thenReturn(true).thenReturn(false);
 		when(insertRs.getLong(any(String.class))).thenReturn(new Long(1));
 		when(insertRs.getInt(any(String.class))).thenReturn(new Integer(1));
 		when(insertRs.getString(any(String.class))).thenReturn(" ");
@@ -87,12 +88,13 @@ public class StoreEmpModelInsertTest {
 		when(insertSoftDeletedStmt.executeUpdate()).thenReturn(1);
 		
 		when(insertSoftDeletedStmt.executeQuery()).thenReturn(insertSoftDeletedRs);
-		when(insertSoftDeletedRs.next()).thenReturn(false)
-		                     .thenReturn(true).thenReturn(false)
-		                     .thenReturn(true).thenReturn(false)
-		                     .thenReturn(true).thenReturn(false)
-		                     .thenReturn(true).thenReturn(false)
-		                     .thenReturn(true).thenReturn(false);
+		when(insertSoftDeletedRs.next()).thenReturn(true).thenReturn(false)
+								        .thenReturn(true).thenReturn(true).thenReturn(false)
+								        .thenReturn(true).thenReturn(true).thenReturn(false)
+								        .thenReturn(true).thenReturn(true).thenReturn(false)
+								        .thenReturn(true).thenReturn(true).thenReturn(false)
+								        .thenReturn(true)
+					                    .thenReturn(true).thenReturn(true).thenReturn(false);
 		when(insertSoftDeletedRs.getLong(any(String.class))).thenReturn(new Long(1));
 		when(insertSoftDeletedRs.getInt(any(String.class))).thenReturn(new Integer(1));
 		when(insertSoftDeletedRs.getString(any(String.class))).thenReturn(" ");

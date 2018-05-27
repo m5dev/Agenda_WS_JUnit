@@ -73,7 +73,7 @@ public class EmpWtimeModelDeleteTest {
 		when(deleteStmt.executeUpdate()).thenReturn(1);
 		
 		when(deleteStmt.executeQuery()).thenReturn(deleteRs);		
-		when(deleteRs.next()).thenReturn(true).thenReturn(false);
+		when(deleteRs.next()).thenReturn(true).thenReturn(true).thenReturn(false);
 	}
 	
 	
@@ -85,7 +85,7 @@ public class EmpWtimeModelDeleteTest {
 		
 		when(empNotFoundConn.prepareStatement(any(String.class))).thenReturn(empNotFoundStmt);
 		when(empNotFoundStmt.executeQuery()).thenReturn(empNotFoundRs);		
-		when(empNotFoundRs.next()).thenReturn(false);
+		when(empNotFoundRs.next()).thenReturn(true).thenReturn(false);
 	}
 	
 	
@@ -138,7 +138,7 @@ public class EmpWtimeModelDeleteTest {
 		Response response = model.getResponse();
 		assertTrue(response.getStatus() == Response.Status.BAD_REQUEST.getStatusCode());
 		
-		String responseBody = "{\"selectCode\":1001,\"selectMessage\":\"Employee's working time data don't exist on DB\",\"results\":{}}";
+		String responseBody = "{\"selectCode\":1001,\"selectMessage\":\"Employee's working time data not found on DB\",\"results\":{}}";
 		assertTrue(response.getEntity().equals(responseBody));
 		
 		}

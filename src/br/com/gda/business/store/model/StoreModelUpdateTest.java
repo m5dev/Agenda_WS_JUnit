@@ -33,18 +33,18 @@ import br.com.gda.model.Model;
 @RunWith(PowerMockRunner.class)
 public class StoreModelUpdateTest {
 	@Mock private Connection updateConn;
-	@Mock private Connection updateConstraintConn;
-	@Mock private Connection invalidConstraintConn;
+	@Mock private Connection updateCnpjConn;
+	@Mock private Connection updateCnpjAlreadyTakenConn;
 	@Mock private Connection storeDontExistConn;
 	@Mock private Connection invalidConn;
 	@Mock private PreparedStatement updateStmt;
-	@Mock private PreparedStatement updateConstraintStmt;
-	@Mock private PreparedStatement invalidConstraintStmt;
+	@Mock private PreparedStatement updateCnpjStmt;
+	@Mock private PreparedStatement updateCnpjAlreadyTakenStmt;
 	@Mock private PreparedStatement storeDontExistStmt;
 	@Mock private PreparedStatement invalidStmt;
 	@Mock private ResultSet updateRs;
-	@Mock private ResultSet updateConstraintRs;
-	@Mock private ResultSet invalidConstraintRs;
+	@Mock private ResultSet updateCnpjRs;
+	@Mock private ResultSet updateCnpjAlreadyTakenRs;
 	@Mock private ResultSet storeDontExistRs;
 	
 	private Model model;
@@ -77,7 +77,10 @@ public class StoreModelUpdateTest {
 		when(updateStmt.executeUpdate()).thenReturn(1);		
 
 		when(updateStmt.executeQuery()).thenReturn(updateRs);
-		when(updateRs.next()).thenReturn(true).thenReturn(false).thenReturn(true).thenReturn(false).thenReturn(true).thenReturn(false);
+		when(updateRs.next()).thenReturn(true).thenReturn(true).thenReturn(false)
+		                     .thenReturn(true).thenReturn(true).thenReturn(false)
+		                     .thenReturn(true)
+		                     .thenReturn(true).thenReturn(true).thenReturn(false);
 		when(updateRs.getLong(any(String.class))).thenReturn(new Long(1));
 		when(updateRs.getInt(any(String.class))).thenReturn(new Integer(1));
 		when(updateRs.getString(any(String.class))).thenReturn(" ");
@@ -87,45 +90,51 @@ public class StoreModelUpdateTest {
 	
 	
 	private void initializeScenarioUpdateConstraint() throws SQLException {
-		updateConstraintStmt = mock(PreparedStatement.class);
-		updateConstraintRs = mock(ResultSet.class);
-		updateConstraintConn = mock(Connection.class);
+		updateCnpjStmt = mock(PreparedStatement.class);
+		updateCnpjRs = mock(ResultSet.class);
+		updateCnpjConn = mock(Connection.class);
 		
-		when(updateConstraintConn.prepareStatement(any(String.class))).thenReturn(updateConstraintStmt);	
-		doNothing().when(updateConstraintStmt).setString(anyInt(), anyString());
-		doNothing().when(updateConstraintStmt).setLong(anyInt(), anyLong());
-		doNothing().when(updateConstraintStmt).setTime(anyInt(), any(Time.class));		
+		when(updateCnpjConn.prepareStatement(any(String.class))).thenReturn(updateCnpjStmt);	
+		doNothing().when(updateCnpjStmt).setString(anyInt(), anyString());
+		doNothing().when(updateCnpjStmt).setLong(anyInt(), anyLong());
+		doNothing().when(updateCnpjStmt).setTime(anyInt(), any(Time.class));		
 		
-		when(updateConstraintStmt.executeUpdate()).thenReturn(1);		
+		when(updateCnpjStmt.executeUpdate()).thenReturn(1);		
 
-		when(updateConstraintStmt.executeQuery()).thenReturn(updateConstraintRs);
-		when(updateConstraintRs.next()).thenReturn(true).thenReturn(false).thenReturn(false).thenReturn(false).thenReturn(true).thenReturn(false);
-		when(updateConstraintRs.getLong(any(String.class))).thenReturn(new Long(1));
-		when(updateConstraintRs.getInt(any(String.class))).thenReturn(new Integer(1));
-		when(updateConstraintRs.getString(any(String.class))).thenReturn(" ");
-		when(updateConstraintRs.getTime(any(String.class))).thenReturn(Time.valueOf("11:22:33"));
+		when(updateCnpjStmt.executeQuery()).thenReturn(updateCnpjRs);
+		when(updateCnpjRs.next()).thenReturn(true).thenReturn(true).thenReturn(false)
+		                         .thenReturn(true).thenReturn(false)
+		                         .thenReturn(true).thenReturn(false)
+		                         .thenReturn(true)
+		                         .thenReturn(true).thenReturn(true).thenReturn(false);
+		when(updateCnpjRs.getLong(any(String.class))).thenReturn(new Long(1));
+		when(updateCnpjRs.getInt(any(String.class))).thenReturn(new Integer(1));
+		when(updateCnpjRs.getString(any(String.class))).thenReturn(" ");
+		when(updateCnpjRs.getTime(any(String.class))).thenReturn(Time.valueOf("11:22:33"));
 	}
 	
 	
 	
 	private void initializeScenarioInvalidConstraint() throws SQLException {
-		invalidConstraintStmt = mock(PreparedStatement.class);
-		invalidConstraintRs = mock(ResultSet.class);
-		invalidConstraintConn = mock(Connection.class);
+		updateCnpjAlreadyTakenStmt = mock(PreparedStatement.class);
+		updateCnpjAlreadyTakenRs = mock(ResultSet.class);
+		updateCnpjAlreadyTakenConn = mock(Connection.class);
 		
-		when(invalidConstraintConn.prepareStatement(any(String.class))).thenReturn(invalidConstraintStmt);	
-		doNothing().when(invalidConstraintStmt).setString(anyInt(), anyString());
-		doNothing().when(invalidConstraintStmt).setLong(anyInt(), anyLong());
-		doNothing().when(invalidConstraintStmt).setTime(anyInt(), any(Time.class));		
+		when(updateCnpjAlreadyTakenConn.prepareStatement(any(String.class))).thenReturn(updateCnpjAlreadyTakenStmt);	
+		doNothing().when(updateCnpjAlreadyTakenStmt).setString(anyInt(), anyString());
+		doNothing().when(updateCnpjAlreadyTakenStmt).setLong(anyInt(), anyLong());
+		doNothing().when(updateCnpjAlreadyTakenStmt).setTime(anyInt(), any(Time.class));		
 		
-		when(invalidConstraintStmt.executeUpdate()).thenReturn(1);		
+		when(updateCnpjAlreadyTakenStmt.executeUpdate()).thenReturn(1);		
 
-		when(invalidConstraintStmt.executeQuery()).thenReturn(invalidConstraintRs);
-		when(invalidConstraintRs.next()).thenReturn(true).thenReturn(false).thenReturn(false).thenReturn(true).thenReturn(false).thenReturn(true).thenReturn(false);
-		when(invalidConstraintRs.getLong(any(String.class))).thenReturn(new Long(1));
-		when(invalidConstraintRs.getInt(any(String.class))).thenReturn(new Integer(1));
-		when(invalidConstraintRs.getString(any(String.class))).thenReturn(" ");
-		when(invalidConstraintRs.getTime(any(String.class))).thenReturn(Time.valueOf("11:22:33"));
+		when(updateCnpjAlreadyTakenStmt.executeQuery()).thenReturn(updateCnpjAlreadyTakenRs);
+		when(updateCnpjAlreadyTakenRs.next()).thenReturn(true).thenReturn(true).thenReturn(false)
+		                                     .thenReturn(true).thenReturn(false)
+		                                     .thenReturn(true).thenReturn(true).thenReturn(false);
+		when(updateCnpjAlreadyTakenRs.getLong(any(String.class))).thenReturn(new Long(1));
+		when(updateCnpjAlreadyTakenRs.getInt(any(String.class))).thenReturn(new Integer(1));
+		when(updateCnpjAlreadyTakenRs.getString(any(String.class))).thenReturn(" ");
+		when(updateCnpjAlreadyTakenRs.getTime(any(String.class))).thenReturn(Time.valueOf("11:22:33"));
 	}
 	
 	
@@ -179,8 +188,8 @@ public class StoreModelUpdateTest {
 	
 	
 	@Test
-	public void updateStoreConstraintCheck() {
-		initializeUpdateStoreConstraintCheck();
+	public void updateCnpj() {
+		initializeUpdateCnpj();
 		model.executeRequest();
 		Response response = model.getResponse();
 		assertTrue(response.getStatus() == Response.Status.OK.getStatusCode());
@@ -191,16 +200,16 @@ public class StoreModelUpdateTest {
 		
 	
 	
-	protected void initializeUpdateStoreConstraintCheck() {
-		PowerMockito.when(DbConnection.getConnection()).thenReturn(updateConstraintConn);
+	protected void initializeUpdateCnpj() {
+		PowerMockito.when(DbConnection.getConnection()).thenReturn(updateCnpjConn);
 		model = new StoreModelUpdate(incomingDataUpdateStore());
 	}
 	
 	
 	
 	@Test
-	public void invalidConstraintCheck() {
-		initializeInvalidConstraintCheck();
+	public void updateCnpjAlreadyTaken() {
+		initializeUpdateCnpjAlreadyTaken();
 		model.executeRequest();
 		Response response = model.getResponse();
 		assertTrue(response.getStatus() == Response.Status.BAD_REQUEST.getStatusCode());
@@ -211,8 +220,8 @@ public class StoreModelUpdateTest {
 		
 	
 	
-	protected void initializeInvalidConstraintCheck() {
-		PowerMockito.when(DbConnection.getConnection()).thenReturn(invalidConstraintConn);
+	protected void initializeUpdateCnpjAlreadyTaken() {
+		PowerMockito.when(DbConnection.getConnection()).thenReturn(updateCnpjAlreadyTakenConn);
 		model = new StoreModelUpdate(incomingDataUpdateStore());
 	}
 	

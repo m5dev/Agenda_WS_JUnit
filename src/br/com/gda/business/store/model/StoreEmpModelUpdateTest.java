@@ -60,7 +60,7 @@ public class StoreEmpModelUpdateTest {
 		
 		initializeScenarioUpdate();
 		initializeScenarioEntryNotFound();
-		initializeScenarioUpdateEmpDontExist();
+		initializeScenarioEmployeeDontExist();
 		initializeScenarioStoreDontExist();
 		initializeScenarioPositionDontExist();
 		initializeScenarioInvalidConnection();
@@ -81,12 +81,12 @@ public class StoreEmpModelUpdateTest {
 		when(updateStmt.executeUpdate()).thenReturn(1);		
 
 		when(updateStmt.executeQuery()).thenReturn(updateRs);
-		when(updateRs.next()).thenReturn(true).thenReturn(false)
-		                     .thenReturn(true).thenReturn(false)
-		                     .thenReturn(true).thenReturn(false)
-		                     .thenReturn(true).thenReturn(false)
-		                     .thenReturn(true).thenReturn(false)
-		                     .thenReturn(true).thenReturn(false);
+		when(updateRs.next()).thenReturn(true).thenReturn(true).thenReturn(false)
+		                     .thenReturn(true).thenReturn(true).thenReturn(false)
+		                     .thenReturn(true).thenReturn(true).thenReturn(false)
+		                     .thenReturn(true).thenReturn(true).thenReturn(false)
+		                     .thenReturn(true)
+		                     .thenReturn(true).thenReturn(true).thenReturn(false);
 		when(updateRs.getLong(any(String.class))).thenReturn(new Long(1));
 		when(updateRs.getInt(any(String.class))).thenReturn(new Integer(1));
 		when(updateRs.getString(any(String.class))).thenReturn(" ");
@@ -108,10 +108,10 @@ public class StoreEmpModelUpdateTest {
 		when(entryNotFoundStmt.executeUpdate()).thenReturn(1);		
 
 		when(entryNotFoundStmt.executeQuery()).thenReturn(entryNotFoundRs);
-		when(entryNotFoundRs.next()).thenReturn(true).thenReturn(false)
-		                            .thenReturn(true).thenReturn(false)
-		                            .thenReturn(true).thenReturn(false)
-		                            .thenReturn(false);
+		when(entryNotFoundRs.next()).thenReturn(true).thenReturn(true).thenReturn(false)
+		                            .thenReturn(true).thenReturn(true).thenReturn(false)
+		                            .thenReturn(true).thenReturn(true).thenReturn(false)
+		                            .thenReturn(true).thenReturn(false);
 		when(entryNotFoundRs.getLong(any(String.class))).thenReturn(new Long(1));
 		when(entryNotFoundRs.getInt(any(String.class))).thenReturn(new Integer(1));
 		when(entryNotFoundRs.getString(any(String.class))).thenReturn(" ");
@@ -120,7 +120,7 @@ public class StoreEmpModelUpdateTest {
 	
 	
 	
-	private void initializeScenarioUpdateEmpDontExist() throws SQLException {
+	private void initializeScenarioEmployeeDontExist() throws SQLException {
 		empDontExistStmt = mock(PreparedStatement.class);
 		empDontExistRs = mock(ResultSet.class);
 		empDontExistConn = mock(Connection.class);
@@ -133,9 +133,9 @@ public class StoreEmpModelUpdateTest {
 		when(empDontExistStmt.executeUpdate()).thenReturn(1);		
 
 		when(empDontExistStmt.executeQuery()).thenReturn(empDontExistRs);
-		when(empDontExistRs.next()).thenReturn(true).thenReturn(false)
-								   .thenReturn(true).thenReturn(false)
-								   .thenReturn(false);		
+		when(empDontExistRs.next()).thenReturn(true).thenReturn(true).thenReturn(false)
+								   .thenReturn(true).thenReturn(true).thenReturn(false)
+								   .thenReturn(true).thenReturn(false);		
 		when(empDontExistRs.getLong(any(String.class))).thenReturn(new Long(1));
 		when(empDontExistRs.getInt(any(String.class))).thenReturn(new Integer(1));
 		when(empDontExistRs.getString(any(String.class))).thenReturn(" ");
@@ -152,8 +152,8 @@ public class StoreEmpModelUpdateTest {
 		when(storeDontExistConn.prepareStatement(any(String.class))).thenReturn(storeDontExistStmt);
 
 		when(storeDontExistStmt.executeQuery()).thenReturn(storeDontExistRs);
-		when(storeDontExistRs.next()).thenReturn(true).thenReturn(false)
-								     .thenReturn(false);	
+		when(storeDontExistRs.next()).thenReturn(true).thenReturn(true).thenReturn(false)
+								     .thenReturn(true).thenReturn(false);	
 	}
 	
 	
@@ -166,7 +166,7 @@ public class StoreEmpModelUpdateTest {
 		when(positionDontExistConn.prepareStatement(any(String.class))).thenReturn(positionDontExistStmt);
 
 		when(positionDontExistStmt.executeQuery()).thenReturn(positionDontExistRs);
-		when(positionDontExistRs.next()).thenReturn(false);	
+		when(positionDontExistRs.next()).thenReturn(true).thenReturn(false);	
 	}
 	
 	
@@ -186,8 +186,8 @@ public class StoreEmpModelUpdateTest {
 	
 	
 	@Test
-	public void updateStoreEmp() {
-		initializeUpdateStoreEmp();
+	public void update() {
+		initializeUpdate();
 		model.executeRequest();
 		Response response = model.getResponse();
 		assertTrue(response.getStatus() == Response.Status.OK.getStatusCode());
@@ -198,7 +198,7 @@ public class StoreEmpModelUpdateTest {
 		
 	
 	
-	protected void initializeUpdateStoreEmp() {
+	protected void initializeUpdate() {
 		PowerMockito.when(DbConnection.getConnection()).thenReturn(updateConn);
 		model = new StoreEmpModelUpdate(incomingDataUpdateStore());
 	}
@@ -212,19 +212,19 @@ public class StoreEmpModelUpdateTest {
 	
 	
 	@Test
-	public void updateStoreEmpEmployeeDontExist() {
-		initializeUpdateStoreEmpEmployeeDontExist();
+	public void fieldEmployeeDontExist() {
+		initializeFieldEmployeeDontExist();
 		model.executeRequest();
 		Response response = model.getResponse();
 		assertTrue(response.getStatus() == Response.Status.BAD_REQUEST.getStatusCode());
 		
-		String responseBody = "{\"selectCode\":1051,\"selectMessage\":\"Employee's data don't exist on DB\",\"results\":{}}";
+		String responseBody = "{\"selectCode\":1051,\"selectMessage\":\"Employee's data not found on DB\",\"results\":{}}";
 		assertTrue(response.getEntity().equals(responseBody));		
 	}
 		
 	
 	
-	protected void initializeUpdateStoreEmpEmployeeDontExist() {
+	protected void initializeFieldEmployeeDontExist() {
 		PowerMockito.when(DbConnection.getConnection()).thenReturn(empDontExistConn);
 		model = new StoreEmpModelUpdate(incomingDataUpdateStore());
 	}
@@ -232,19 +232,19 @@ public class StoreEmpModelUpdateTest {
 	
 	
 	@Test
-	public void updateStoreEmpStoreDontExist() {
-		initializeUpdateStoreEmpStoreDontExist();
+	public void fieldStoreDontExist() {
+		initializeFieldStoreDontExist();
 		model.executeRequest();
 		Response response = model.getResponse();
 		assertTrue(response.getStatus() == Response.Status.BAD_REQUEST.getStatusCode());
 		
-		String responseBody = "{\"selectCode\":1103,\"selectMessage\":\"Store's data don't exist on DB\",\"results\":{}}";
+		String responseBody = "{\"selectCode\":1103,\"selectMessage\":\"Store's data not found on DB\",\"results\":{}}";
 		assertTrue(response.getEntity().equals(responseBody));		
 	}
 		
 	
 	
-	protected void initializeUpdateStoreEmpStoreDontExist() {
+	protected void initializeFieldStoreDontExist() {
 		PowerMockito.when(DbConnection.getConnection()).thenReturn(storeDontExistConn);
 		model = new StoreEmpModelUpdate(incomingDataUpdateStore());
 	}
@@ -252,8 +252,8 @@ public class StoreEmpModelUpdateTest {
 	
 	
 	@Test
-	public void updateStoreEmpPositionDontExist() {
-		initializeUpdateStoreEmpPositionDontExist();
+	public void fieldPositionDontExist() {
+		initializeFieldPositionDontExist();
 		model.executeRequest();
 		Response response = model.getResponse();
 		assertTrue(response.getStatus() == Response.Status.BAD_REQUEST.getStatusCode());
@@ -264,7 +264,7 @@ public class StoreEmpModelUpdateTest {
 		
 	
 	
-	protected void initializeUpdateStoreEmpPositionDontExist() {
+	protected void initializeFieldPositionDontExist() {
 		PowerMockito.when(DbConnection.getConnection()).thenReturn(positionDontExistConn);
 		model = new StoreEmpModelUpdate(incomingDataUpdateStore());
 	}
@@ -272,19 +272,19 @@ public class StoreEmpModelUpdateTest {
 	
 	
 	@Test
-	public void updateStoreEmpEntryNotFound() {
-		initializeUpdateStoreEmpEntryNotFound();
+	public void entryNotFound() {
+		initializeEntryNotFound();
 		model.executeRequest();
 		Response response = model.getResponse();
 		assertTrue(response.getStatus() == Response.Status.BAD_REQUEST.getStatusCode());
 		
-		String responseBody = "{\"selectCode\":1105,\"selectMessage\":\"Store-Employee's data don't exist on DB\",\"results\":{}}";
+		String responseBody = "{\"selectCode\":1105,\"selectMessage\":\"Store-Employee's data not found on DB\",\"results\":{}}";
 		assertTrue(response.getEntity().equals(responseBody));		
 	}
 		
 	
 	
-	protected void initializeUpdateStoreEmpEntryNotFound() {
+	protected void initializeEntryNotFound() {
 		PowerMockito.when(DbConnection.getConnection()).thenReturn(entryNotFoundConn);
 		model = new StoreEmpModelUpdate(incomingDataUpdateStore());
 	}

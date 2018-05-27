@@ -70,7 +70,9 @@ public class EmpWtimeModelUpdateTest {
 		when(updateStmt.executeUpdate()).thenReturn(1);		
 
 		when(updateStmt.executeQuery()).thenReturn(updateRs);
-		when(updateRs.next()).thenReturn(true).thenReturn(false).thenReturn(true).thenReturn(false);
+		when(updateRs.next()).thenReturn(true).thenReturn(true).thenReturn(false)
+		                     .thenReturn(true)
+		                     .thenReturn(true).thenReturn(true).thenReturn(false);
 		when(updateRs.getLong(any(String.class))).thenReturn(new Long(1));
 		when(updateRs.getInt(any(String.class))).thenReturn(new Integer(1));
 		when(updateRs.getString(any(String.class))).thenReturn(" ");
@@ -87,7 +89,7 @@ public class EmpWtimeModelUpdateTest {
 		when(empDontExistConn.prepareStatement(any(String.class))).thenReturn(empDontExistStmt);
 
 		when(empDontExistStmt.executeQuery()).thenReturn(empDontExistRs);
-		when(empDontExistRs.next()).thenReturn(false);
+		when(empDontExistRs.next()).thenReturn(true).thenReturn(false);
 	}
 	
 	
@@ -133,7 +135,7 @@ public class EmpWtimeModelUpdateTest {
 		Response response = model.getResponse();
 		assertTrue(response.getStatus() == Response.Status.BAD_REQUEST.getStatusCode());
 		
-		String responseBody = "{\"selectCode\":1001,\"selectMessage\":\"Employee's working time data don't exist on DB\",\"results\":{}}";
+		String responseBody = "{\"selectCode\":1001,\"selectMessage\":\"Employee's working time data not found on DB\",\"results\":{}}";
 		assertTrue(response.getEntity().equals(responseBody));		
 	}
 		
@@ -153,8 +155,8 @@ public class EmpWtimeModelUpdateTest {
 	
 	
 	@Test
-	public void missingMandatoryField1() {
-		initializeMissingMandatoryField1();
+	public void missingFieldCodOwner() {
+		initializeMissingFieldCodOwner();
 		model.executeRequest();
 		Response response = model.getResponse();
 		assertTrue(response.getStatus() == Response.Status.BAD_REQUEST.getStatusCode());
@@ -165,21 +167,21 @@ public class EmpWtimeModelUpdateTest {
 	
 		
 	
-	protected void initializeMissingMandatoryField1() {
+	protected void initializeMissingFieldCodOwner() {
 		PowerMockito.when(DbConnection.getConnection()).thenReturn(empDontExistConn);		
-		model = new EmpWtimeModelUpdate(incomingDataMandatoryField1());
+		model = new EmpWtimeModelUpdate(incomingDataMissingFieldCodOwner());
 	}	
 	
 	
-	protected String incomingDataMandatoryField1() {
+	protected String incomingDataMissingFieldCodOwner() {
 		return "[	{	\"codStore\": 15,	\"codEmployee\": 54,	\"weekday\": 1, 	\"beginTime\": {\"hour\": 9, \"minute\": 0}, 	\"endTime\": {\"hour\": 18, \"minute\": 0}	},	{	\"codOwner\": 8,	\"codStore\": 15,	\"codEmployee\": 54,	\"weekday\": 2, 	\"beginTime\": {\"hour\": 8, \"minute\": 0}, 	\"endTime\": {\"hour\": 17, \"minute\": 0}	},	{	\"codOwner\": 8,	\"codStore\": 15,	\"codEmployee\": 54,	\"weekday\": 3, 	\"beginTime\": {\"hour\": 8, \"minute\": 0}, 	\"endTime\": {\"hour\": 17, \"minute\": 0}	}]";
 	}
 	
 	
 	
 	@Test
-	public void missingMandatoryField2() {
-		initializeMissingMandatoryField2();
+	public void missingFieldCodStore() {
+		initializeMissingFieldCodStore();
 		model.executeRequest();
 		Response response = model.getResponse();
 		assertTrue(response.getStatus() == Response.Status.BAD_REQUEST.getStatusCode());
@@ -190,22 +192,22 @@ public class EmpWtimeModelUpdateTest {
 	
 		
 	
-	protected void initializeMissingMandatoryField2() {
+	protected void initializeMissingFieldCodStore() {
 		PowerMockito.when(DbConnection.getConnection()).thenReturn(empDontExistConn);		
-		model = new EmpWtimeModelUpdate(incomingDataMandatoryField2());
+		model = new EmpWtimeModelUpdate(incomingDataMissingFieldCodStore());
 	}	
 	
 	
 	
-	protected String incomingDataMandatoryField2() {
+	protected String incomingDataMissingFieldCodStore() {
 		return "[	{	\"codOwner\": 8,	\"codEmployee\": 54,	\"weekday\": 1, 	\"beginTime\": {\"hour\": 9, \"minute\": 0}, 	\"endTime\": {\"hour\": 18, \"minute\": 0}	},	{	\"codOwner\": 8,	\"codStore\": 15,	\"codEmployee\": 54,	\"weekday\": 2, 	\"beginTime\": {\"hour\": 8, \"minute\": 0}, 	\"endTime\": {\"hour\": 17, \"minute\": 0}	},	{	\"codOwner\": 8,	\"codStore\": 15,	\"codEmployee\": 54,	\"weekday\": 3, 	\"beginTime\": {\"hour\": 8, \"minute\": 0}, 	\"endTime\": {\"hour\": 17, \"minute\": 0}	}]";
 	}
 	
 	
 	
 	@Test
-	public void missingMandatoryField3() {
-		initializeMissingMandatoryField3();
+	public void missingFieldCodEmployee() {
+		initializeMissingFieldCodEmployee();
 		model.executeRequest();
 		Response response = model.getResponse();
 		assertTrue(response.getStatus() == Response.Status.BAD_REQUEST.getStatusCode());
@@ -216,22 +218,22 @@ public class EmpWtimeModelUpdateTest {
 	
 		
 	
-	protected void initializeMissingMandatoryField3() {
+	protected void initializeMissingFieldCodEmployee() {
 		PowerMockito.when(DbConnection.getConnection()).thenReturn(empDontExistConn);		
-		model = new EmpWtimeModelUpdate(incomingDataMandatoryField3());
+		model = new EmpWtimeModelUpdate(incomingDataMissingFieldCodEmployee());
 	}	
 	
 	
 	
-	protected String incomingDataMandatoryField3() {
+	protected String incomingDataMissingFieldCodEmployee() {
 		return "[	{	\"codOwner\": 8,	\"codStore\": 15,	\"weekday\": 1, 	\"beginTime\": {\"hour\": 9, \"minute\": 0}, 	\"endTime\": {\"hour\": 18, \"minute\": 0}	},	{	\"codOwner\": 8,	\"codStore\": 15,	\"codEmployee\": 54,	\"weekday\": 2, 	\"beginTime\": {\"hour\": 8, \"minute\": 0}, 	\"endTime\": {\"hour\": 17, \"minute\": 0}	},	{	\"codOwner\": 8,	\"codStore\": 15,	\"codEmployee\": 54,	\"weekday\": 3, 	\"beginTime\": {\"hour\": 8, \"minute\": 0}, 	\"endTime\": {\"hour\": 17, \"minute\": 0}	}]";
 	}
 	
 	
 	
 	@Test
-	public void missingMandatoryField4() {
-		initializeMissingMandatoryField4();
+	public void missingFieldWeekday() {
+		initializeMissingFieldWeekday();
 		model.executeRequest();
 		Response response = model.getResponse();
 		assertTrue(response.getStatus() == Response.Status.BAD_REQUEST.getStatusCode());
@@ -242,14 +244,14 @@ public class EmpWtimeModelUpdateTest {
 	
 		
 	
-	protected void initializeMissingMandatoryField4() {
+	protected void initializeMissingFieldWeekday() {
 		PowerMockito.when(DbConnection.getConnection()).thenReturn(empDontExistConn);		
-		model = new EmpWtimeModelUpdate(incomingDataMandatoryField4());
+		model = new EmpWtimeModelUpdate(incomingDataMissingFieldWeekday());
 	}	
 	
 	
 	
-	protected String incomingDataMandatoryField4() {
+	protected String incomingDataMissingFieldWeekday() {
 		return "[	{	\"codOwner\": 8,	\"codStore\": 15,	\"codEmployee\": 54, 	\"beginTime\": {\"hour\": 9, \"minute\": 0}, 	\"endTime\": {\"hour\": 18, \"minute\": 0}	},	{	\"codOwner\": 8,	\"codStore\": 15,	\"codEmployee\": 54,	\"weekday\": 2, 	\"beginTime\": {\"hour\": 8, \"minute\": 0}, 	\"endTime\": {\"hour\": 17, \"minute\": 0}	},	{	\"codOwner\": 8,	\"codStore\": 15,	\"codEmployee\": 54, 	\"beginTime\": {\"hour\": 8, \"minute\": 0}, 	\"endTime\": {\"hour\": 17, \"minute\": 0}	}]";
 	}
 	
