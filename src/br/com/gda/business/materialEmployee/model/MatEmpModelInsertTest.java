@@ -2,6 +2,10 @@ package br.com.gda.business.materialEmployee.model;
 
 import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -29,14 +33,31 @@ import br.com.gda.model.Model;
 public class MatEmpModelInsertTest {
 	@Mock private Connection insertSoftDeletedConn;
 	@Mock private Connection insertNewConn;
-	//@Mock private Connection storeEmpAlreadyExistConn;
+	@Mock private Connection invalidStoreEmpConn;
+	@Mock private Connection invalidStoreConn;
+	@Mock private Connection invalidMatConn;
+	@Mock private Connection invalidEmpConn;
+	@Mock private Connection invalidOwnerConn;
+	@Mock private Connection alreadyExistConn;
 	@Mock private Connection invalidConn;
 	@Mock private PreparedStatement insertNewStmt;
+	@Mock private PreparedStatement invalidStoreEmpStmt;
+	@Mock private PreparedStatement invalidStoreStmt;
+	@Mock private PreparedStatement invalidMatStmt;
+	@Mock private PreparedStatement invalidEmpStmt;
+	@Mock private PreparedStatement invalidOwnerStmt;
 	@Mock private PreparedStatement insertSoftDeletedStmt;
-	//@Mock private PreparedStatement storeEmpAlreadyExistStmt;
+	@Mock private PreparedStatement alreadyExistStmt;
+	@Mock private PreparedStatement invalidStmt;
 	@Mock private ResultSet insertSoftDeletedRs;
 	@Mock private ResultSet insertNewRs;
-	//@Mock private ResultSet storeEmpAlreadyExistRs;
+	@Mock private ResultSet invalidStoreEmpRs;
+	@Mock private ResultSet invalidStoreRs;
+	@Mock private ResultSet invalidMatRs;
+	@Mock private ResultSet invalidEmpRs;
+	@Mock private ResultSet invalidOwnerRs;
+	@Mock private ResultSet alreadyExistRs;
+	@Mock private ResultSet invalidRs;
 	
 	private Model model;
 	
@@ -48,8 +69,13 @@ public class MatEmpModelInsertTest {
 		
 		initializeScenarioInsertNew();
 		initializeScenarioInsertSoftDeleted();
-		//initializeScenarioStoreEmpAlreadyExist();
-		//initializeScenarioInvalidConnection();
+		initializeScenarioInvalidStoreEmp();
+		initializeScenarioInvalidMat();
+		initializeScenarioInvalidEmp();
+		initializeScenarioInvalidStore();
+		initializeScenarioInvalidOwner();
+		initializeScenarioAlreadyExist();
+		initializeScenarioInvalidConnection();
 	}
 	
 	
@@ -106,6 +132,148 @@ public class MatEmpModelInsertTest {
 	
 	
 	
+	private void initializeScenarioInvalidStoreEmp() throws SQLException {
+		invalidStoreEmpConn = mock(Connection.class);
+		invalidStoreEmpStmt = mock(PreparedStatement.class);
+		invalidStoreEmpRs = mock(ResultSet.class);
+		
+		when(invalidStoreEmpConn.prepareStatement(any(String.class))).thenReturn(invalidStoreEmpStmt);
+		when(invalidStoreEmpStmt.executeUpdate()).thenReturn(1);
+		
+		when(invalidStoreEmpStmt.executeQuery()).thenReturn(invalidStoreEmpRs);
+		when(invalidStoreEmpRs.next()).thenReturn(true).thenReturn(true).thenReturn(false)	//CheckOwner
+		                        	  .thenReturn(true).thenReturn(true).thenReturn(false)	//CheckStore
+		                        	  .thenReturn(true).thenReturn(true).thenReturn(false)	//CheckEmp
+		                        	  .thenReturn(true).thenReturn(true).thenReturn(false)	//CheckMat
+		                        	  .thenReturn(true).thenReturn(false);					//CheckStoreEmp
+
+		when(invalidStoreEmpRs.getLong(any(String.class))).thenReturn(new Long(1));
+		when(invalidStoreEmpRs.getInt(any(String.class))).thenReturn(new Integer(1));
+		when(invalidStoreEmpRs.getString(any(String.class))).thenReturn(" ");
+		when(invalidStoreEmpRs.getTime(any(String.class))).thenReturn(Time.valueOf("11:22:33"));		
+	}
+	
+	
+	
+	private void initializeScenarioInvalidMat() throws SQLException {
+		invalidMatConn = mock(Connection.class);
+		invalidMatStmt = mock(PreparedStatement.class);
+		invalidMatRs = mock(ResultSet.class);
+		
+		when(invalidMatConn.prepareStatement(any(String.class))).thenReturn(invalidMatStmt);
+		when(invalidMatStmt.executeUpdate()).thenReturn(1);
+		
+		when(invalidMatStmt.executeQuery()).thenReturn(invalidMatRs);
+		when(invalidMatRs.next()).thenReturn(true).thenReturn(true).thenReturn(false)	//CheckOwner
+		                         .thenReturn(true).thenReturn(true).thenReturn(false)	//CheckStore
+		                         .thenReturn(true).thenReturn(true).thenReturn(false)	//CheckEmp
+		                         .thenReturn(true).thenReturn(false);					//CheckMat
+
+		when(invalidMatRs.getLong(any(String.class))).thenReturn(new Long(1));
+		when(invalidMatRs.getInt(any(String.class))).thenReturn(new Integer(1));
+		when(invalidMatRs.getString(any(String.class))).thenReturn(" ");
+		when(invalidMatRs.getTime(any(String.class))).thenReturn(Time.valueOf("11:22:33"));		
+	}
+	
+	
+	
+	private void initializeScenarioInvalidEmp() throws SQLException {
+		invalidEmpConn = mock(Connection.class);
+		invalidEmpStmt = mock(PreparedStatement.class);
+		invalidEmpRs = mock(ResultSet.class);
+		
+		when(invalidEmpConn.prepareStatement(any(String.class))).thenReturn(invalidEmpStmt);
+		when(invalidEmpStmt.executeUpdate()).thenReturn(1);
+		
+		when(invalidEmpStmt.executeQuery()).thenReturn(invalidEmpRs);
+		when(invalidEmpRs.next()).thenReturn(true).thenReturn(true).thenReturn(false)	//CheckOwner
+		                         .thenReturn(true).thenReturn(true).thenReturn(false)	//CheckStore
+		                         .thenReturn(true).thenReturn(false);					//CheckEmp
+
+		when(invalidEmpRs.getLong(any(String.class))).thenReturn(new Long(1));
+		when(invalidEmpRs.getInt(any(String.class))).thenReturn(new Integer(1));
+		when(invalidEmpRs.getString(any(String.class))).thenReturn(" ");
+		when(invalidEmpRs.getTime(any(String.class))).thenReturn(Time.valueOf("11:22:33"));		
+	}
+	
+	
+	
+	private void initializeScenarioInvalidStore() throws SQLException {
+		invalidStoreConn = mock(Connection.class);
+		invalidStoreStmt = mock(PreparedStatement.class);
+		invalidStoreRs = mock(ResultSet.class);
+		
+		when(invalidStoreConn.prepareStatement(any(String.class))).thenReturn(invalidStoreStmt);
+		when(invalidStoreStmt.executeUpdate()).thenReturn(1);
+		
+		when(invalidStoreStmt.executeQuery()).thenReturn(invalidStoreRs);
+		when(invalidStoreRs.next()).thenReturn(true).thenReturn(true).thenReturn(false)	//CheckOwner
+		                           .thenReturn(true).thenReturn(false);					//CheckStore
+
+		when(invalidStoreRs.getLong(any(String.class))).thenReturn(new Long(1));
+		when(invalidStoreRs.getInt(any(String.class))).thenReturn(new Integer(1));
+		when(invalidStoreRs.getString(any(String.class))).thenReturn(" ");
+		when(invalidStoreRs.getTime(any(String.class))).thenReturn(Time.valueOf("11:22:33"));		
+	}
+	
+	
+	
+	private void initializeScenarioInvalidOwner() throws SQLException {
+		invalidOwnerConn = mock(Connection.class);
+		invalidOwnerStmt = mock(PreparedStatement.class);
+		invalidOwnerRs = mock(ResultSet.class);
+		
+		when(invalidOwnerConn.prepareStatement(any(String.class))).thenReturn(invalidOwnerStmt);
+		when(invalidOwnerStmt.executeUpdate()).thenReturn(1);
+		
+		when(invalidOwnerStmt.executeQuery()).thenReturn(invalidOwnerRs);
+		when(invalidOwnerRs.next()).thenReturn(true).thenReturn(false);	//CheckOwner
+
+		when(invalidOwnerRs.getLong(any(String.class))).thenReturn(new Long(1));
+		when(invalidOwnerRs.getInt(any(String.class))).thenReturn(new Integer(1));
+		when(invalidOwnerRs.getString(any(String.class))).thenReturn(" ");
+		when(invalidOwnerRs.getTime(any(String.class))).thenReturn(Time.valueOf("11:22:33"));		
+	}
+	
+	
+	
+	private void initializeScenarioAlreadyExist() throws SQLException {
+		alreadyExistConn = mock(Connection.class);
+		alreadyExistStmt = mock(PreparedStatement.class);
+		alreadyExistRs = mock(ResultSet.class);
+		
+		when(alreadyExistConn.prepareStatement(any(String.class))).thenReturn(alreadyExistStmt);
+		when(alreadyExistStmt.executeUpdate()).thenReturn(1);
+		
+		when(alreadyExistStmt.executeQuery()).thenReturn(alreadyExistRs);
+		when(alreadyExistRs.next()).thenReturn(true).thenReturn(true).thenReturn(false)	//CheckOwner
+		                        .thenReturn(true).thenReturn(true).thenReturn(false)	//CheckStore
+		                        .thenReturn(true).thenReturn(true).thenReturn(false)	//CheckEmp
+		                        .thenReturn(true).thenReturn(true).thenReturn(false)	//CheckMat
+		                        .thenReturn(true).thenReturn(true).thenReturn(false)	//CheckStoreEmp
+		                        .thenReturn(true).thenReturn(true).thenReturn(false);	//CheckExist
+		when(alreadyExistRs.getLong(any(String.class))).thenReturn(new Long(1));
+		when(alreadyExistRs.getInt(any(String.class))).thenReturn(new Integer(1));
+		when(alreadyExistRs.getString(any(String.class))).thenReturn(" ");
+		when(alreadyExistRs.getTime(any(String.class))).thenReturn(Time.valueOf("11:22:33"));		
+	}
+	
+	
+	
+	private void initializeScenarioInvalidConnection() throws SQLException {
+		invalidStmt = mock(PreparedStatement.class);
+		invalidConn = mock(Connection.class);
+		
+		when(invalidConn.prepareStatement(anyString())).thenThrow(new SQLException());
+		when(invalidStmt.executeQuery()).thenThrow(new SQLException());
+		
+		doThrow(new SQLException()).when(invalidStmt).setString(anyInt(), anyString());
+		doThrow(new SQLException()).when(invalidStmt).setLong(anyInt(), anyLong());
+		doThrow(new SQLException()).when(invalidStmt).setTime(anyInt(), any(Time.class)); 
+	}
+	
+	
+	
 	@Test
 	public void insertNewRecord() {
 		initializeInsertNewRecord();
@@ -128,6 +296,126 @@ public class MatEmpModelInsertTest {
 	
 	protected String incomingDataOrdinaryUsage() {
 		return "{\"codOwner\": 8,    \"codStore\": 15,    \"codEmployee\": 66,    \"codMat\": 72}";
+	}
+	
+	
+	
+	@Test
+	public void recordAlreadyExist() {
+		initializeAlreadyExist();
+		model.executeRequest();
+		Response response = model.getResponse();
+		assertTrue(response.getStatus() == Response.Status.BAD_REQUEST.getStatusCode());
+		
+		String responseBody = "{\"selectCode\":1107,\"selectMessage\":\"Employee's material data already exist on DB\",\"results\":{}}";
+		assertTrue(response.getEntity().equals(responseBody));		
+	}
+		
+	
+	
+	protected void initializeAlreadyExist() {
+		PowerMockito.when(DbConnection.getConnection()).thenReturn(alreadyExistConn);
+		model = new MatEmpModelInsert(incomingDataOrdinaryUsage());
+	}
+	
+	
+	
+	@Test
+	public void invalidFieldStoreEmp() {
+		initializeInvalidFieldStoreEmp();
+		model.executeRequest();
+		Response response = model.getResponse();
+		assertTrue(response.getStatus() == Response.Status.BAD_REQUEST.getStatusCode());
+		
+		String responseBody = "{\"selectCode\":1105,\"selectMessage\":\"Store-Employee's data not found on DB\",\"results\":{}}";
+		assertTrue(response.getEntity().equals(responseBody));		
+	}
+		
+	
+	
+	protected void initializeInvalidFieldStoreEmp() {
+		PowerMockito.when(DbConnection.getConnection()).thenReturn(invalidStoreEmpConn);
+		model = new MatEmpModelInsert(incomingDataOrdinaryUsage());
+	}
+	
+	
+	
+	@Test
+	public void invalidFieldMaterial() {
+		initializeInvalidFieldMaterial();
+		model.executeRequest();
+		Response response = model.getResponse();
+		assertTrue(response.getStatus() == Response.Status.BAD_REQUEST.getStatusCode());
+		
+		String responseBody = "{\"selectCode\":1201,\"selectMessage\":\"Material data not found on DB\",\"results\":{}}";
+		assertTrue(response.getEntity().equals(responseBody));		
+	}
+		
+	
+	
+	protected void initializeInvalidFieldMaterial() {
+		PowerMockito.when(DbConnection.getConnection()).thenReturn(invalidMatConn);
+		model = new MatEmpModelInsert(incomingDataOrdinaryUsage());
+	}
+	
+	
+	
+	@Test
+	public void invalidFieldEmployee() {
+		initializeInvalidFieldEmployee();
+		model.executeRequest();
+		Response response = model.getResponse();
+		assertTrue(response.getStatus() == Response.Status.BAD_REQUEST.getStatusCode());
+		
+		String responseBody = "{\"selectCode\":1051,\"selectMessage\":\"Employee's data not found on DB\",\"results\":{}}";
+		assertTrue(response.getEntity().equals(responseBody));		
+	}
+		
+	
+	
+	protected void initializeInvalidFieldEmployee() {
+		PowerMockito.when(DbConnection.getConnection()).thenReturn(invalidEmpConn);
+		model = new MatEmpModelInsert(incomingDataOrdinaryUsage());
+	}
+	
+	
+	
+	@Test
+	public void invalidFieldStore() {
+		initializeInvalidFieldStore();
+		model.executeRequest();
+		Response response = model.getResponse();
+		assertTrue(response.getStatus() == Response.Status.BAD_REQUEST.getStatusCode());
+		
+		String responseBody = "{\"selectCode\":1103,\"selectMessage\":\"Store's data not found on DB\",\"results\":{}}";
+		assertTrue(response.getEntity().equals(responseBody));		
+	}
+		
+	
+	
+	protected void initializeInvalidFieldStore() {
+		PowerMockito.when(DbConnection.getConnection()).thenReturn(invalidStoreConn);
+		model = new MatEmpModelInsert(incomingDataOrdinaryUsage());
+	}
+	
+	
+	
+	@Test
+	public void invalidFieldOwner() {
+		initializeInvalidFieldOwner();
+		model.executeRequest();
+		Response response = model.getResponse();
+		assertTrue(response.getStatus() == Response.Status.BAD_REQUEST.getStatusCode());
+		
+		String responseBody = "{\"selectCode\":1251,\"selectMessage\":\"Owner data not found on DB\",\"results\":{}}";
+		assertTrue(response.getEntity().equals(responseBody));		
+	}
+		
+	
+	
+	protected void initializeInvalidFieldOwner() {
+		PowerMockito.when(DbConnection.getConnection()).thenReturn(invalidOwnerConn);
+		model = new MatEmpModelInsert(incomingDataOrdinaryUsage());
 	}
 	
 	
@@ -252,5 +540,45 @@ public class MatEmpModelInsertTest {
 	
 	protected String incomingDataMissingFieldCodMat() {
 		return "{\"codOwner\": 8,    \"codStore\": 15,    \"codEmployee\": 66}";
+	}
+	
+	
+	
+	@Test
+	public void nullArgument() {
+		initializeNullArgument();
+		model.executeRequest();
+		Response response = model.getResponse();
+		assertTrue(response.getStatus() == Response.Status.BAD_REQUEST.getStatusCode());
+		
+		String responseBody = "{\"selectCode\":400,\"selectMessage\":\"IllegalArgument: mandatory argument might be missing or invalid value was passed\",\"results\":{}}";
+		assertTrue(response.getEntity().equals(responseBody));		
+	}
+		
+	
+	
+	protected void initializeNullArgument() {
+		PowerMockito.when(DbConnection.getConnection()).thenReturn(insertNewConn);
+		model = new MatEmpModelInsert(null);
+	}
+	
+	
+	
+	@Test
+	public void invalidConnection() {
+		initializeInvalidConnection();
+		model.executeRequest();
+		Response response = model.getResponse();
+		assertTrue(response.getStatus() == Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
+		
+		String responseBody = "{\"selectCode\":500,\"selectMessage\":\"Ops... something went wrong\",\"results\":{}}";
+		assertTrue(response.getEntity().equals(responseBody));		
+	}
+		
+	
+	
+	protected void initializeInvalidConnection() {
+		PowerMockito.when(DbConnection.getConnection()).thenReturn(invalidConn);
+		model = new MatEmpModelInsert(incomingDataOrdinaryUsage());
 	}
 }

@@ -265,9 +265,9 @@ public final class MatEmpModelDeleteTest {
 		initializeArgumentNull();
 		model.executeRequest();
 		Response response = model.getResponse();
-		assertTrue(response.getStatus() == Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
+		assertTrue(response.getStatus() == Response.Status.BAD_REQUEST.getStatusCode());
 		
-		String responseBody = "{\"selectCode\":500,\"selectMessage\":\"Ops... something went wrong\",\"results\":{}}";
+		String responseBody = "{\"selectCode\":400,\"selectMessage\":\"IllegalArgument: mandatory argument might be missing or invalid value was passed\",\"results\":{}}";
 		assertTrue(response.getEntity().equals(responseBody));		
 	}
 	
