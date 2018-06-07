@@ -6,6 +6,7 @@ import org.junit.runners.Suite.SuiteClasses;
 
 import br.com.gda.business.employee.EmpSuiteTest;
 import br.com.gda.business.employee.EmpWorkTimeSuiteTest;
+import br.com.gda.business.material.MatSuiteTest;
 import br.com.gda.business.materialEmployee.MatEmpSuiteTest;
 import br.com.gda.business.store.StoreSuiteTest;
 import br.com.gda.model.checker.CheckerSuiteTest;
@@ -15,6 +16,7 @@ import br.com.gda.model.checker.CheckerSuiteTest;
 			   EmpWorkTimeSuiteTest.class,
 			   StoreSuiteTest.class,
 			   MatEmpSuiteTest.class,
+			   MatSuiteTest.class,
 			   CheckerSuiteTest.class})
 public class AllSuiteTest {
 
