@@ -5,8 +5,9 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
-@SuiteClasses({//MatModelDeleteTest.class,
+@SuiteClasses({MatModelDeleteTest.class,
 	           MatModelInsertTest.class,
+	           MatModelUpdateTest.class,
 	           MatModelSelectTest.class})
 public class MatModelSuiteTest {
 

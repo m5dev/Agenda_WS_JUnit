@@ -1,4 +1,4 @@
-package br.com.gda.business.store.model;
+package br.com.gda.business.storeEmployee.model;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;

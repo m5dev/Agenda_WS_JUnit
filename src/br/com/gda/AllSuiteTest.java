@@ -9,6 +9,7 @@ import br.com.gda.business.employee.EmpWorkTimeSuiteTest;
 import br.com.gda.business.material.MatSuiteTest;
 import br.com.gda.business.materialEmployee.MatEmpSuiteTest;
 import br.com.gda.business.store.StoreSuiteTest;
+import br.com.gda.business.storeEmployee.model.StoreEmpSuiteTest;
 import br.com.gda.model.checker.CheckerSuiteTest;
 
 @RunWith(Suite.class)
@@ -16,6 +17,7 @@ import br.com.gda.model.checker.CheckerSuiteTest;
 			   EmpWorkTimeSuiteTest.class,
 			   StoreSuiteTest.class,
 			   MatEmpSuiteTest.class,
+			   StoreEmpSuiteTest.class,
 			   MatSuiteTest.class,
 			   CheckerSuiteTest.class})
 public class AllSuiteTest {

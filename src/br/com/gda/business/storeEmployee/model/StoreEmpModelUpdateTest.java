@@ -1,4 +1,4 @@
-package br.com.gda.business.store.model;
+package br.com.gda.business.storeEmployee.model;
 
 import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -26,6 +26,7 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import br.com.gda.business.storeEmployee.model.StoreEmpModelUpdate;
 import br.com.gda.common.DbConnection;
 import br.com.gda.model.Model;
 
