@@ -1,4 +1,4 @@
-package br.com.gda.business.employee.dao;
+package br.com.gda.business.employeeWorkTime.dao;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -22,11 +22,12 @@ import org.junit.Test;
 import org.mockito.Mock;
 
 import br.com.gda.sql.SqlStmtExecOption;
-import br.com.gda.business.employee.dao.EmpWtimeSelectExec;
-import br.com.gda.business.employee.info.EmpWTimeInfo;
+import br.com.gda.business.employeeWorkTime.dao.EmpWTimeInsert;
+import br.com.gda.business.employeeWorkTime.info.EmpWTimeInfo;
+import br.com.gda.common.Common;
 import br.com.gda.sql.SqlStmtExec;
 
-public class EmpWorkTimeStmtExecSelectTest {
+public class EmpWTimeStmtInsertTest {
 	@Mock private Connection validConn;
 	@Mock private Connection invalidConn;
 	@Mock private PreparedStatement validStmt;
@@ -37,19 +38,23 @@ public class EmpWorkTimeStmtExecSelectTest {
 	private SqlStmtExec<EmpWTimeInfo> sqlStatemetExecutor;
 	
 	
+	
 	@Before
 	public void initializeMockObjects() throws SQLException {
 		validConn = mock(Connection.class);
 		validStmt = mock(PreparedStatement.class);
 		invalidConn = mock(Connection.class);
 		rs = mock(ResultSet.class);
+		when(rs.next()).thenReturn(false);
 		when(validConn.prepareStatement(any(String.class))).thenReturn(validStmt);
 		when(validStmt.executeQuery()).thenReturn(rs);
+		when(validStmt.executeUpdate()).thenReturn(1);
 		when(invalidConn.prepareStatement(anyString())).thenThrow(new SQLException());
 		doNothing().when(validStmt).setString(anyInt(), anyString());
 		doNothing().when(validStmt).setLong(anyInt(), anyLong());
 		doNothing().when(validStmt).setTime(anyInt(), any(Time.class));
 	}
+	
 	
 	
 	@Test
@@ -71,7 +76,41 @@ public class EmpWorkTimeStmtExecSelectTest {
 			this.sqlStatemetOptions.add(oneOption);
 		}		
 		
-		this.sqlStatemetExecutor = new EmpWtimeSelectExec(this.sqlStatemetOptions);
+		this.sqlStatemetExecutor = new EmpWTimeInsert(this.sqlStatemetOptions);
+	}
+	
+	
+	
+	private void initializeWorkingTime() {
+		try {
+			EmpWTimeInfo workingTime = new EmpWTimeInfo();
+			workingTime.codOwner = 8;
+			workingTime.codStore = 15;
+			workingTime.codEmployee = 54;
+			workingTime.codWeekday = 1;
+			workingTime.beginTime = LocalTime.of(9, 00);
+			workingTime.endTime = LocalTime.of(18, 00);
+			
+			EmpWTimeInfo clone = (EmpWTimeInfo) workingTime.clone();;
+			this.workingTimes.add(clone);
+			
+			
+			workingTime.codWeekday = 2;
+			workingTime.beginTime = LocalTime.of(9, 00);
+			workingTime.endTime = LocalTime.of(13, 00);
+			clone = (EmpWTimeInfo) workingTime.clone();;
+			this.workingTimes.add(clone);
+			
+			
+			workingTime.codWeekday = 3;
+			workingTime.beginTime = LocalTime.of(13, 00);
+			workingTime.endTime = LocalTime.of(20, 00);
+			clone = (EmpWTimeInfo) workingTime.clone();;
+			this.workingTimes.add(clone);	
+
+		} catch (CloneNotSupportedException e) {
+			throw new IllegalStateException(e);
+		}				
 	}
 	
 	
@@ -95,7 +134,7 @@ public class EmpWorkTimeStmtExecSelectTest {
 			this.sqlStatemetOptions.add(oneOption);
 		}		
 		
-		this.sqlStatemetExecutor = new EmpWtimeSelectExec(this.sqlStatemetOptions);
+		this.sqlStatemetExecutor = new EmpWTimeInsert(this.sqlStatemetOptions);
 	}
 	
 	
@@ -119,7 +158,7 @@ public class EmpWorkTimeStmtExecSelectTest {
 			this.sqlStatemetOptions.add(oneOption);
 		}		
 		
-		this.sqlStatemetExecutor = new EmpWtimeSelectExec(this.sqlStatemetOptions);
+		this.sqlStatemetExecutor = new EmpWTimeInsert(this.sqlStatemetOptions);
 	}
 	
 	
@@ -144,7 +183,7 @@ public class EmpWorkTimeStmtExecSelectTest {
 			this.sqlStatemetOptions.add(oneOption);
 		}		
 		
-		this.sqlStatemetExecutor = new EmpWtimeSelectExec(this.sqlStatemetOptions);
+		this.sqlStatemetExecutor = new EmpWTimeInsert(this.sqlStatemetOptions);
 	}
 	
 	
@@ -160,7 +199,7 @@ public class EmpWorkTimeStmtExecSelectTest {
 	private void initializeEmptyStatementOption() {
 		initializeWorkingTime();
 		
-		this.sqlStatemetExecutor = new EmpWtimeSelectExec(this.sqlStatemetOptions);
+		this.sqlStatemetExecutor = new EmpWTimeInsert(this.sqlStatemetOptions);
 	}
 	
 	
@@ -184,40 +223,6 @@ public class EmpWorkTimeStmtExecSelectTest {
 			this.sqlStatemetOptions.add(oneOption);
 		}		
 		
-		this.sqlStatemetExecutor = new EmpWtimeSelectExec(this.sqlStatemetOptions);
-	}
-	
-	
-	
-	private void initializeWorkingTime() {
-		try {
-			EmpWTimeInfo workingTime = new EmpWTimeInfo();
-			workingTime.codOwner = 8;
-			workingTime.codStore = 15;
-			workingTime.codEmployee = 54;
-			workingTime.weekday = 1;
-			workingTime.beginTime = LocalTime.of(9, 00);
-			workingTime.endTime = LocalTime.of(18, 00);
-			
-			EmpWTimeInfo clone = (EmpWTimeInfo) workingTime.clone();;
-			this.workingTimes.add(clone);
-			
-			
-			workingTime.weekday = 2;
-			workingTime.beginTime = LocalTime.of(9, 00);
-			workingTime.endTime = LocalTime.of(13, 00);
-			clone = (EmpWTimeInfo) workingTime.clone();;
-			this.workingTimes.add(clone);
-			
-			
-			workingTime.weekday = 3;
-			workingTime.beginTime = LocalTime.of(13, 00);
-			workingTime.endTime = LocalTime.of(20, 00);
-			clone = (EmpWTimeInfo) workingTime.clone();;
-			this.workingTimes.add(clone);	
-
-		} catch (CloneNotSupportedException e) {
-			throw new IllegalStateException(e);
-		}				
+		this.sqlStatemetExecutor = new EmpWTimeInsert(this.sqlStatemetOptions);
 	}
 }

@@ -5,21 +5,27 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 import br.com.gda.business.employee.EmpSuiteTest;
-import br.com.gda.business.employee.EmpWorkTimeSuiteTest;
+import br.com.gda.business.employeeLeaveDate.EmpLDateSuiteTest;
+import br.com.gda.business.employeeWorkTime.EmpWTimeSuiteTest;
 import br.com.gda.business.material.MatSuiteTest;
 import br.com.gda.business.materialEmployee.MatEmpSuiteTest;
 import br.com.gda.business.store.StoreSuiteTest;
-import br.com.gda.business.storeEmployee.model.StoreEmpSuiteTest;
-import br.com.gda.model.checker.CheckerSuiteTest;
+import br.com.gda.business.storeEmployee.StoreEmpSuiteTest;
+import br.com.gda.business.storeLeaveDate.StoreLDateSuiteTest;
+import br.com.gda.business.storeWorkTime.StoreWTimeSuiteTest;
+import br.com.gda.model.ModelSuiteTest;
 
 @RunWith(Suite.class)
 @SuiteClasses({EmpSuiteTest.class,
-			   EmpWorkTimeSuiteTest.class,
+			   EmpWTimeSuiteTest.class,
 			   StoreSuiteTest.class,
 			   MatEmpSuiteTest.class,
 			   StoreEmpSuiteTest.class,
 			   MatSuiteTest.class,
-			   CheckerSuiteTest.class})
+			   EmpLDateSuiteTest.class,
+			   StoreLDateSuiteTest.class,
+			   StoreWTimeSuiteTest.class,
+			   ModelSuiteTest.class})
 public class AllSuiteTest {
 
 }

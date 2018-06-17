@@ -94,7 +94,6 @@ public class StoreEmpModelInsertTest {
 								        .thenReturn(true).thenReturn(true).thenReturn(false)
 								        .thenReturn(true).thenReturn(true).thenReturn(false)
 								        .thenReturn(true).thenReturn(true).thenReturn(false)
-								        .thenReturn(true)
 					                    .thenReturn(true).thenReturn(true).thenReturn(false);
 		when(insertSoftDeletedRs.getLong(any(String.class))).thenReturn(new Long(1));
 		when(insertSoftDeletedRs.getInt(any(String.class))).thenReturn(new Integer(1));

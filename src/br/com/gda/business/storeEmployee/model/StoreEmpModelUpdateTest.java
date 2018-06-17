@@ -86,7 +86,6 @@ public class StoreEmpModelUpdateTest {
 		                     .thenReturn(true).thenReturn(true).thenReturn(false)
 		                     .thenReturn(true).thenReturn(true).thenReturn(false)
 		                     .thenReturn(true).thenReturn(true).thenReturn(false)
-		                     .thenReturn(true)
 		                     .thenReturn(true).thenReturn(true).thenReturn(false);
 		when(updateRs.getLong(any(String.class))).thenReturn(new Long(1));
 		when(updateRs.getInt(any(String.class))).thenReturn(new Integer(1));

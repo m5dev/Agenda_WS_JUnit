@@ -112,7 +112,7 @@ public class StoreModelSelectTest {
 		Response response = model.getResponse();
 		assertTrue(response.getStatus() == Response.Status.OK.getStatusCode());
 		
-		String responseBody = "{\"selectCode\":200,\"selectMessage\":\"The list was returned successfully\",\"results\":[{\"codOwner\":1,\"codStore\":1,\"cnpj\":\" \",\"inscrMun\":\" \",\"inscrEst\":\" \",\"razaoSocial\":\" \",\"name\":\" \",\"address1\":\" \",\"address2\":\" \",\"postalCode\":1,\"city\":\" \",\"codCountry\":\" \",\"txtCountry\":\" \",\"stateProvince\":\" \",\"phone\":\" \",\"codCurr\":\" \",\"codPayment\":\" \",\"latitude\":0.0,\"longitude\":0.0,\"codLanguage\":\"PT\"}]}";
+		String responseBody = "{\"selectCode\":200,\"selectMessage\":\"The list was returned successfully\",\"results\":[{\"codOwner\":1,\"codStore\":1,\"cnpj\":\" \",\"inscrMun\":\" \",\"inscrEst\":\" \",\"razaoSocial\":\" \",\"name\":\" \",\"address1\":\" \",\"address2\":\" \",\"postalCode\":1,\"city\":\" \",\"codCountry\":\" \",\"txtCountry\":\" \",\"stateProvince\":\" \",\"phone\":\" \",\"codCurr\":\" \",\"codPayment\":\" \",\"latitude\":0.0,\"longitude\":0.0,\"codTimezone\":\" \",\"codLanguage\":\"PT\"}]}";
 		assertTrue(response.getEntity().equals(responseBody));		
 	}
 	
@@ -132,8 +132,8 @@ public class StoreModelSelectTest {
 	
 	
 	@Test
-	public void storeNotFound() {
-		initializeStoreNotFound();
+	public void recordNotFound() {
+		initializeRecordNotFound();
 		model.executeRequest();
 		Response response = model.getResponse();
 		assertTrue(response.getStatus() == Response.Status.BAD_REQUEST.getStatusCode());
@@ -145,7 +145,7 @@ public class StoreModelSelectTest {
 	
 	
 	
-	protected void initializeStoreNotFound() {
+	protected void initializeRecordNotFound() {
 		PowerMockito.when(DbConnection.getConnection()).thenReturn(storeNotFoundConn);
 		
 		infoRecord = new StoreInfo();
@@ -205,5 +205,25 @@ public class StoreModelSelectTest {
 		infoRecord.codStore = 1;
 		
 		model = new StoreModelSelect(infoRecord);
+	}
+	
+	
+	
+	@Test
+	public void nullArgument() {
+		initializeNullArgument();
+		model.executeRequest();
+		Response response = model.getResponse();
+		assertTrue(response.getStatus() == Response.Status.BAD_REQUEST.getStatusCode());
+		
+		String responseBody = "{\"selectCode\":400,\"selectMessage\":\"IllegalArgument: mandatory argument might be missing or invalid value was passed\",\"results\":{}}";
+		assertTrue(response.getEntity().equals(responseBody));		
+	}
+	
+	
+	
+	protected void initializeNullArgument() {
+		PowerMockito.when(DbConnection.getConnection()).thenReturn(selectConn);
+		model = new StoreModelSelect(null);
 	}
 }

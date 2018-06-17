@@ -1,4 +1,4 @@
-package br.com.gda.business.employee.dao;
+package br.com.gda.business.employeeWorkTime.dao;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -22,11 +22,12 @@ import org.junit.Test;
 import org.mockito.Mock;
 
 import br.com.gda.sql.SqlStmtExecOption;
-import br.com.gda.business.employee.dao.EmpWtimeDeleteExec;
-import br.com.gda.business.employee.info.EmpWTimeInfo;
+import br.com.gda.business.employeeWorkTime.dao.EmpWTimeSelect;
+import br.com.gda.business.employeeWorkTime.info.EmpWTimeInfo;
+import br.com.gda.common.Common;
 import br.com.gda.sql.SqlStmtExec;
 
-public class EmpWorkTimeStmtExecDeleteTest {
+public class EmpWTimeStmtSelectTest {
 	@Mock private Connection validConn;
 	@Mock private Connection invalidConn;
 	@Mock private PreparedStatement validStmt;
@@ -37,17 +38,14 @@ public class EmpWorkTimeStmtExecDeleteTest {
 	private SqlStmtExec<EmpWTimeInfo> sqlStatemetExecutor;
 	
 	
-	
 	@Before
 	public void initializeMockObjects() throws SQLException {
 		validConn = mock(Connection.class);
 		validStmt = mock(PreparedStatement.class);
 		invalidConn = mock(Connection.class);
 		rs = mock(ResultSet.class);
-		when(rs.next()).thenReturn(false);
 		when(validConn.prepareStatement(any(String.class))).thenReturn(validStmt);
 		when(validStmt.executeQuery()).thenReturn(rs);
-		when(validStmt.executeUpdate()).thenReturn(1);
 		when(invalidConn.prepareStatement(anyString())).thenThrow(new SQLException());
 		doNothing().when(validStmt).setString(anyInt(), anyString());
 		doNothing().when(validStmt).setLong(anyInt(), anyLong());
@@ -55,7 +53,6 @@ public class EmpWorkTimeStmtExecDeleteTest {
 	}
 	
 	
-
 	@Test
 	public void ordinaryUsage() throws SQLException {
 		initializeOrdinaryUsage();
@@ -75,7 +72,7 @@ public class EmpWorkTimeStmtExecDeleteTest {
 			this.sqlStatemetOptions.add(oneOption);
 		}		
 		
-		this.sqlStatemetExecutor = new EmpWtimeDeleteExec(this.sqlStatemetOptions);
+		this.sqlStatemetExecutor = new EmpWTimeSelect(this.sqlStatemetOptions);
 	}
 	
 	
@@ -99,7 +96,7 @@ public class EmpWorkTimeStmtExecDeleteTest {
 			this.sqlStatemetOptions.add(oneOption);
 		}		
 		
-		this.sqlStatemetExecutor = new EmpWtimeDeleteExec(this.sqlStatemetOptions);
+		this.sqlStatemetExecutor = new EmpWTimeSelect(this.sqlStatemetOptions);
 	}
 	
 	
@@ -116,14 +113,14 @@ public class EmpWorkTimeStmtExecDeleteTest {
 		initializeWorkingTime();			
 			
 		for (EmpWTimeInfo eachInfo : this.workingTimes) {
-			SqlStmtExecOption<EmpWTimeInfo> oneOption = new SqlStmtExecOption<>();	
+			SqlStmtExecOption<EmpWTimeInfo> oneOption = new SqlStmtExecOption<>();		
 			oneOption.conn = null;
 			oneOption.schemaName = Common.SCHEMA_NAME;
 			oneOption.recordInfo = eachInfo;
 			this.sqlStatemetOptions.add(oneOption);
 		}		
 		
-		this.sqlStatemetExecutor = new EmpWtimeDeleteExec(this.sqlStatemetOptions);
+		this.sqlStatemetExecutor = new EmpWTimeSelect(this.sqlStatemetOptions);
 	}
 	
 	
@@ -141,14 +138,14 @@ public class EmpWorkTimeStmtExecDeleteTest {
 		initializeWorkingTime();			
 			
 		for (EmpWTimeInfo eachInfo : this.workingTimes) {
-			SqlStmtExecOption<EmpWTimeInfo> oneOption = new SqlStmtExecOption<>();	
+			SqlStmtExecOption<EmpWTimeInfo> oneOption = new SqlStmtExecOption<>();		
 			oneOption.conn = this.validConn;
 			oneOption.schemaName = Common.SCHEMA_NAME;
 			oneOption.recordInfo = null;
 			this.sqlStatemetOptions.add(oneOption);
 		}		
 		
-		this.sqlStatemetExecutor = new EmpWtimeDeleteExec(this.sqlStatemetOptions);
+		this.sqlStatemetExecutor = new EmpWTimeSelect(this.sqlStatemetOptions);
 	}
 	
 	
@@ -164,7 +161,7 @@ public class EmpWorkTimeStmtExecDeleteTest {
 	private void initializeEmptyStatementOption() {
 		initializeWorkingTime();
 		
-		this.sqlStatemetExecutor = new EmpWtimeDeleteExec(this.sqlStatemetOptions);
+		this.sqlStatemetExecutor = new EmpWTimeSelect(this.sqlStatemetOptions);
 	}
 	
 	
@@ -181,14 +178,14 @@ public class EmpWorkTimeStmtExecDeleteTest {
 		initializeWorkingTime();			
 			
 		for (EmpWTimeInfo eachInfo : this.workingTimes) {
-			SqlStmtExecOption<EmpWTimeInfo> oneOption = new SqlStmtExecOption<>();	
+			SqlStmtExecOption<EmpWTimeInfo> oneOption = new SqlStmtExecOption<>();		
 			oneOption.conn = this.invalidConn;
 			oneOption.schemaName = Common.SCHEMA_NAME;
 			oneOption.recordInfo = eachInfo;
 			this.sqlStatemetOptions.add(oneOption);
 		}		
 		
-		this.sqlStatemetExecutor = new EmpWtimeDeleteExec(this.sqlStatemetOptions);
+		this.sqlStatemetExecutor = new EmpWTimeSelect(this.sqlStatemetOptions);
 	}
 	
 	
@@ -199,7 +196,7 @@ public class EmpWorkTimeStmtExecDeleteTest {
 			workingTime.codOwner = 8;
 			workingTime.codStore = 15;
 			workingTime.codEmployee = 54;
-			workingTime.weekday = 1;
+			workingTime.codWeekday = 1;
 			workingTime.beginTime = LocalTime.of(9, 00);
 			workingTime.endTime = LocalTime.of(18, 00);
 			
@@ -207,14 +204,14 @@ public class EmpWorkTimeStmtExecDeleteTest {
 			this.workingTimes.add(clone);
 			
 			
-			workingTime.weekday = 2;
+			workingTime.codWeekday = 2;
 			workingTime.beginTime = LocalTime.of(9, 00);
 			workingTime.endTime = LocalTime.of(13, 00);
 			clone = (EmpWTimeInfo) workingTime.clone();;
 			this.workingTimes.add(clone);
 			
 			
-			workingTime.weekday = 3;
+			workingTime.codWeekday = 3;
 			workingTime.beginTime = LocalTime.of(13, 00);
 			workingTime.endTime = LocalTime.of(20, 00);
 			clone = (EmpWTimeInfo) workingTime.clone();;

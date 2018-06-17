@@ -421,7 +421,7 @@ public class MatEmpModelInsertTest {
 	
 	
 	@Test
-	public void insertSoftDeletedecord() {
+	public void insertSoftDeletedRecord() {
 		initializeInsertSoftDeletedRecord();
 		model.executeRequest();
 		Response response = model.getResponse();

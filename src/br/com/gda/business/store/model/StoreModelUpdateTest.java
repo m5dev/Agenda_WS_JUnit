@@ -33,19 +33,31 @@ import br.com.gda.model.Model;
 @RunWith(PowerMockRunner.class)
 public class StoreModelUpdateTest {
 	@Mock private Connection updateConn;
-	@Mock private Connection updateCnpjConn;
-	@Mock private Connection updateCnpjAlreadyTakenConn;
-	@Mock private Connection storeDontExistConn;
-	@Mock private Connection invalidConn;
 	@Mock private PreparedStatement updateStmt;
-	@Mock private PreparedStatement updateCnpjStmt;
-	@Mock private PreparedStatement updateCnpjAlreadyTakenStmt;
-	@Mock private PreparedStatement storeDontExistStmt;
-	@Mock private PreparedStatement invalidStmt;
 	@Mock private ResultSet updateRs;
+	
+	@Mock private Connection updateCnpjConn;
+	@Mock private PreparedStatement updateCnpjStmt;
 	@Mock private ResultSet updateCnpjRs;
+	
+	@Mock private Connection updateCnpjAlreadyTakenConn;
+	@Mock private PreparedStatement updateCnpjAlreadyTakenStmt;
 	@Mock private ResultSet updateCnpjAlreadyTakenRs;
+	
+	@Mock private Connection storeDontExistConn;
+	@Mock private PreparedStatement storeDontExistStmt;
 	@Mock private ResultSet storeDontExistRs;
+	
+	@Mock private Connection invalidConn;
+	@Mock private PreparedStatement invalidStmt;
+	
+	@Mock private Connection invalidTimezoneConn;
+	@Mock private PreparedStatement invalidTimezoneStmt;
+	@Mock private ResultSet invalidTimezoneRs;
+	
+	@Mock private Connection invalidOwnerConn;
+	@Mock private PreparedStatement invalidOwnerStmt;
+	@Mock private ResultSet invalidOwnerRs;
 	
 	private Model model;
 	
@@ -60,6 +72,8 @@ public class StoreModelUpdateTest {
 		initializeScenarioInvalidConstraint();
 		initializeScenarioStoreDontExist();
 		initializeScenarioInvalidConnection();
+		initializeScenarioInvalidOwner();
+		initializeScenarioInvalidTimezone();
 	}
 	
 	
@@ -77,10 +91,12 @@ public class StoreModelUpdateTest {
 		when(updateStmt.executeUpdate()).thenReturn(1);		
 
 		when(updateStmt.executeQuery()).thenReturn(updateRs);
-		when(updateRs.next()).thenReturn(true).thenReturn(true).thenReturn(false)
-		                     .thenReturn(true).thenReturn(true).thenReturn(false)
-		                     .thenReturn(true)
-		                     .thenReturn(true).thenReturn(true).thenReturn(false);
+		when(updateRs.next()).thenReturn(true).thenReturn(true).thenReturn(false)	// Check Owner
+		                     .thenReturn(true).thenReturn(true).thenReturn(false)	// Check Timezone
+		                     .thenReturn(true).thenReturn(true).thenReturn(false)	// Check Exist
+		                     .thenReturn(true).thenReturn(true).thenReturn(false)	// Check CNPJ is the same
+		                     														// Update
+		                     .thenReturn(true).thenReturn(true).thenReturn(false);	// Select
 		when(updateRs.getLong(any(String.class))).thenReturn(new Long(1));
 		when(updateRs.getInt(any(String.class))).thenReturn(new Integer(1));
 		when(updateRs.getString(any(String.class))).thenReturn(" ");
@@ -102,11 +118,13 @@ public class StoreModelUpdateTest {
 		when(updateCnpjStmt.executeUpdate()).thenReturn(1);		
 
 		when(updateCnpjStmt.executeQuery()).thenReturn(updateCnpjRs);
-		when(updateCnpjRs.next()).thenReturn(true).thenReturn(true).thenReturn(false)
-		                         .thenReturn(true).thenReturn(false)
-		                         .thenReturn(true).thenReturn(false)
-		                         .thenReturn(true)
-		                         .thenReturn(true).thenReturn(true).thenReturn(false);
+		when(updateCnpjRs.next()).thenReturn(true).thenReturn(true).thenReturn(false)	// Check Owner
+						         .thenReturn(true).thenReturn(true).thenReturn(false)	// Check Timezone
+						         .thenReturn(true).thenReturn(true).thenReturn(false)	// Check Exist
+						         .thenReturn(true).thenReturn(false)					// Check CNPJ is the same
+						         .thenReturn(true).thenReturn(false)					// Check CNPJ is already taken
+						        														// Update
+						         .thenReturn(true).thenReturn(true).thenReturn(false);	// Select
 		when(updateCnpjRs.getLong(any(String.class))).thenReturn(new Long(1));
 		when(updateCnpjRs.getInt(any(String.class))).thenReturn(new Integer(1));
 		when(updateCnpjRs.getString(any(String.class))).thenReturn(" ");
@@ -128,9 +146,11 @@ public class StoreModelUpdateTest {
 		when(updateCnpjAlreadyTakenStmt.executeUpdate()).thenReturn(1);		
 
 		when(updateCnpjAlreadyTakenStmt.executeQuery()).thenReturn(updateCnpjAlreadyTakenRs);
-		when(updateCnpjAlreadyTakenRs.next()).thenReturn(true).thenReturn(true).thenReturn(false)
-		                                     .thenReturn(true).thenReturn(false)
-		                                     .thenReturn(true).thenReturn(true).thenReturn(false);
+		when(updateCnpjAlreadyTakenRs.next()).thenReturn(true).thenReturn(true).thenReturn(false)	// Check Owner
+									         .thenReturn(true).thenReturn(true).thenReturn(false)	// Check Timezone
+									         .thenReturn(true).thenReturn(true).thenReturn(false)	// Check Exist
+									         .thenReturn(true).thenReturn(false)					// Check CNPJ is the same
+									         .thenReturn(true).thenReturn(true).thenReturn(false);	// Check CNPJ is already taken
 		when(updateCnpjAlreadyTakenRs.getLong(any(String.class))).thenReturn(new Long(1));
 		when(updateCnpjAlreadyTakenRs.getInt(any(String.class))).thenReturn(new Integer(1));
 		when(updateCnpjAlreadyTakenRs.getString(any(String.class))).thenReturn(" ");
@@ -165,23 +185,62 @@ public class StoreModelUpdateTest {
 	}
 	
 	
+	
+	private void initializeScenarioInvalidOwner() throws SQLException {
+		invalidOwnerConn = mock(Connection.class);
+		invalidOwnerStmt = mock(PreparedStatement.class);
+		invalidOwnerRs = mock(ResultSet.class);
+		
+		when(invalidOwnerConn.prepareStatement(any(String.class))).thenReturn(invalidOwnerStmt);
+		when(invalidOwnerStmt.executeUpdate()).thenReturn(1);
+		
+		when(invalidOwnerStmt.executeQuery()).thenReturn(invalidOwnerRs);
+		when(invalidOwnerRs.next()).thenReturn(true).thenReturn(false);	// Check Owner
+
+		when(invalidOwnerRs.getLong(any(String.class))).thenReturn(new Long(1));
+		when(invalidOwnerRs.getInt(any(String.class))).thenReturn(new Integer(1));
+		when(invalidOwnerRs.getString(any(String.class))).thenReturn(" ");
+		when(invalidOwnerRs.getTime(any(String.class))).thenReturn(Time.valueOf("11:22:33"));		
+	}
+	
+	
+	
+	private void initializeScenarioInvalidTimezone() throws SQLException {
+		invalidTimezoneConn = mock(Connection.class);
+		invalidTimezoneStmt = mock(PreparedStatement.class);
+		invalidTimezoneRs = mock(ResultSet.class);
+		
+		when(invalidTimezoneConn.prepareStatement(any(String.class))).thenReturn(invalidTimezoneStmt);
+		when(invalidTimezoneStmt.executeUpdate()).thenReturn(1);
+		
+		when(invalidTimezoneStmt.executeQuery()).thenReturn(invalidTimezoneRs);
+		when(invalidTimezoneRs.next()).thenReturn(true).thenReturn(true).thenReturn(false)	// Check Owner
+		                      		  .thenReturn(true).thenReturn(false);					// Check Timezone
+
+		when(invalidTimezoneRs.getLong(any(String.class))).thenReturn(new Long(1));
+		when(invalidTimezoneRs.getInt(any(String.class))).thenReturn(new Integer(1));
+		when(invalidTimezoneRs.getString(any(String.class))).thenReturn(" ");
+		when(invalidTimezoneRs.getTime(any(String.class))).thenReturn(Time.valueOf("11:22:33"));		
+	}
+	
+	
 
 	@Test
-	public void updateStore() {
-		initializeUpdateStore();
+	public void updateRecord() {
+		initializeUpdateRecord();
 		model.executeRequest();
 		Response response = model.getResponse();
 		assertTrue(response.getStatus() == Response.Status.OK.getStatusCode());
 		
-		String responseBody = "{\"selectCode\":200,\"selectMessage\":\"The list was returned successfully\",\"results\":[{\"codOwner\":1,\"codStore\":1,\"cnpj\":\" \",\"inscrMun\":\" \",\"inscrEst\":\" \",\"razaoSocial\":\" \",\"name\":\" \",\"address1\":\" \",\"address2\":\" \",\"postalCode\":1,\"city\":\" \",\"codCountry\":\" \",\"txtCountry\":\" \",\"stateProvince\":\" \",\"phone\":\" \",\"codCurr\":\" \",\"codPayment\":\" \",\"latitude\":0.0,\"longitude\":0.0,\"codLanguage\":\"PT\"}]}";
+		String responseBody = "{\"selectCode\":200,\"selectMessage\":\"The list was returned successfully\",\"results\":[{\"codOwner\":1,\"codStore\":1,\"cnpj\":\" \",\"inscrMun\":\" \",\"inscrEst\":\" \",\"razaoSocial\":\" \",\"name\":\" \",\"address1\":\" \",\"address2\":\" \",\"postalCode\":1,\"city\":\" \",\"codCountry\":\" \",\"txtCountry\":\" \",\"stateProvince\":\" \",\"phone\":\" \",\"codCurr\":\" \",\"codPayment\":\" \",\"latitude\":0.0,\"longitude\":0.0,\"codTimezone\":\" \",\"codLanguage\":\"PT\"}]}";
 		assertTrue(response.getEntity().equals(responseBody));		
 	}
 		
 	
 	
-	protected void initializeUpdateStore() {
+	protected void initializeUpdateRecord() {
 		PowerMockito.when(DbConnection.getConnection()).thenReturn(updateConn);
-		model = new StoreModelUpdate(incomingDataUpdateStore());
+		model = new StoreModelUpdate(incomingDataOrdinaryUsage());
 	}
 	
 	
@@ -194,7 +253,7 @@ public class StoreModelUpdateTest {
 		Response response = model.getResponse();
 		assertTrue(response.getStatus() == Response.Status.OK.getStatusCode());
 		
-		String responseBody = "{\"selectCode\":200,\"selectMessage\":\"The list was returned successfully\",\"results\":[{\"codOwner\":1,\"codStore\":1,\"cnpj\":\" \",\"inscrMun\":\" \",\"inscrEst\":\" \",\"razaoSocial\":\" \",\"name\":\" \",\"address1\":\" \",\"address2\":\" \",\"postalCode\":1,\"city\":\" \",\"codCountry\":\" \",\"txtCountry\":\" \",\"stateProvince\":\" \",\"phone\":\" \",\"codCurr\":\" \",\"codPayment\":\" \",\"latitude\":0.0,\"longitude\":0.0,\"codLanguage\":\"PT\"}]}";
+		String responseBody = "{\"selectCode\":200,\"selectMessage\":\"The list was returned successfully\",\"results\":[{\"codOwner\":1,\"codStore\":1,\"cnpj\":\" \",\"inscrMun\":\" \",\"inscrEst\":\" \",\"razaoSocial\":\" \",\"name\":\" \",\"address1\":\" \",\"address2\":\" \",\"postalCode\":1,\"city\":\" \",\"codCountry\":\" \",\"txtCountry\":\" \",\"stateProvince\":\" \",\"phone\":\" \",\"codCurr\":\" \",\"codPayment\":\" \",\"latitude\":0.0,\"longitude\":0.0,\"codTimezone\":\" \",\"codLanguage\":\"PT\"}]}";
 		assertTrue(response.getEntity().equals(responseBody));		
 	}
 		
@@ -202,7 +261,7 @@ public class StoreModelUpdateTest {
 	
 	protected void initializeUpdateCnpj() {
 		PowerMockito.when(DbConnection.getConnection()).thenReturn(updateCnpjConn);
-		model = new StoreModelUpdate(incomingDataUpdateStore());
+		model = new StoreModelUpdate(incomingDataOrdinaryUsage());
 	}
 	
 	
@@ -222,13 +281,13 @@ public class StoreModelUpdateTest {
 	
 	protected void initializeUpdateCnpjAlreadyTaken() {
 		PowerMockito.when(DbConnection.getConnection()).thenReturn(updateCnpjAlreadyTakenConn);
-		model = new StoreModelUpdate(incomingDataUpdateStore());
+		model = new StoreModelUpdate(incomingDataOrdinaryUsage());
 	}
 	
 	
 	
-	protected String incomingDataUpdateStore() {
-		return "[   {	\"codOwner\": \"8\",	\"codStore\": \"16\",	\"cnpj\": \"02357537000139\", 	\"inscEstadual\": \"83739029\", 	\"inscMunicipal\": \"873787620999\", 	\"razaoSocial\": \"Loja DEF LTDA\",	\"name\": \"ABC Coiffeur - Filial B\",	\"address1\": \"Rua 123 de Oliveira 4, Centro\",	\"address2\": \"Loja A\",	\"postalcode\": \"20735060\",	\"city\": \"Rio de Janeiro\",	\"state\": \"RJ\",	\"country\": \"BR\",	\"phone\": \"21-2592-2592\",	\"codCurr\": \"BRL\",	\"codPayment\": \"MPA-BF17622CF63C\"   }]";
+	protected String incomingDataOrdinaryUsage() {
+		return "[   {\"codOwner\": 8,\"codStore\": 15,\"cnpj\": \"58371636000120\",\"inscrMun\": \"873787620999\",\"inscrEst\": \"83739029\",\"razaoSocial\": \"Loja ABC LTDA\",\"name\": \"ABC Coiffeur - Filial B\",\"address1\": \"Rua 123 de Oliveira 4, Centro\",\"address2\": \"Loja A\",\"postalCode\": 20735060,\"city\": \"Rio de Janeiro\",\"codCountry\": \"BR\",\"txtCountry\": \"Brasil\",\"stateProvince\": \"RJ\",\"phone\": \"21-2592-2592\",\"codCurr\": \"BRL\",\"codPayment\": \"MPA-BF17622CF63C\",\"latitude\": 0,\"longitude\": 0,\"codLanguage\": \"PT\",\"codTimezone\": \"America/Sao_Paulo\"   }]";
 	}
 	
 	
@@ -254,7 +313,7 @@ public class StoreModelUpdateTest {
 	
 	
 	protected String incomingDataMissingFieldCodOwner() {
-		return "[   {\"codStore\": \"16\",	\"cnpj\": \"02357537000139\", 	\"inscEstadual\": \"83739029\", 	\"inscMunicipal\": \"873787620999\", 	\"razaoSocial\": \"Loja DEF LTDA\",	\"name\": \"ABC Coiffeur - Filial B\",	\"address1\": \"Rua 123 de Oliveira 4, Centro\",	\"address2\": \"Loja A\",	\"postalcode\": \"20735060\",	\"city\": \"Rio de Janeiro\",	\"state\": \"RJ\",	\"country\": \"BR\",	\"phone\": \"21-2592-2592\",	\"codCurr\": \"BRL\",	\"codPayment\": \"MPA-BF17622CF63C\"   }]";
+		return "[   {\"codStore\": 15,\"cnpj\": \"58371636000120\",\"inscrMun\": \"873787620999\",\"inscrEst\": \"83739029\",\"razaoSocial\": \"Loja ABC LTDA\",\"name\": \"ABC Coiffeur - Filial B\",\"address1\": \"Rua 123 de Oliveira 4, Centro\",\"address2\": \"Loja A\",\"postalCode\": 20735060,\"city\": \"Rio de Janeiro\",\"codCountry\": \"BR\",\"txtCountry\": \"Brasil\",\"stateProvince\": \"RJ\",\"phone\": \"21-2592-2592\",\"codCurr\": \"BRL\",\"codPayment\": \"MPA-BF17622CF63C\",\"latitude\": 0,\"longitude\": 0,\"codLanguage\": \"PT\",\"codTimezone\": \"America/Sao_Paulo\"   }]";
 	}
 	
 	
@@ -280,7 +339,7 @@ public class StoreModelUpdateTest {
 	
 	
 	protected String incomingDataMissingFieldCodStore() {
-		return "[   {	\"codOwner\": \"8\",\"cnpj\": \"02357537000139\", 	\"inscEstadual\": \"83739029\", 	\"inscMunicipal\": \"873787620999\", 	\"razaoSocial\": \"Loja DEF LTDA\",	\"name\": \"ABC Coiffeur - Filial B\",	\"address1\": \"Rua 123 de Oliveira 4, Centro\",	\"address2\": \"Loja A\",	\"postalcode\": \"20735060\",	\"city\": \"Rio de Janeiro\",	\"state\": \"RJ\",	\"country\": \"BR\",	\"phone\": \"21-2592-2592\",	\"codCurr\": \"BRL\",	\"codPayment\": \"MPA-BF17622CF63C\"   }]";
+		return "[   {\"codOwner\": 8,\"cnpj\": \"58371636000120\",\"inscrMun\": \"873787620999\",\"inscrEst\": \"83739029\",\"razaoSocial\": \"Loja ABC LTDA\",\"name\": \"ABC Coiffeur - Filial B\",\"address1\": \"Rua 123 de Oliveira 4, Centro\",\"address2\": \"Loja A\",\"postalCode\": 20735060,\"city\": \"Rio de Janeiro\",\"codCountry\": \"BR\",\"txtCountry\": \"Brasil\",\"stateProvince\": \"RJ\",\"phone\": \"21-2592-2592\",\"codCurr\": \"BRL\",\"codPayment\": \"MPA-BF17622CF63C\",\"latitude\": 0,\"longitude\": 0,\"codLanguage\": \"PT\",\"codTimezone\": \"America/Sao_Paulo\"   }]";
 	}
 	
 	
@@ -356,7 +415,7 @@ public class StoreModelUpdateTest {
 	
 	
 	protected String incomingDataInvalidCnpj() {
-		return "[   {	\"codOwner\": \"8\",	\"codStore\": \"16\",	\"cnpj\": \"02357537000130\", 	\"inscEstadual\": \"83739029\", 	\"inscMunicipal\": \"873787620999\", 	\"razaoSocial\": \"Loja DEF LTDA\",	\"name\": \"ABC Coiffeur - Filial B\",	\"address1\": \"Rua 123 de Oliveira 4, Centro\",	\"address2\": \"Loja A\",	\"postalcode\": \"20735060\",	\"city\": \"Rio de Janeiro\",	\"state\": \"RJ\",	\"country\": \"BR\",	\"phone\": \"21-2592-2592\",	\"codCurr\": \"BRL\",	\"codPayment\": \"MPA-BF17622CF63C\"   }]";
+		return "[   {\"codOwner\": 8,\"codStore\": 15,\"cnpj\": \"58371636000129\",\"inscrMun\": \"873787620999\",\"inscrEst\": \"83739029\",\"razaoSocial\": \"Loja ABC LTDA\",\"name\": \"ABC Coiffeur - Filial B\",\"address1\": \"Rua 123 de Oliveira 4, Centro\",\"address2\": \"Loja A\",\"postalCode\": 20735060,\"city\": \"Rio de Janeiro\",\"codCountry\": \"BR\",\"txtCountry\": \"Brasil\",\"stateProvince\": \"RJ\",\"phone\": \"21-2592-2592\",\"codCurr\": \"BRL\",\"codPayment\": \"MPA-BF17622CF63C\",\"latitude\": 0,\"longitude\": 0,\"codLanguage\": \"PT\",\"codTimezone\": \"America/Sao_Paulo\"   }]";
 	}
 	
 	
@@ -376,6 +435,66 @@ public class StoreModelUpdateTest {
 	
 	protected void initializeinvalidConnection() {
 		PowerMockito.when(DbConnection.getConnection()).thenReturn(invalidConn);
-		model = new StoreModelUpdate(incomingDataUpdateStore());
+		model = new StoreModelUpdate(incomingDataOrdinaryUsage());
 	}
+	
+	
+	
+	@Test
+	public void invalidFieldCodOwner() {
+		initializeInvalidFieldCodOwner();
+		model.executeRequest();
+		Response response = model.getResponse();
+		assertTrue(response.getStatus() == Response.Status.BAD_REQUEST.getStatusCode());
+		
+		String responseBody = "{\"selectCode\":1251,\"selectMessage\":\"Owner data not found on DB\",\"results\":{}}";
+		assertTrue(response.getEntity().equals(responseBody));		
+	}
+		
+	
+	
+	protected void initializeInvalidFieldCodOwner() {
+		PowerMockito.when(DbConnection.getConnection()).thenReturn(invalidOwnerConn);
+		model = new StoreModelUpdate(incomingDataOrdinaryUsage());
+	}
+	
+	
+	
+	@Test
+	public void invalidFieldCodTimezone() {
+		initializeInvalidFieldCodTimezone();
+		model.executeRequest();
+		Response response = model.getResponse();
+		assertTrue(response.getStatus() == Response.Status.BAD_REQUEST.getStatusCode());
+		
+		String responseBody = "{\"selectCode\":1167,\"selectMessage\":\"Timezone not found on DB\",\"results\":{}}";
+		assertTrue(response.getEntity().equals(responseBody));		
+	}
+		
+	
+	
+	protected void initializeInvalidFieldCodTimezone() {
+		PowerMockito.when(DbConnection.getConnection()).thenReturn(invalidTimezoneConn);
+		model = new StoreModelUpdate(incomingDataOrdinaryUsage());
+	}
+	
+	
+	
+	@Test
+	public void nullArgument() {
+		initializeNullArgument();
+		model.executeRequest();
+		Response response = model.getResponse();
+		assertTrue(response.getStatus() == Response.Status.BAD_REQUEST.getStatusCode());
+		
+		String responseBody = "{\"selectCode\":400,\"selectMessage\":\"IllegalArgument: mandatory argument might be missing or invalid value was passed\",\"results\":{}}";
+		assertTrue(response.getEntity().equals(responseBody));		
+	}
+		
+	
+	
+	protected void initializeNullArgument() {
+		PowerMockito.when(DbConnection.getConnection()).thenReturn(updateConn);
+		model = new StoreModelUpdate(null);
+	}	
 }
