@@ -65,6 +65,10 @@ public class EmpWTimeModelInsertTest {
 	@Mock private PreparedStatement invalidOwnerStmt;
 	@Mock private ResultSet invalidOwnerRs;
 	
+	@Mock private Connection invalidStoreTimeConn;
+	@Mock private PreparedStatement invalidStoreTimeStmt;
+	@Mock private ResultSet invalidStoreTimeRs;
+	
 	@Mock private Connection invalidConn;	
 	
 	private Model model;
@@ -84,6 +88,7 @@ public class EmpWTimeModelInsertTest {
 		initializeScenarioInvalidStore();
 		initializeScenarioInvalidEmployee();
 		initializeScenarioInvalidOwner();
+		initializeScenarioInvalidStoreTime();
 	}
 	
 	
@@ -103,6 +108,7 @@ public class EmpWTimeModelInsertTest {
 							    .thenReturn(true).thenReturn(true).thenReturn(false)	// Check Weekday
 							    .thenReturn(true).thenReturn(true).thenReturn(false)	// Check StoreEmp
 							    .thenReturn(true).thenReturn(false)						// Check Exist
+							    .thenReturn(true).thenReturn(true).thenReturn(false)	// Check Store Time
 							    .thenReturn(true).thenReturn(false)						// Check Soft Deleted
 							 															// Insert
 							    .thenReturn(true).thenReturn(true).thenReturn(false);	// Select
@@ -130,6 +136,7 @@ public class EmpWTimeModelInsertTest {
 									    .thenReturn(true).thenReturn(true).thenReturn(false)	// Check Weekday
 									    .thenReturn(true).thenReturn(true).thenReturn(false)	// Check StoreEmp
 									    .thenReturn(true).thenReturn(false)						// Check Exist
+									    .thenReturn(true).thenReturn(true).thenReturn(false)	// Check Store Time
 									    .thenReturn(true).thenReturn(true).thenReturn(false)	// Check Soft Deleted
 									 															// Update
 									    .thenReturn(true).thenReturn(true).thenReturn(false);	// Select
@@ -276,6 +283,31 @@ public class EmpWTimeModelInsertTest {
 		when(invalidOwnerRs.getInt(any(String.class))).thenReturn(new Integer(1));
 		when(invalidOwnerRs.getString(any(String.class))).thenReturn(" ");
 		when(invalidOwnerRs.getTime(any(String.class))).thenReturn(Time.valueOf("11:22:33"));		
+	}
+	
+	
+	
+	private void initializeScenarioInvalidStoreTime() throws SQLException {
+		invalidStoreTimeConn = mock(Connection.class);
+		invalidStoreTimeStmt = mock(PreparedStatement.class);
+		invalidStoreTimeRs = mock(ResultSet.class);
+		
+		when(invalidStoreTimeConn.prepareStatement(any(String.class))).thenReturn(invalidStoreTimeStmt);
+		when(invalidStoreTimeStmt.executeUpdate()).thenReturn(1);
+		
+		when(invalidStoreTimeStmt.executeQuery()).thenReturn(invalidStoreTimeRs);
+		when(invalidStoreTimeRs.next()).thenReturn(true).thenReturn(true).thenReturn(false)	// Check Owner
+								       .thenReturn(true).thenReturn(true).thenReturn(false)	// Check Employee
+									   .thenReturn(true).thenReturn(true).thenReturn(false)	// Check Store
+									   .thenReturn(true).thenReturn(true).thenReturn(false)	// Check Weekday
+									   .thenReturn(true).thenReturn(true).thenReturn(false)	// Check StoreEmp
+									   .thenReturn(true).thenReturn(false)					// Check Exist
+									   .thenReturn(true).thenReturn(false);					// Check Store Time
+
+		when(invalidStoreTimeRs.getLong(any(String.class))).thenReturn(new Long(1));
+		when(invalidStoreTimeRs.getInt(any(String.class))).thenReturn(new Integer(1));
+		when(invalidStoreTimeRs.getString(any(String.class))).thenReturn(" ");
+		when(invalidStoreTimeRs.getTime(any(String.class))).thenReturn(Time.valueOf("11:22:33"));		
 	}
 	
 	
@@ -585,6 +617,26 @@ public class EmpWTimeModelInsertTest {
 	
 	private void initializeInvalidFieldWeekday() {
 		PowerMockito.when(DbConnection.getConnection()).thenReturn(invalidWeekdayConn);
+		model = new EmpWTimeModelInsert(incomingDataOrdinaryUsage());
+	}
+	
+	
+	
+	@Test
+	public void invalidStoreTime() {
+		initializeInvalidStoreTime();
+		model.executeRequest();
+		Response response = model.getResponse();
+		assertTrue(response.getStatus() == Response.Status.BAD_REQUEST.getStatusCode());
+		
+		String responseBody = "{\"selectCode\":1110,\"selectMessage\":\"Selected time is out of range of Store working time\",\"results\":{}}";
+		assertTrue(response.getEntity().equals(responseBody));		
+	}
+		
+	
+	
+	private void initializeInvalidStoreTime() {
+		PowerMockito.when(DbConnection.getConnection()).thenReturn(invalidStoreTimeConn);
 		model = new EmpWTimeModelInsert(incomingDataOrdinaryUsage());
 	}
 }
