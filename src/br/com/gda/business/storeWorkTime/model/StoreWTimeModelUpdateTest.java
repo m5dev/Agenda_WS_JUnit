@@ -37,6 +37,10 @@ public class StoreWTimeModelUpdateTest {
 	@Mock private PreparedStatement updateStmt;
 	@Mock private ResultSet updateRs;
 	
+	@Mock private Connection conflictConn;
+	@Mock private PreparedStatement conflictStmt;
+	@Mock private ResultSet conflictRs;
+	
 	@Mock private Connection recordDontExistConn;
 	@Mock private PreparedStatement recordDontExistStmt;
 	@Mock private ResultSet recordDontExistRs;
@@ -69,6 +73,7 @@ public class StoreWTimeModelUpdateTest {
 		PowerMockito.mockStatic(DbConnection.class);
 		
 		initializeScenarioUpdate();
+		initializeScenarioConflict();
 		initializeScenarioRecordDontExist();
 		initializeScenarioInvalidConnection();
 		initializeScenarioInvalidWeekday();
@@ -95,12 +100,52 @@ public class StoreWTimeModelUpdateTest {
 							 .thenReturn(true).thenReturn(true).thenReturn(false)	// Check Store
 							 .thenReturn(true).thenReturn(true).thenReturn(false)	// Check Weekday
 							 .thenReturn(true).thenReturn(true).thenReturn(false)	// Check Exist
+							 .thenReturn(true).thenReturn(true).thenReturn(false)	// Check Conflict - Store WorkTime
+							 .thenReturn(true).thenReturn(true).thenReturn(false)	// Check Conflict - Time Range - Part 1
+							 .thenReturn(true).thenReturn(true).thenReturn(false)	// Check Conflict - Time Range - Part 2
+							 .thenReturn(true).thenReturn(false)					// Check Conflict - Return time overlapping
 							 														// Update
 							 .thenReturn(true).thenReturn(true).thenReturn(false);	// Select
 		when(updateRs.getLong(any(String.class))).thenReturn(new Long(1));
 		when(updateRs.getInt(any(String.class))).thenReturn(new Integer(1));
 		when(updateRs.getString(any(String.class))).thenReturn(" ");
-		when(updateRs.getTime(any(String.class))).thenReturn(Time.valueOf("11:22:33"));
+		when(updateRs.getTime(any(String.class))).thenReturn(Time.valueOf("08:00:00")).thenReturn(Time.valueOf("18:00:00"))
+										         .thenReturn(Time.valueOf("08:00:00")).thenReturn(Time.valueOf("18:00:00"))
+										         .thenReturn(Time.valueOf("08:00:00")).thenReturn(Time.valueOf("18:00:00"))
+										         .thenReturn(Time.valueOf("08:00:00")).thenReturn(Time.valueOf("18:00:00"))
+										         .thenReturn(Time.valueOf("11:22:33"));
+	}
+	
+	
+	
+	private void initializeScenarioConflict() throws SQLException {
+		conflictStmt = mock(PreparedStatement.class);
+		conflictRs = mock(ResultSet.class);
+		conflictConn = mock(Connection.class);
+		
+		when(conflictConn.prepareStatement(any(String.class))).thenReturn(conflictStmt);	
+		doNothing().when(conflictStmt).setString(anyInt(), anyString());
+		doNothing().when(conflictStmt).setLong(anyInt(), anyLong());
+		doNothing().when(conflictStmt).setTime(anyInt(), any(Time.class));		
+		
+		when(conflictStmt.executeUpdate()).thenReturn(1);		
+
+		when(conflictStmt.executeQuery()).thenReturn(conflictRs);
+		when(conflictRs.next()).thenReturn(true).thenReturn(true).thenReturn(false)		// Check Owner
+							   .thenReturn(true).thenReturn(true).thenReturn(false)		// Check Store
+							   .thenReturn(true).thenReturn(true).thenReturn(false)		// Check Weekday
+							   .thenReturn(true).thenReturn(true).thenReturn(false)		// Check Exist
+							   .thenReturn(true).thenReturn(true).thenReturn(false)		// Check Conflict - Store WorkTime
+							   .thenReturn(true).thenReturn(true).thenReturn(false)		// Check Conflict - Time Range - Part 1
+							   .thenReturn(true).thenReturn(true).thenReturn(false) 	// Check Conflict - Time Range - Part 2
+							   .thenReturn(true).thenReturn(true).thenReturn(false);	// Check Conflict - Return time overlapping 
+		when(conflictRs.getLong(any(String.class))).thenReturn(new Long(1));
+		when(conflictRs.getInt(any(String.class))).thenReturn(new Integer(1));
+		when(conflictRs.getString(any(String.class))).thenReturn(" ");
+		when(conflictRs.getTime(any(String.class))).thenReturn(Time.valueOf("08:00:00")).thenReturn(Time.valueOf("18:00:00"))
+		                                           .thenReturn(Time.valueOf("08:00:00")).thenReturn(Time.valueOf("18:00:00"))
+		                                           .thenReturn(Time.valueOf("08:00:00")).thenReturn(Time.valueOf("18:00:00"))
+		                                           .thenReturn(Time.valueOf("08:00:00")).thenReturn(Time.valueOf("18:00:00"));
 	}
 	
 	
@@ -210,6 +255,26 @@ public class StoreWTimeModelUpdateTest {
 	
 	private void initializeUpdateRecord() {
 		PowerMockito.when(DbConnection.getConnection()).thenReturn(updateConn);
+		model = new StoreWTimeModelUpdate(incomingDataOrdinaryUsage());
+	}
+	
+	
+	
+	@Test
+	public void conflictEmpWorkTime() {
+		initializeConflictEmpWorkTime();
+		model.executeRequest();
+		Response response = model.getResponse();
+		assertTrue(response.getStatus() == Response.Status.BAD_REQUEST.getStatusCode());
+		
+		String responseBody = "{\"selectCode\":9,\"selectMessage\":\"Conflict detected\",\"results\":{}}";
+		assertTrue(response.getEntity().equals(responseBody));		
+	}
+		
+	
+	
+	private void initializeConflictEmpWorkTime() {
+		PowerMockito.when(DbConnection.getConnection()).thenReturn(conflictConn);
 		model = new StoreWTimeModelUpdate(incomingDataOrdinaryUsage());
 	}
 	
