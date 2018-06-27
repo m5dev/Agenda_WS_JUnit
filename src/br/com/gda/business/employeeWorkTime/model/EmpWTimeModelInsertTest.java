@@ -41,6 +41,10 @@ public class EmpWTimeModelInsertTest {
 	@Mock private PreparedStatement insertNewStmt;
 	@Mock private ResultSet insertNewRs;
 	
+	@Mock private Connection conflictConn;
+	@Mock private PreparedStatement conflictStmt;
+	@Mock private ResultSet conflictRs;
+	
 	@Mock private Connection insertSoftDeletedConn;
 	@Mock private PreparedStatement insertSoftDeletedStmt;
 	@Mock private ResultSet insertSoftDeletedRs;
@@ -80,6 +84,7 @@ public class EmpWTimeModelInsertTest {
 		PowerMockito.mockStatic(DbConnection.class);
 		
 		initializeScenarioInsertNew();
+		initializeScenarioConflict();
 		initializeScenarioInsertSoftDeleted();
 		initializeScenarioDataAlreadyExist();
 		initializeScenarioInvalidConnection();
@@ -109,6 +114,7 @@ public class EmpWTimeModelInsertTest {
 							    .thenReturn(true).thenReturn(true).thenReturn(false)	// Check StoreEmp
 							    .thenReturn(true).thenReturn(false)						// Check Exist
 							    .thenReturn(true).thenReturn(true).thenReturn(false)	// Check Store Time
+							    .thenReturn(true).thenReturn(false)						// Check Work Time conflict
 							    .thenReturn(true).thenReturn(false)						// Check Soft Deleted
 							 															// Insert
 							    .thenReturn(true).thenReturn(true).thenReturn(false);	// Select
@@ -116,6 +122,31 @@ public class EmpWTimeModelInsertTest {
 		when(insertNewRs.getInt(any(String.class))).thenReturn(new Integer(1));
 		when(insertNewRs.getString(any(String.class))).thenReturn(" ");
 		when(insertNewRs.getTime(any(String.class))).thenReturn(Time.valueOf("11:22:33"));		
+	}
+	
+	
+	
+	private void initializeScenarioConflict() throws SQLException {
+		conflictConn = mock(Connection.class);
+		conflictStmt = mock(PreparedStatement.class);
+		conflictRs = mock(ResultSet.class);
+		
+		when(conflictConn.prepareStatement(any(String.class))).thenReturn(conflictStmt);
+		when(conflictStmt.executeUpdate()).thenReturn(1);
+		
+		when(conflictStmt.executeQuery()).thenReturn(conflictRs);
+		when(conflictRs.next()).thenReturn(true).thenReturn(true).thenReturn(false)		// Check Owner
+							   .thenReturn(true).thenReturn(true).thenReturn(false)		// Check Employee
+							   .thenReturn(true).thenReturn(true).thenReturn(false)		// Check Store
+							   .thenReturn(true).thenReturn(true).thenReturn(false)		// Check Weekday
+							   .thenReturn(true).thenReturn(true).thenReturn(false)		// Check StoreEmp
+							   .thenReturn(true).thenReturn(false)						// Check Exist
+							   .thenReturn(true).thenReturn(true).thenReturn(false)		// Check Store Time
+							   .thenReturn(true).thenReturn(true).thenReturn(false);	// Check Work Time conflict
+		when(conflictRs.getLong(any(String.class))).thenReturn(new Long(1));
+		when(conflictRs.getInt(any(String.class))).thenReturn(new Integer(1));
+		when(conflictRs.getString(any(String.class))).thenReturn(" ");
+		when(conflictRs.getTime(any(String.class))).thenReturn(Time.valueOf("11:22:33"));		
 	}
 	
 	
@@ -137,6 +168,7 @@ public class EmpWTimeModelInsertTest {
 									    .thenReturn(true).thenReturn(true).thenReturn(false)	// Check StoreEmp
 									    .thenReturn(true).thenReturn(false)						// Check Exist
 									    .thenReturn(true).thenReturn(true).thenReturn(false)	// Check Store Time
+									    .thenReturn(true).thenReturn(false)						// Check Work Time conflict
 									    .thenReturn(true).thenReturn(true).thenReturn(false)	// Check Soft Deleted
 									 															// Update
 									    .thenReturn(true).thenReturn(true).thenReturn(false);	// Select
@@ -327,6 +359,26 @@ public class EmpWTimeModelInsertTest {
 	
 	private void initializeInsertNewRecord() {
 		PowerMockito.when(DbConnection.getConnection()).thenReturn(insertNewConn);
+		model = new EmpWTimeModelInsert(incomingDataOrdinaryUsage());
+	}
+	
+	
+	
+	@Test
+	public void workTimeConflict() {
+		initializeWorkTimeConflict();
+		model.executeRequest();
+		Response response = model.getResponse();
+		assertTrue(response.getStatus() == Response.Status.BAD_REQUEST.getStatusCode());
+		
+		String responseBody = "{\"selectCode\":1003,\"selectMessage\":\"Employee's working time range conflict\",\"results\":{}}";
+		assertTrue(response.getEntity().equals(responseBody));		
+	}
+		
+	
+	
+	private void initializeWorkTimeConflict() {
+		PowerMockito.when(DbConnection.getConnection()).thenReturn(conflictConn);
 		model = new EmpWTimeModelInsert(incomingDataOrdinaryUsage());
 	}
 	
