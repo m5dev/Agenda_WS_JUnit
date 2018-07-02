@@ -44,10 +44,7 @@ public class StoreModelInsertTest {
 	@Mock private PreparedStatement invalidOwnerStmt;
 	@Mock private ResultSet invalidOwnerRs;
 	
-	@Mock private Connection invalidConn;
-	
-	
-	
+	@Mock private Connection invalidConn;	
 	
 	
 	private Model model;
