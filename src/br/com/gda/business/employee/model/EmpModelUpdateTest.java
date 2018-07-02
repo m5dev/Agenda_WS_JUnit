@@ -80,7 +80,6 @@ public class EmpModelUpdateTest {
 		when(updateStmt.executeQuery()).thenReturn(updateRs);
 		when(updateRs.next()).thenReturn(true).thenReturn(true).thenReturn(false)
 							 .thenReturn(true).thenReturn(true).thenReturn(false)
-							 .thenReturn(true)
 							 .thenReturn(true).thenReturn(true).thenReturn(false);
 		when(updateRs.getLong(any(String.class))).thenReturn(new Long(1));
 		when(updateRs.getInt(any(String.class))).thenReturn(new Integer(1));
@@ -106,7 +105,6 @@ public class EmpModelUpdateTest {
 		when(updateCpfRs.next()).thenReturn(true).thenReturn(true).thenReturn(false)
 								.thenReturn(true).thenReturn(false)
 								.thenReturn(true).thenReturn(false)
-								.thenReturn(false)
 								.thenReturn(true).thenReturn(true).thenReturn(false);
 		when(updateCpfRs.getLong(any(String.class))).thenReturn(new Long(1));
 		when(updateCpfRs.getInt(any(String.class))).thenReturn(new Integer(1));

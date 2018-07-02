@@ -58,6 +58,10 @@ public class CusModelUpdateTest {
 	@Mock private PreparedStatement invalidOwnerStmt;
 	@Mock private ResultSet invalidOwnerRs;
 	
+	@Mock private Connection invalidGenderConn;
+	@Mock private PreparedStatement invalidGenderStmt;
+	@Mock private ResultSet invalidGenderRs;
+	
 	private Model model;
 	
 	
@@ -73,6 +77,7 @@ public class CusModelUpdateTest {
 		initializeScenarioDontExist();
 		initializeScenarioInvalidConnection();
 		initializeScenarioInvalidOwner();
+		initializeScenarioInvalidGender();
 	}
 	
 	
@@ -91,6 +96,7 @@ public class CusModelUpdateTest {
 
 		when(updateStmt.executeQuery()).thenReturn(updateRs);
 		when(updateRs.next()).thenReturn(true).thenReturn(true).thenReturn(false)	// Check Owner
+		                      .thenReturn(true).thenReturn(true).thenReturn(false)	// Check Gender
 		                     .thenReturn(true).thenReturn(true).thenReturn(false)	// Check Exist
 		                     .thenReturn(true).thenReturn(true).thenReturn(false)	// Check EMAIL change
 		                     .thenReturn(true).thenReturn(true).thenReturn(false)	// Check CPF change
@@ -118,6 +124,7 @@ public class CusModelUpdateTest {
 
 		when(emailChangeStmt.executeQuery()).thenReturn(emailChangeRs);
 		when(emailChangeRs.next()).thenReturn(true).thenReturn(true).thenReturn(false)	// Check Owner
+		                          .thenReturn(true).thenReturn(true).thenReturn(false)	// Check Gender
 		                     	  .thenReturn(true).thenReturn(true).thenReturn(false)	// Check Exist
 		                     	  .thenReturn(true).thenReturn(false);					// Check EMAIL change
 		when(emailChangeRs.getLong(any(String.class))).thenReturn(new Long(1));
@@ -142,6 +149,7 @@ public class CusModelUpdateTest {
 
 		when(cpfChangeStmt.executeQuery()).thenReturn(cpfChangeRs);
 		when(cpfChangeRs.next()).thenReturn(true).thenReturn(true).thenReturn(false)	// Check Owner
+		                        .thenReturn(true).thenReturn(true).thenReturn(false)	// Check Gender
         						.thenReturn(true).thenReturn(true).thenReturn(false)	// Check Exist
 						        .thenReturn(true).thenReturn(true).thenReturn(false)	// Check EMAIL change
 						        .thenReturn(true).thenReturn(false)						// Check CPF change
@@ -170,6 +178,7 @@ public class CusModelUpdateTest {
 
 		when(cpfAlreadyTakenStmt.executeQuery()).thenReturn(cpfAlreadyTakenRs);
 		when(cpfAlreadyTakenRs.next()).thenReturn(true).thenReturn(true).thenReturn(false)	// Check Owner
+		                              .thenReturn(true).thenReturn(true).thenReturn(false)	// Check Gender
 									  .thenReturn(true).thenReturn(true).thenReturn(false)	// Check Exist
 									  .thenReturn(true).thenReturn(true).thenReturn(false)	// Check EMAIL change
 									  .thenReturn(true).thenReturn(false)					// Check CPF change
@@ -191,6 +200,7 @@ public class CusModelUpdateTest {
 
 		when(dontExistStmt.executeQuery()).thenReturn(dontExistRs);
 		when(dontExistRs.next()).thenReturn(true).thenReturn(true).thenReturn(false)	// Check Owner
+		                        .thenReturn(true).thenReturn(true).thenReturn(false)	// Check Gender
                                 .thenReturn(true).thenReturn(false);					// Check Exist;
 	}
 	
@@ -225,6 +235,26 @@ public class CusModelUpdateTest {
 		when(invalidOwnerRs.getInt(any(String.class))).thenReturn(new Integer(1));
 		when(invalidOwnerRs.getString(any(String.class))).thenReturn(" ");
 		when(invalidOwnerRs.getTime(any(String.class))).thenReturn(Time.valueOf("11:22:33"));		
+	}
+	
+	
+	
+	private void initializeScenarioInvalidGender() throws SQLException {
+		invalidGenderConn = mock(Connection.class);
+		invalidGenderStmt = mock(PreparedStatement.class);
+		invalidGenderRs = mock(ResultSet.class);
+		
+		when(invalidGenderConn.prepareStatement(any(String.class))).thenReturn(invalidGenderStmt);
+		when(invalidGenderStmt.executeUpdate()).thenReturn(1);
+		
+		when(invalidGenderStmt.executeQuery()).thenReturn(invalidGenderRs);
+		when(invalidGenderRs.next()).thenReturn(true).thenReturn(true).thenReturn(false)	// Check Owner
+							        .thenReturn(true).thenReturn(false);					// Check Gender
+		
+		when(invalidGenderRs.getLong(any(String.class))).thenReturn(new Long(1));
+		when(invalidGenderRs.getInt(any(String.class))).thenReturn(new Integer(1));
+		when(invalidGenderRs.getString(any(String.class))).thenReturn(" ");
+		when(invalidGenderRs.getTime(any(String.class))).thenReturn(Time.valueOf("11:22:33"));			
 	}
 	
 	
@@ -546,6 +576,26 @@ public class CusModelUpdateTest {
 	
 	protected void initializeinvalidConnection() {
 		PowerMockito.when(DbConnection.getConnection()).thenReturn(invalidConn);
+		model = new CusModelUpdate(incomingDataOrdinaryUsage());
+	}
+	
+	
+	
+	@Test
+	public void invalidFieldCodGender() {
+		initializeInvalidFieldCodGender();
+		model.executeRequest();
+		Response response = model.getResponse();
+		assertTrue(response.getStatus() == Response.Status.BAD_REQUEST.getStatusCode());
+		
+		String responseBody = "{\"selectCode\":1169,\"selectMessage\":\"Gender not found on DB\",\"results\":{}}";
+		assertTrue(response.getEntity().equals(responseBody));		
+	}
+		
+	
+	
+	protected void initializeInvalidFieldCodGender() {
+		PowerMockito.when(DbConnection.getConnection()).thenReturn(invalidGenderConn);
 		model = new CusModelUpdate(incomingDataOrdinaryUsage());
 	}
 }
