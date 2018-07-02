@@ -34,16 +34,17 @@ import br.com.gda.model.Model;
 @RunWith(PowerMockRunner.class)
 public class StoreModelSelectTest {
 	@Mock private Connection selectConn;
-	@Mock private Connection storeNotFoundConn;
-	@Mock private Connection invalidConn;
 	@Mock private PreparedStatement selectStmt;
-	@Mock private PreparedStatement storeNotFoundStmt;
-	@Mock private PreparedStatement invalidStmt;
 	@Mock private ResultSet selectRs;
-	@Mock private ResultSet storeNotFoundRs;
+	
+	@Mock private Connection notFoundConn;
+	@Mock private PreparedStatement notFoundStmt;
+	@Mock private ResultSet notFoundRs;
+	
+	@Mock private Connection invalidConn;
+	@Mock private PreparedStatement invalidStmt;
 	
 	private Model model;
-	private StoreInfo infoRecord;
 	
 	
 	
@@ -52,7 +53,7 @@ public class StoreModelSelectTest {
 		PowerMockito.mockStatic(DbConnection.class);
 		
 		initializeScenarioSelect();
-		initializeScenarioStoreNotFound();
+		initializeScenarioNotFound();
 		initializeScenarioInvalidConnection();
 	}
 	
@@ -78,15 +79,15 @@ public class StoreModelSelectTest {
 	
 	
 	
-	private void initializeScenarioStoreNotFound() throws SQLException {
-		storeNotFoundStmt = mock(PreparedStatement.class);						
-		storeNotFoundRs = mock(ResultSet.class);		
-		storeNotFoundConn = mock(Connection.class);
+	private void initializeScenarioNotFound() throws SQLException {
+		notFoundStmt = mock(PreparedStatement.class);						
+		notFoundRs = mock(ResultSet.class);		
+		notFoundConn = mock(Connection.class);
 		
-		when(storeNotFoundConn.prepareStatement(any(String.class))).thenReturn(storeNotFoundStmt);	
+		when(notFoundConn.prepareStatement(any(String.class))).thenReturn(notFoundStmt);	
 		
-		when(storeNotFoundStmt.executeQuery()).thenReturn(storeNotFoundRs);		
-		when(storeNotFoundRs.next()).thenReturn(false);
+		when(notFoundStmt.executeQuery()).thenReturn(notFoundRs);		
+		when(notFoundRs.next()).thenReturn(false);
 	}
 	
 	
@@ -106,8 +107,8 @@ public class StoreModelSelectTest {
 
 
 	@Test
-	public void selectWithFullKey() {
-		initializeSelectWithFullKey();
+	public void selectRecord() {
+		initializeSelectRecord();
 		model.executeRequest();
 		Response response = model.getResponse();
 		assertTrue(response.getStatus() == Response.Status.OK.getStatusCode());
@@ -119,10 +120,10 @@ public class StoreModelSelectTest {
 	
 	
 	
-	protected void initializeSelectWithFullKey() {
+	protected void initializeSelectRecord() {
 		PowerMockito.when(DbConnection.getConnection()).thenReturn(selectConn);
 		
-		infoRecord = new StoreInfo();
+		StoreInfo infoRecord = new StoreInfo();
 		infoRecord.codOwner = 1;
 		infoRecord.codStore = 1;
 		
@@ -146,9 +147,9 @@ public class StoreModelSelectTest {
 	
 	
 	protected void initializeRecordNotFound() {
-		PowerMockito.when(DbConnection.getConnection()).thenReturn(storeNotFoundConn);
+		PowerMockito.when(DbConnection.getConnection()).thenReturn(notFoundConn);
 		
-		infoRecord = new StoreInfo();
+		StoreInfo infoRecord = new StoreInfo();
 		infoRecord.codOwner = 1;
 		infoRecord.codStore = 1;
 		
@@ -174,7 +175,7 @@ public class StoreModelSelectTest {
 	protected void initializeMissingFieldCodStore() {
 		PowerMockito.when(DbConnection.getConnection()).thenReturn(selectConn);
 		
-		infoRecord = new StoreInfo();
+		StoreInfo infoRecord = new StoreInfo();
 		infoRecord.codOwner = -1;
 		infoRecord.codStore = -1;
 		
@@ -200,7 +201,7 @@ public class StoreModelSelectTest {
 	protected void initializeInvalidConnection() {
 		PowerMockito.when(DbConnection.getConnection()).thenReturn(invalidConn);
 		
-		infoRecord = new StoreInfo();
+		StoreInfo infoRecord = new StoreInfo();
 		infoRecord.codOwner = 1;
 		infoRecord.codStore = 1;
 		

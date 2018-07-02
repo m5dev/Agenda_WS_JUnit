@@ -44,9 +44,9 @@ public class StoreModelUpdateTest {
 	@Mock private PreparedStatement updateCnpjAlreadyTakenStmt;
 	@Mock private ResultSet updateCnpjAlreadyTakenRs;
 	
-	@Mock private Connection storeDontExistConn;
-	@Mock private PreparedStatement storeDontExistStmt;
-	@Mock private ResultSet storeDontExistRs;
+	@Mock private Connection dontExistConn;
+	@Mock private PreparedStatement dontExistStmt;
+	@Mock private ResultSet dontExistRs;
 	
 	@Mock private Connection invalidConn;
 	@Mock private PreparedStatement invalidStmt;
@@ -70,7 +70,7 @@ public class StoreModelUpdateTest {
 		initializeScenarioUpdate();
 		initializeScenarioUpdateConstraint();
 		initializeScenarioInvalidConstraint();
-		initializeScenarioStoreDontExist();
+		initializeScenarioDontExist();
 		initializeScenarioInvalidConnection();
 		initializeScenarioInvalidOwner();
 		initializeScenarioInvalidTimezone();
@@ -159,15 +159,17 @@ public class StoreModelUpdateTest {
 	
 	
 	
-	private void initializeScenarioStoreDontExist() throws SQLException {
-		storeDontExistStmt = mock(PreparedStatement.class);
-		storeDontExistRs = mock(ResultSet.class);		
-		storeDontExistConn = mock(Connection.class);
+	private void initializeScenarioDontExist() throws SQLException {
+		dontExistStmt = mock(PreparedStatement.class);
+		dontExistRs = mock(ResultSet.class);		
+		dontExistConn = mock(Connection.class);
 		
-		when(storeDontExistConn.prepareStatement(any(String.class))).thenReturn(storeDontExistStmt);
+		when(dontExistConn.prepareStatement(any(String.class))).thenReturn(dontExistStmt);
 
-		when(storeDontExistStmt.executeQuery()).thenReturn(storeDontExistRs);
-		when(storeDontExistRs.next()).thenReturn(false);
+		when(dontExistStmt.executeQuery()).thenReturn(dontExistRs);
+		when(dontExistRs.next()).thenReturn(true).thenReturn(true).thenReturn(false)	// Check Owner
+						        .thenReturn(true).thenReturn(true).thenReturn(false)	// Check Timezone
+						        .thenReturn(true).thenReturn(false);					// Check Exist
 	}
 	
 	
@@ -306,7 +308,7 @@ public class StoreModelUpdateTest {
 		
 	
 	protected void initializeMissingFieldCodOwner() {
-		PowerMockito.when(DbConnection.getConnection()).thenReturn(storeDontExistConn);		
+		PowerMockito.when(DbConnection.getConnection()).thenReturn(dontExistConn);		
 		model = new StoreModelUpdate(incomingDataMissingFieldCodOwner());
 	}	
 	
@@ -332,7 +334,7 @@ public class StoreModelUpdateTest {
 		
 	
 	protected void initializeMissingFieldCodStore() {
-		PowerMockito.when(DbConnection.getConnection()).thenReturn(storeDontExistConn);		
+		PowerMockito.when(DbConnection.getConnection()).thenReturn(dontExistConn);		
 		model = new StoreModelUpdate(incomingDataMissingFieldCodStore());
 	}	
 	
@@ -358,7 +360,7 @@ public class StoreModelUpdateTest {
 		
 	
 	protected void initializeMissingFieldName() {
-		PowerMockito.when(DbConnection.getConnection()).thenReturn(storeDontExistConn);		
+		PowerMockito.when(DbConnection.getConnection()).thenReturn(dontExistConn);		
 		model = new StoreModelUpdate(incomingDataMissingFieldName());
 	}	
 	
@@ -384,7 +386,7 @@ public class StoreModelUpdateTest {
 		
 	
 	protected void initializeMissingFieldCnpj() {
-		PowerMockito.when(DbConnection.getConnection()).thenReturn(storeDontExistConn);		
+		PowerMockito.when(DbConnection.getConnection()).thenReturn(dontExistConn);		
 		model = new StoreModelUpdate(incomingDataMissingFieldCnpj());
 	}	
 	
@@ -409,7 +411,7 @@ public class StoreModelUpdateTest {
 		
 	
 	protected void initializeInvalidCnpj() {
-		PowerMockito.when(DbConnection.getConnection()).thenReturn(storeDontExistConn);		
+		PowerMockito.when(DbConnection.getConnection()).thenReturn(dontExistConn);		
 		model = new StoreModelUpdate(incomingDataInvalidCnpj());
 	}	
 	
@@ -496,5 +498,25 @@ public class StoreModelUpdateTest {
 	protected void initializeNullArgument() {
 		PowerMockito.when(DbConnection.getConnection()).thenReturn(updateConn);
 		model = new StoreModelUpdate(null);
-	}	
+	}
+	
+	
+	
+	@Test
+	public void recordDontExist() {
+		initializeRecordDontExist();
+		model.executeRequest();
+		Response response = model.getResponse();
+		assertTrue(response.getStatus() == Response.Status.BAD_REQUEST.getStatusCode());
+		
+		String responseBody = "{\"selectCode\":1103,\"selectMessage\":\"Store's data not found on DB\",\"results\":{}}";
+		assertTrue(response.getEntity().equals(responseBody));		
+	}
+		
+	
+	
+	protected void initializeRecordDontExist() {
+		PowerMockito.when(DbConnection.getConnection()).thenReturn(dontExistConn);
+		model = new StoreModelUpdate(incomingDataOrdinaryUsage());
+	}
 }

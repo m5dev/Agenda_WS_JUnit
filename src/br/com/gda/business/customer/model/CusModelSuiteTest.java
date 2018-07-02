@@ -5,7 +5,10 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
-@SuiteClasses({CusModelInsertTest.class})
+@SuiteClasses({CusModelInsertTest.class,
+			   CusModelSelectTest.class,
+			   CusModelUpdateTest.class,
+			   CusModelDeleteTest.class})
 public class CusModelSuiteTest {
 
 }
