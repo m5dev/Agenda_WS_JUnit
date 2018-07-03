@@ -462,6 +462,26 @@ public class CusModelUpdateTest {
 	
 	
 	@Test
+	public void invalidCodGender() {
+		initializeInvalidCodGender();
+		model.executeRequest();
+		Response response = model.getResponse();
+		assertTrue(response.getStatus() == Response.Status.BAD_REQUEST.getStatusCode());
+		
+		String responseBody = "{\"selectCode\":1169,\"selectMessage\":\"Gender not found on DB\",\"results\":{}}";
+		assertTrue(response.getEntity().equals(responseBody));		
+	}
+		
+	
+	
+	protected void initializeInvalidCodGender() {
+		PowerMockito.when(DbConnection.getConnection()).thenReturn(invalidGenderConn);
+		model = new CusModelUpdate(incomingDataOrdinaryUsage());
+	}
+	
+	
+	
+	@Test
 	public void recordDontExist() {
 		initializeRecordDontExist();
 		model.executeRequest();
@@ -576,26 +596,6 @@ public class CusModelUpdateTest {
 	
 	protected void initializeinvalidConnection() {
 		PowerMockito.when(DbConnection.getConnection()).thenReturn(invalidConn);
-		model = new CusModelUpdate(incomingDataOrdinaryUsage());
-	}
-	
-	
-	
-	@Test
-	public void invalidFieldCodGender() {
-		initializeInvalidFieldCodGender();
-		model.executeRequest();
-		Response response = model.getResponse();
-		assertTrue(response.getStatus() == Response.Status.BAD_REQUEST.getStatusCode());
-		
-		String responseBody = "{\"selectCode\":1169,\"selectMessage\":\"Gender not found on DB\",\"results\":{}}";
-		assertTrue(response.getEntity().equals(responseBody));		
-	}
-		
-	
-	
-	protected void initializeInvalidFieldCodGender() {
-		PowerMockito.when(DbConnection.getConnection()).thenReturn(invalidGenderConn);
 		model = new CusModelUpdate(incomingDataOrdinaryUsage());
 	}
 }

@@ -30,12 +30,22 @@ import br.com.gda.model.Model;
 @RunWith(PowerMockRunner.class)
 public class EmpModelInsertTest {
 	@Mock private Connection insertConn;
-	@Mock private Connection cpfAlreadyExistConn;
-	@Mock private Connection invalidConn;
 	@Mock private PreparedStatement insertStmt;
-	@Mock private PreparedStatement cpfAlreadyExistStmt;
 	@Mock private ResultSet insertRs;
+	
+	@Mock private Connection cpfAlreadyExistConn;
+	@Mock private PreparedStatement cpfAlreadyExistStmt;
 	@Mock private ResultSet cpfAlreadyExistRs;
+	
+	@Mock private Connection invalidGenderConn;
+	@Mock private PreparedStatement invalidGenderStmt;
+	@Mock private ResultSet invalidGenderRs;
+	
+	@Mock private Connection invalidOwnerConn;
+	@Mock private PreparedStatement invalidOwnerStmt;
+	@Mock private ResultSet invalidOwnerRs;
+	
+	@Mock private Connection invalidConn;
 	
 	private Model model;
 	
@@ -48,6 +58,8 @@ public class EmpModelInsertTest {
 		initializeScenarioInsert();
 		initializeScenarioCpf();
 		initializeScenarioInvalidConnection();
+		initializeScenarioInvalidGender();
+		initializeScenarioInvalidOwner();
 	}
 	
 	
@@ -61,7 +73,11 @@ public class EmpModelInsertTest {
 		when(insertStmt.executeUpdate()).thenReturn(1);
 		
 		when(insertStmt.executeQuery()).thenReturn(insertRs);
-		when(insertRs.next()).thenReturn(false).thenReturn(false).thenReturn(true).thenReturn(true).thenReturn(true).thenReturn(false);
+		when(insertRs.next()).thenReturn(true).thenReturn(true).thenReturn(false)	// Check Owner
+		                     .thenReturn(true).thenReturn(true).thenReturn(false)	// Check Gender
+		                     .thenReturn(true).thenReturn(false)					// Check CPF already exist
+		                     .thenReturn(true)										// Insert
+		                     .thenReturn(true).thenReturn(true).thenReturn(false);	// Select
 		when(insertRs.getLong(any(String.class))).thenReturn(new Long(1));
 		when(insertRs.getInt(any(String.class))).thenReturn(new Integer(1));
 		when(insertRs.getString(any(String.class))).thenReturn(" ");
@@ -80,7 +96,9 @@ public class EmpModelInsertTest {
 		
 		
 		when(cpfAlreadyExistStmt.executeQuery()).thenReturn(cpfAlreadyExistRs);
-		when(cpfAlreadyExistRs.next()).thenReturn(false).thenReturn(true).thenReturn(false);
+		when(cpfAlreadyExistRs.next()).thenReturn(true).thenReturn(true).thenReturn(false)	// Check Owner
+							          .thenReturn(true).thenReturn(true).thenReturn(false)	// Check Gender
+								      .thenReturn(true).thenReturn(true).thenReturn(false);	// Check CPF already exist
 		when(cpfAlreadyExistRs.getLong(any(String.class))).thenReturn(new Long(1));
 		when(cpfAlreadyExistRs.getInt(any(String.class))).thenReturn(new Integer(1));
 		when(cpfAlreadyExistRs.getString(any(String.class))).thenReturn(" ");
@@ -95,10 +113,49 @@ public class EmpModelInsertTest {
 	}
 	
 	
+	
+	private void initializeScenarioInvalidGender() throws SQLException {
+		invalidGenderConn = mock(Connection.class);
+		invalidGenderStmt = mock(PreparedStatement.class);
+		invalidGenderRs = mock(ResultSet.class);
+		
+		when(invalidGenderConn.prepareStatement(any(String.class))).thenReturn(invalidGenderStmt);
+		when(invalidGenderStmt.executeUpdate()).thenReturn(1);
+		
+		when(invalidGenderStmt.executeQuery()).thenReturn(invalidGenderRs);
+		when(invalidGenderRs.next()).thenReturn(true).thenReturn(true).thenReturn(false)	// Check Owner
+							        .thenReturn(true).thenReturn(false);					// Check Gender
+		
+		when(invalidGenderRs.getLong(any(String.class))).thenReturn(new Long(1));
+		when(invalidGenderRs.getInt(any(String.class))).thenReturn(new Integer(1));
+		when(invalidGenderRs.getString(any(String.class))).thenReturn(" ");
+		when(invalidGenderRs.getTime(any(String.class))).thenReturn(Time.valueOf("11:22:33"));			
+	}
+	
+	
+	
+	private void initializeScenarioInvalidOwner() throws SQLException {
+		invalidOwnerConn = mock(Connection.class);
+		invalidOwnerStmt = mock(PreparedStatement.class);
+		invalidOwnerRs = mock(ResultSet.class);
+		
+		when(invalidOwnerConn.prepareStatement(any(String.class))).thenReturn(invalidOwnerStmt);
+		when(invalidOwnerStmt.executeUpdate()).thenReturn(1);
+		
+		when(invalidOwnerStmt.executeQuery()).thenReturn(invalidOwnerRs);
+		when(invalidOwnerRs.next()).thenReturn(true).thenReturn(false);	// Check Owner
+
+		when(invalidOwnerRs.getLong(any(String.class))).thenReturn(new Long(1));
+		when(invalidOwnerRs.getInt(any(String.class))).thenReturn(new Integer(1));
+		when(invalidOwnerRs.getString(any(String.class))).thenReturn(" ");
+		when(invalidOwnerRs.getTime(any(String.class))).thenReturn(Time.valueOf("11:22:33"));		
+	}
+	
+	
 		
 	@Test
-	public void insertNewEmp() {
-		initializeInsertNewEmp();
+	public void insertNewRecord() {
+		initializeInsertNewRecord();
 		model.executeRequest();
 		Response response = model.getResponse();
 		assertTrue(response.getStatus() == Response.Status.OK.getStatusCode());
@@ -109,7 +166,7 @@ public class EmpModelInsertTest {
 		
 	
 	
-	protected void initializeInsertNewEmp() {
+	protected void initializeInsertNewRecord() {
 		PowerMockito.when(DbConnection.getConnection()).thenReturn(insertConn);
 		model = new EmpModelInsert(incomingDataOrdinaryUsage());
 	}
@@ -195,8 +252,8 @@ public class EmpModelInsertTest {
 	
 	
 	@Test
-	public void missingFieldcodOwner() {
-		initializeMissingFieldcodOwner();
+	public void missingFieldCodOwner() {
+		initializeMissingFieldCodOwner();
 		model.executeRequest();
 		Response response = model.getResponse();
 		assertTrue(response.getStatus() == Response.Status.BAD_REQUEST.getStatusCode());
@@ -207,7 +264,7 @@ public class EmpModelInsertTest {
 	
 		
 	
-	protected void initializeMissingFieldcodOwner() {
+	protected void initializeMissingFieldCodOwner() {
 		PowerMockito.when(DbConnection.getConnection()).thenReturn(insertConn);		
 		model = new EmpModelInsert(incomingDataMissingFieldName());
 	}	
@@ -221,8 +278,8 @@ public class EmpModelInsertTest {
 	
 	
 	@Test
-	public void passingFieldCodEmployee() {
-		initializePassingFieldCodEmployee();
+	public void fieldCodEmployee() {
+		initializeFieldCodEmployee();
 		model.executeRequest();
 		Response response = model.getResponse();
 		assertTrue(response.getStatus() == Response.Status.BAD_REQUEST.getStatusCode());
@@ -233,7 +290,7 @@ public class EmpModelInsertTest {
 	
 		
 	
-	protected void initializePassingFieldCodEmployee() {
+	protected void initializeFieldCodEmployee() {
 		PowerMockito.when(DbConnection.getConnection()).thenReturn(insertConn);		
 		model = new EmpModelInsert(incomingDataPassingFieldCodEmployee());
 	}	
@@ -289,4 +346,64 @@ public class EmpModelInsertTest {
 		PowerMockito.when(DbConnection.getConnection()).thenReturn(invalidConn);
 		model = new EmpModelInsert(incomingDataOrdinaryUsage());
 	}
+	
+	
+	
+	@Test
+	public void invalidFieldCodGender() {
+		initializeInvalidFieldCodGender();
+		model.executeRequest();
+		Response response = model.getResponse();
+		assertTrue(response.getStatus() == Response.Status.BAD_REQUEST.getStatusCode());
+		
+		String responseBody = "{\"selectCode\":1169,\"selectMessage\":\"Gender not found on DB\",\"results\":{}}";
+		assertTrue(response.getEntity().equals(responseBody));		
+	}
+		
+	
+	
+	protected void initializeInvalidFieldCodGender() {
+		PowerMockito.when(DbConnection.getConnection()).thenReturn(invalidGenderConn);
+		model = new EmpModelInsert(incomingDataOrdinaryUsage());
+	}
+	
+	
+	
+	@Test
+	public void invalidFieldCodOwner() {
+		initializeInvalidFieldCodOwner();
+		model.executeRequest();
+		Response response = model.getResponse();
+		assertTrue(response.getStatus() == Response.Status.BAD_REQUEST.getStatusCode());
+		
+		String responseBody = "{\"selectCode\":1251,\"selectMessage\":\"Owner data not found on DB\",\"results\":{}}";
+		assertTrue(response.getEntity().equals(responseBody));		
+	}
+		
+	
+	
+	protected void initializeInvalidFieldCodOwner() {
+		PowerMockito.when(DbConnection.getConnection()).thenReturn(invalidOwnerConn);
+		model = new EmpModelInsert(incomingDataOrdinaryUsage());
+	}
+	
+	
+	
+	@Test
+	public void nullArgument() {
+		initializeNullArgument();
+		model.executeRequest();
+		Response response = model.getResponse();
+		assertTrue(response.getStatus() == Response.Status.BAD_REQUEST.getStatusCode());
+		
+		String responseBody = "{\"selectCode\":400,\"selectMessage\":\"IllegalArgument: mandatory argument might be missing or invalid value was passed\",\"results\":{}}";
+		assertTrue(response.getEntity().equals(responseBody));		
+	}
+		
+	
+	
+	protected void initializeNullArgument() {
+		PowerMockito.when(DbConnection.getConnection()).thenReturn(insertConn);
+		model = new EmpModelInsert(null);
+	}	
 }
