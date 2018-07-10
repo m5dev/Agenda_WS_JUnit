@@ -32,31 +32,43 @@ import br.com.gda.model.Model;
 @RunWith(PowerMockRunner.class)
 public class MatEmpModelInsertTest {
 	@Mock private Connection insertSoftDeletedConn;
-	@Mock private Connection insertNewConn;
-	@Mock private Connection invalidStoreEmpConn;
-	@Mock private Connection invalidStoreConn;
-	@Mock private Connection invalidMatConn;
-	@Mock private Connection invalidEmpConn;
-	@Mock private Connection invalidOwnerConn;
-	@Mock private Connection alreadyExistConn;
-	@Mock private Connection invalidConn;
-	@Mock private PreparedStatement insertNewStmt;
-	@Mock private PreparedStatement invalidStoreEmpStmt;
-	@Mock private PreparedStatement invalidStoreStmt;
-	@Mock private PreparedStatement invalidMatStmt;
-	@Mock private PreparedStatement invalidEmpStmt;
-	@Mock private PreparedStatement invalidOwnerStmt;
 	@Mock private PreparedStatement insertSoftDeletedStmt;
-	@Mock private PreparedStatement alreadyExistStmt;
-	@Mock private PreparedStatement invalidStmt;
 	@Mock private ResultSet insertSoftDeletedRs;
+	
+	@Mock private Connection insertNewConn;
+	@Mock private PreparedStatement insertNewStmt;
 	@Mock private ResultSet insertNewRs;
+	
+	@Mock private Connection invalidStoreEmpConn;
+	@Mock private PreparedStatement invalidStoreEmpStmt;
 	@Mock private ResultSet invalidStoreEmpRs;
+	
+	@Mock private Connection invalidMatStoreConn;
+	@Mock private PreparedStatement invalidMatStoreStmt;
+	@Mock private ResultSet invalidMatStoreRs;
+	
+	@Mock private Connection invalidStoreConn;
+	@Mock private PreparedStatement invalidStoreStmt;
 	@Mock private ResultSet invalidStoreRs;
+	
+	@Mock private Connection invalidMatConn;
+	@Mock private PreparedStatement invalidMatStmt;
 	@Mock private ResultSet invalidMatRs;
+	
+	@Mock private Connection invalidEmpConn;
+	@Mock private PreparedStatement invalidEmpStmt;
 	@Mock private ResultSet invalidEmpRs;
+	
+	@Mock private Connection invalidOwnerConn;
+	@Mock private PreparedStatement invalidOwnerStmt;
 	@Mock private ResultSet invalidOwnerRs;
+	
+	@Mock private Connection alreadyExistConn;
+	@Mock private PreparedStatement alreadyExistStmt;
 	@Mock private ResultSet alreadyExistRs;
+	
+	@Mock private Connection invalidConn;
+	@Mock private PreparedStatement invalidStmt;	
 	@Mock private ResultSet invalidRs;
 	
 	private Model model;
@@ -70,6 +82,7 @@ public class MatEmpModelInsertTest {
 		initializeScenarioInsertNew();
 		initializeScenarioInsertSoftDeleted();
 		initializeScenarioInvalidStoreEmp();
+		initializeScenarioInvalidMatStore();
 		initializeScenarioInvalidMat();
 		initializeScenarioInvalidEmp();
 		initializeScenarioInvalidStore();
@@ -94,6 +107,7 @@ public class MatEmpModelInsertTest {
 		                        .thenReturn(true).thenReturn(true).thenReturn(false)	//CheckEmp
 		                        .thenReturn(true).thenReturn(true).thenReturn(false)	//CheckMat
 		                        .thenReturn(true).thenReturn(true).thenReturn(false)	//CheckStoreEmp
+		                        .thenReturn(true).thenReturn(true).thenReturn(false)	//CheckMatStore
 		                        .thenReturn(true).thenReturn(false)						//CheckExist
 		                        .thenReturn(true).thenReturn(false)						//CheckSoftDeleted
 		                        														//Insert
@@ -120,6 +134,7 @@ public class MatEmpModelInsertTest {
 		                        		.thenReturn(true).thenReturn(true).thenReturn(false)	//CheckEmp
 		                        		.thenReturn(true).thenReturn(true).thenReturn(false)	//CheckMat
 		                        		.thenReturn(true).thenReturn(true).thenReturn(false)	//CheckStoreEmp
+		                        		.thenReturn(true).thenReturn(true).thenReturn(false)	//CheckMatStore
 		                        		.thenReturn(true).thenReturn(false)						//CheckExist
 		                        		.thenReturn(true).thenReturn(true).thenReturn(false)	//CheckSoftDeleted
 		                        																//Update
@@ -151,6 +166,29 @@ public class MatEmpModelInsertTest {
 		when(invalidStoreEmpRs.getInt(any(String.class))).thenReturn(new Integer(1));
 		when(invalidStoreEmpRs.getString(any(String.class))).thenReturn(" ");
 		when(invalidStoreEmpRs.getTime(any(String.class))).thenReturn(Time.valueOf("11:22:33"));		
+	}
+	
+	
+	
+	private void initializeScenarioInvalidMatStore() throws SQLException {
+		invalidMatStoreConn = mock(Connection.class);
+		invalidMatStoreStmt = mock(PreparedStatement.class);
+		invalidMatStoreRs = mock(ResultSet.class);
+		
+		when(invalidMatStoreConn.prepareStatement(any(String.class))).thenReturn(invalidMatStoreStmt);
+		when(invalidMatStoreStmt.executeUpdate()).thenReturn(1);
+		
+		when(invalidMatStoreStmt.executeQuery()).thenReturn(invalidMatStoreRs);
+		when(invalidMatStoreRs.next()).thenReturn(true).thenReturn(true).thenReturn(false)	//CheckOwner
+		                        	  .thenReturn(true).thenReturn(true).thenReturn(false)	//CheckStore
+		                        	  .thenReturn(true).thenReturn(true).thenReturn(false)	//CheckEmp
+		                        	  .thenReturn(true).thenReturn(true).thenReturn(false)	//CheckMat
+		                        	  .thenReturn(true).thenReturn(true).thenReturn(false)	//CheckStoreEmp
+		                        	  .thenReturn(true).thenReturn(false);					//CheckMatStore
+		when(invalidMatStoreRs.getLong(any(String.class))).thenReturn(new Long(1));
+		when(invalidMatStoreRs.getInt(any(String.class))).thenReturn(new Integer(1));
+		when(invalidMatStoreRs.getString(any(String.class))).thenReturn(" ");
+		when(invalidMatStoreRs.getTime(any(String.class))).thenReturn(Time.valueOf("11:22:33"));		
 	}
 	
 	
@@ -246,12 +284,13 @@ public class MatEmpModelInsertTest {
 		when(alreadyExistStmt.executeUpdate()).thenReturn(1);
 		
 		when(alreadyExistStmt.executeQuery()).thenReturn(alreadyExistRs);
-		when(alreadyExistRs.next()).thenReturn(true).thenReturn(true).thenReturn(false)	//CheckOwner
-		                        .thenReturn(true).thenReturn(true).thenReturn(false)	//CheckStore
-		                        .thenReturn(true).thenReturn(true).thenReturn(false)	//CheckEmp
-		                        .thenReturn(true).thenReturn(true).thenReturn(false)	//CheckMat
-		                        .thenReturn(true).thenReturn(true).thenReturn(false)	//CheckStoreEmp
-		                        .thenReturn(true).thenReturn(true).thenReturn(false);	//CheckExist
+		when(alreadyExistRs.next()).thenReturn(true).thenReturn(true).thenReturn(false)		//CheckOwner
+		                           .thenReturn(true).thenReturn(true).thenReturn(false)		//CheckStore
+		                           .thenReturn(true).thenReturn(true).thenReturn(false)		//CheckEmp
+		                           .thenReturn(true).thenReturn(true).thenReturn(false)		//CheckMat
+		                           .thenReturn(true).thenReturn(true).thenReturn(false)		//CheckStoreEmp
+		                           .thenReturn(true).thenReturn(true).thenReturn(false)		//CheckMatStore
+		                           .thenReturn(true).thenReturn(true).thenReturn(false);	//CheckExist
 		when(alreadyExistRs.getLong(any(String.class))).thenReturn(new Long(1));
 		when(alreadyExistRs.getInt(any(String.class))).thenReturn(new Integer(1));
 		when(alreadyExistRs.getString(any(String.class))).thenReturn(" ");
@@ -281,7 +320,7 @@ public class MatEmpModelInsertTest {
 		Response response = model.getResponse();
 		assertTrue(response.getStatus() == Response.Status.OK.getStatusCode());
 		
-		String responseBody = "{\"selectCode\":200,\"selectMessage\":\"The list was returned successfully\",\"results\":[{\"codOwner\":1,\"codStore\":1,\"codEmployee\":1,\"codMat\":1,\"codLanguage\":\"PT\"}]}";
+		String responseBody = "{\"selectCode\":200,\"selectMessage\":\"The list was returned successfully\",\"results\":[{\"codOwner\":1,\"codStore\":1,\"codEmployee\":1,\"codMat\":1,\"codType\":-1,\"codCategory\":-1,\"priceUnit\":-1,\"codLanguage\":\" \"}]}";
 		assertTrue(response.getEntity().equals(responseBody));		
 	}
 		
@@ -321,8 +360,8 @@ public class MatEmpModelInsertTest {
 	
 	
 	@Test
-	public void invalidFieldStoreEmp() {
-		initializeInvalidFieldStoreEmp();
+	public void invalidStoreEmp() {
+		initializeInvalidStoreEmp();
 		model.executeRequest();
 		Response response = model.getResponse();
 		assertTrue(response.getStatus() == Response.Status.BAD_REQUEST.getStatusCode());
@@ -333,7 +372,7 @@ public class MatEmpModelInsertTest {
 		
 	
 	
-	protected void initializeInvalidFieldStoreEmp() {
+	protected void initializeInvalidStoreEmp() {
 		PowerMockito.when(DbConnection.getConnection()).thenReturn(invalidStoreEmpConn);
 		model = new MatEmpModelInsert(incomingDataOrdinaryUsage());
 	}
@@ -341,8 +380,8 @@ public class MatEmpModelInsertTest {
 	
 	
 	@Test
-	public void invalidFieldMaterial() {
-		initializeInvalidFieldMaterial();
+	public void invalidFieldCodMaterial() {
+		initializeInvalidFieldCodMaterial();
 		model.executeRequest();
 		Response response = model.getResponse();
 		assertTrue(response.getStatus() == Response.Status.BAD_REQUEST.getStatusCode());
@@ -353,7 +392,7 @@ public class MatEmpModelInsertTest {
 		
 	
 	
-	protected void initializeInvalidFieldMaterial() {
+	protected void initializeInvalidFieldCodMaterial() {
 		PowerMockito.when(DbConnection.getConnection()).thenReturn(invalidMatConn);
 		model = new MatEmpModelInsert(incomingDataOrdinaryUsage());
 	}
@@ -361,8 +400,8 @@ public class MatEmpModelInsertTest {
 	
 	
 	@Test
-	public void invalidFieldEmployee() {
-		initializeInvalidFieldEmployee();
+	public void invalidFieldCodEmployee() {
+		initializeInvalidFieldCodEmployee();
 		model.executeRequest();
 		Response response = model.getResponse();
 		assertTrue(response.getStatus() == Response.Status.BAD_REQUEST.getStatusCode());
@@ -373,7 +412,7 @@ public class MatEmpModelInsertTest {
 		
 	
 	
-	protected void initializeInvalidFieldEmployee() {
+	protected void initializeInvalidFieldCodEmployee() {
 		PowerMockito.when(DbConnection.getConnection()).thenReturn(invalidEmpConn);
 		model = new MatEmpModelInsert(incomingDataOrdinaryUsage());
 	}
@@ -381,8 +420,8 @@ public class MatEmpModelInsertTest {
 	
 	
 	@Test
-	public void invalidFieldStore() {
-		initializeInvalidFieldStore();
+	public void invalidFieldCodStore() {
+		initializeInvalidFieldCodStore();
 		model.executeRequest();
 		Response response = model.getResponse();
 		assertTrue(response.getStatus() == Response.Status.BAD_REQUEST.getStatusCode());
@@ -393,7 +432,7 @@ public class MatEmpModelInsertTest {
 		
 	
 	
-	protected void initializeInvalidFieldStore() {
+	protected void initializeInvalidFieldCodStore() {
 		PowerMockito.when(DbConnection.getConnection()).thenReturn(invalidStoreConn);
 		model = new MatEmpModelInsert(incomingDataOrdinaryUsage());
 	}
@@ -401,8 +440,8 @@ public class MatEmpModelInsertTest {
 	
 	
 	@Test
-	public void invalidFieldOwner() {
-		initializeInvalidFieldOwner();
+	public void invalidFieldCodOwner() {
+		initializeInvalidFieldCodOwner();
 		model.executeRequest();
 		Response response = model.getResponse();
 		assertTrue(response.getStatus() == Response.Status.BAD_REQUEST.getStatusCode());
@@ -413,7 +452,7 @@ public class MatEmpModelInsertTest {
 		
 	
 	
-	protected void initializeInvalidFieldOwner() {
+	protected void initializeInvalidFieldCodOwner() {
 		PowerMockito.when(DbConnection.getConnection()).thenReturn(invalidOwnerConn);
 		model = new MatEmpModelInsert(incomingDataOrdinaryUsage());
 	}
@@ -427,7 +466,7 @@ public class MatEmpModelInsertTest {
 		Response response = model.getResponse();
 		assertTrue(response.getStatus() == Response.Status.OK.getStatusCode());
 		
-		String responseBody = "{\"selectCode\":200,\"selectMessage\":\"The list was returned successfully\",\"results\":[{\"codOwner\":1,\"codStore\":1,\"codEmployee\":1,\"codMat\":1,\"codLanguage\":\"PT\"}]}";
+		String responseBody = "{\"selectCode\":200,\"selectMessage\":\"The list was returned successfully\",\"results\":[{\"codOwner\":1,\"codStore\":1,\"codEmployee\":1,\"codMat\":1,\"codType\":-1,\"codCategory\":-1,\"priceUnit\":-1,\"codLanguage\":\" \"}]}";
 		assertTrue(response.getEntity().equals(responseBody));		
 	}
 		
@@ -579,6 +618,26 @@ public class MatEmpModelInsertTest {
 	
 	protected void initializeInvalidConnection() {
 		PowerMockito.when(DbConnection.getConnection()).thenReturn(invalidConn);
+		model = new MatEmpModelInsert(incomingDataOrdinaryUsage());
+	}
+	
+	
+	
+	@Test
+	public void invalidMatStore() {
+		initializeInvalidMatStore();
+		model.executeRequest();
+		Response response = model.getResponse();
+		assertTrue(response.getStatus() == Response.Status.BAD_REQUEST.getStatusCode());
+		
+		String responseBody = "{\"selectCode\":1119,\"selectMessage\":\"Store's material data not found on DB\",\"results\":{}}";
+		assertTrue(response.getEntity().equals(responseBody));		
+	}
+		
+	
+	
+	protected void initializeInvalidMatStore() {
+		PowerMockito.when(DbConnection.getConnection()).thenReturn(invalidMatStoreConn);
 		model = new MatEmpModelInsert(incomingDataOrdinaryUsage());
 	}
 }

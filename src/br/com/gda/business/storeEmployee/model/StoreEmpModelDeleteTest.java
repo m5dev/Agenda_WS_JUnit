@@ -73,6 +73,7 @@ public class StoreEmpModelDeleteTest {
 		
 		when(deleteStmt.executeQuery()).thenReturn(deleteRs);		
 		when(deleteRs.next()).thenReturn(true).thenReturn(true).thenReturn(false);
+		
 	}
 	
 	

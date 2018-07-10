@@ -29,16 +29,23 @@ import br.com.gda.model.Model;
 @PrepareForTest({DbConnection.class})
 @RunWith(PowerMockRunner.class)
 public class StoreEmpModelInsertTest {
-	@Mock private Connection insertSoftDeletedConn;
 	@Mock private Connection insertConn;
-	@Mock private Connection storeEmpAlreadyExistConn;
-	@Mock private Connection invalidConn;
 	@Mock private PreparedStatement insertStmt;
-	@Mock private PreparedStatement insertSoftDeletedStmt;
-	@Mock private PreparedStatement storeEmpAlreadyExistStmt;
-	@Mock private ResultSet insertSoftDeletedRs;
 	@Mock private ResultSet insertRs;
+	
+	@Mock private Connection storeEmpAlreadyExistConn;	
 	@Mock private ResultSet storeEmpAlreadyExistRs;
+	@Mock private PreparedStatement storeEmpAlreadyExistStmt;
+	
+	@Mock private Connection invalidConn;	
+	
+	@Mock private Connection insertSoftDeletedConn;
+	@Mock private ResultSet insertSoftDeletedRs;
+	@Mock private PreparedStatement insertSoftDeletedStmt;
+	
+	@Mock private Connection ewtConflictConn;
+	@Mock private PreparedStatement ewtConflictStmt;
+	@Mock private ResultSet ewtConflictRs;	
 	
 	private Model model;
 	
@@ -49,6 +56,7 @@ public class StoreEmpModelInsertTest {
 		PowerMockito.mockStatic(DbConnection.class);
 		
 		initializeScenarioInsert();
+		initializeScenarioEwtConflict();
 		initializeScenarioInsertSoftDeleted();
 		initializeScenarioStoreEmpAlreadyExist();
 		initializeScenarioInvalidConnection();
@@ -65,17 +73,63 @@ public class StoreEmpModelInsertTest {
 		when(insertStmt.executeUpdate()).thenReturn(1);
 		
 		when(insertStmt.executeQuery()).thenReturn(insertRs);
-		when(insertRs.next()).thenReturn(true).thenReturn(false)
-		                     .thenReturn(true).thenReturn(true).thenReturn(false)
-		                     .thenReturn(true).thenReturn(true).thenReturn(false)
-		                     .thenReturn(true).thenReturn(true).thenReturn(false)
-		                     .thenReturn(true).thenReturn(false)
-		                     .thenReturn(true)
-		                     .thenReturn(true).thenReturn(true).thenReturn(false);
+		when(insertRs.next()).thenReturn(true).thenReturn(false)					// SE  - Already exist
+		                     .thenReturn(true).thenReturn(true).thenReturn(false)	// SE  - Check EmpPos
+		                     .thenReturn(true).thenReturn(true).thenReturn(false)	// SE  - Check Store
+		                     .thenReturn(true).thenReturn(true).thenReturn(false)	// SE  - Check Emp
+		                     .thenReturn(true).thenReturn(false)					// SE  - Check soft deleted
+		                     .thenReturn(true)										// SE  - Insert
+		                     .thenReturn(true).thenReturn(true).thenReturn(false)	// SE  - Check Store Work Time
+		                     .thenReturn(true).thenReturn(true).thenReturn(false)	// SWT - Select
+		                     .thenReturn(true).thenReturn(true).thenReturn(false)	// EWT - Check Owner
+		                     .thenReturn(true).thenReturn(true).thenReturn(false)	// EWT - Check Emp
+		                     .thenReturn(true).thenReturn(true).thenReturn(false)	// EWT - Check Store
+		                     .thenReturn(true).thenReturn(true).thenReturn(false)	// EWT - Check Weekday
+		                     .thenReturn(true).thenReturn(true).thenReturn(false)	// EWT - Check StoreEmp
+		                     .thenReturn(true).thenReturn(false)					// EWT - Check already exist
+		                     .thenReturn(true).thenReturn(true).thenReturn(false)	// EWT - Check Store Time
+		                     .thenReturn(true).thenReturn(false)					// EWT - Check conflict
+		                     .thenReturn(true).thenReturn(false)					// EWT - Check soft deleted
+		                     .thenReturn(true)										// EWT - Insert
+		                     .thenReturn(true).thenReturn(true).thenReturn(false)	// EWT - Select		                     
+		                     .thenReturn(true).thenReturn(true).thenReturn(false);	// SE  - Select
 		when(insertRs.getLong(any(String.class))).thenReturn(new Long(1));
 		when(insertRs.getInt(any(String.class))).thenReturn(new Integer(1));
 		when(insertRs.getString(any(String.class))).thenReturn(" ");
 		when(insertRs.getTime(any(String.class))).thenReturn(Time.valueOf("11:22:33"));		
+	}
+	
+	
+	
+	private void initializeScenarioEwtConflict() throws SQLException {
+		ewtConflictConn = mock(Connection.class);
+		ewtConflictStmt = mock(PreparedStatement.class);
+		ewtConflictRs = mock(ResultSet.class);
+		
+		when(ewtConflictConn.prepareStatement(any(String.class))).thenReturn(ewtConflictStmt);
+		when(ewtConflictStmt.executeUpdate()).thenReturn(1);
+		
+		when(ewtConflictStmt.executeQuery()).thenReturn(ewtConflictRs);
+		when(ewtConflictRs.next()).thenReturn(true).thenReturn(false)					// SE  - Already exist
+		 	                      .thenReturn(true).thenReturn(true).thenReturn(false)	// SE  - Check EmpPos
+			                      .thenReturn(true).thenReturn(true).thenReturn(false)	// SE  - Check Store
+			                      .thenReturn(true).thenReturn(true).thenReturn(false)	// SE  - Check Emp
+			                      .thenReturn(true).thenReturn(false)					// SE  - Check soft deleted
+			                      .thenReturn(true)										// SE  - Insert
+			                      .thenReturn(true).thenReturn(true).thenReturn(false)	// SE  - Check Store Work Time
+			                      .thenReturn(true).thenReturn(true).thenReturn(false)	// SWT - Select
+			                      .thenReturn(true).thenReturn(true).thenReturn(false)	// EWT - Check Owner
+			                      .thenReturn(true).thenReturn(true).thenReturn(false)	// EWT - Check Emp
+			                      .thenReturn(true).thenReturn(true).thenReturn(false)	// EWT - Check Store
+			                      .thenReturn(true).thenReturn(true).thenReturn(false)	// EWT - Check Weekday
+			                      .thenReturn(true).thenReturn(true).thenReturn(false)	// EWT - Check StoreEmp
+			                      .thenReturn(true).thenReturn(false)					// EWT - Check already exist
+			                      .thenReturn(true).thenReturn(true).thenReturn(false)	// EWT - Check Store Time
+			                      .thenReturn(true).thenReturn(true).thenReturn(false);	// EWT - Check conflict
+		when(ewtConflictRs.getLong(any(String.class))).thenReturn(new Long(1));
+		when(ewtConflictRs.getInt(any(String.class))).thenReturn(new Integer(1));
+		when(ewtConflictRs.getString(any(String.class))).thenReturn(" ");
+		when(ewtConflictRs.getTime(any(String.class))).thenReturn(Time.valueOf("11:22:33"));		
 	}
 	
 	
@@ -89,12 +143,25 @@ public class StoreEmpModelInsertTest {
 		when(insertSoftDeletedStmt.executeUpdate()).thenReturn(1);
 		
 		when(insertSoftDeletedStmt.executeQuery()).thenReturn(insertSoftDeletedRs);
-		when(insertSoftDeletedRs.next()).thenReturn(true).thenReturn(false)
-								        .thenReturn(true).thenReturn(true).thenReturn(false)
-								        .thenReturn(true).thenReturn(true).thenReturn(false)
-								        .thenReturn(true).thenReturn(true).thenReturn(false)
-								        .thenReturn(true).thenReturn(true).thenReturn(false)
-					                    .thenReturn(true).thenReturn(true).thenReturn(false);
+		when(insertSoftDeletedRs.next()).thenReturn(true).thenReturn(false)						// SE  - Already exist
+								        .thenReturn(true).thenReturn(true).thenReturn(false)	// SE  - Check EmpPos
+								        .thenReturn(true).thenReturn(true).thenReturn(false)	// SE  - Check Store
+								        .thenReturn(true).thenReturn(true).thenReturn(false)	// SE  - Check Emp
+								        .thenReturn(true).thenReturn(true).thenReturn(false)	// SE  - Check soft deleted
+								        .thenReturn(true).thenReturn(true).thenReturn(false)	// SE  - Check Store Work Time
+								        .thenReturn(true).thenReturn(true).thenReturn(false)	// SWT - Select
+								        .thenReturn(true).thenReturn(true).thenReturn(false)	// EWT - Check Owner
+								        .thenReturn(true).thenReturn(true).thenReturn(false)	// EWT - Check Emp
+								        .thenReturn(true).thenReturn(true).thenReturn(false)	// EWT - Check Store
+								        .thenReturn(true).thenReturn(true).thenReturn(false)	// EWT - Check Weekday
+								        .thenReturn(true).thenReturn(true).thenReturn(false)	// EWT - Check StoreEmp
+								        .thenReturn(true).thenReturn(false)						// EWT - Check already exist
+								        .thenReturn(true).thenReturn(true).thenReturn(false)	// EWT - Check Store Time
+								        .thenReturn(true).thenReturn(false)						// EWT - Check conflict
+								        .thenReturn(true).thenReturn(false)						// EWT - Check soft deleted
+								        .thenReturn(true)										// EWT - Insert
+								        .thenReturn(true).thenReturn(true).thenReturn(false)	// EWT - Select		                     
+								        .thenReturn(true).thenReturn(true).thenReturn(false);	// SE  - Select
 		when(insertSoftDeletedRs.getLong(any(String.class))).thenReturn(new Long(1));
 		when(insertSoftDeletedRs.getInt(any(String.class))).thenReturn(new Integer(1));
 		when(insertSoftDeletedRs.getString(any(String.class))).thenReturn(" ");
@@ -130,8 +197,8 @@ public class StoreEmpModelInsertTest {
 	
 	
 	@Test
-	public void insertStoreEmp() {
-		initializeInsertStoreEmp();
+	public void insertNewRecord() {
+		initializeInsertNewRecord();
 		model.executeRequest();
 		Response response = model.getResponse();
 		assertTrue(response.getStatus() == Response.Status.OK.getStatusCode());
@@ -142,8 +209,28 @@ public class StoreEmpModelInsertTest {
 		
 	
 	
-	protected void initializeInsertStoreEmp() {
+	protected void initializeInsertNewRecord() {
 		PowerMockito.when(DbConnection.getConnection()).thenReturn(insertConn);
+		model = new StoreEmpModelInsert(incomingDataOrdinaryUsage());
+	}
+	
+	
+	
+	@Test
+	public void ewtConflict() {
+		initializeEwtConflict();
+		model.executeRequest();
+		Response response = model.getResponse();
+		assertTrue(response.getStatus() == Response.Status.BAD_REQUEST.getStatusCode());
+		
+		String responseBody = "{\"selectCode\":1003,\"selectMessage\":\"Employee's working time range conflict\",\"results\":{}}";
+		assertTrue(response.getEntity().equals(responseBody));		
+	}
+		
+	
+	
+	protected void initializeEwtConflict() {
+		PowerMockito.when(DbConnection.getConnection()).thenReturn(ewtConflictConn);
 		model = new StoreEmpModelInsert(incomingDataOrdinaryUsage());
 	}
 	
@@ -170,7 +257,8 @@ public class StoreEmpModelInsertTest {
 	
 	
 	protected String incomingDataOrdinaryUsage() {
-		return "[{\"codOwner\": 8,\"codStore\": 15,\"codEmployee\": 64,\"codPositionStore\": 4}]";
+		return "[{\"codOwner\": 1,\"codStore\": 1,\"codEmployee\": 1,\"codPositionStore\": 1}]";
+		//return "[{\"codOwner\": 8,\"codStore\": 15,\"codEmployee\": 64,\"codPositionStore\": 4}]";
 	}
 	
 	

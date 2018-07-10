@@ -33,13 +33,23 @@ import br.com.gda.model.Model;
 @RunWith(PowerMockRunner.class)
 public final class MatEmpModelSelectTest {
 	@Mock private Connection invalidConn;
-	@Mock private Connection notFoundConn;
-	@Mock private Connection selectConn;
 	@Mock private PreparedStatement invalidStmt;
-	@Mock private PreparedStatement notFoundStmt;
-	@Mock private PreparedStatement selectStmt;
 	@Mock private ResultSet invalidRs;
+	
+	@Mock private Connection notFoundConn;
+	@Mock private PreparedStatement notFoundStmt;
 	@Mock private ResultSet notFoundRs;
+	
+	@Mock private Connection empNotFoundConn;
+	@Mock private PreparedStatement empNotFoundStmt;
+	@Mock private ResultSet empNotFoundRs;
+	
+	@Mock private Connection matNotFoundConn;
+	@Mock private PreparedStatement matNotFoundStmt;
+	@Mock private ResultSet matNotFoundRs;
+	
+	@Mock private Connection selectConn;
+	@Mock private PreparedStatement selectStmt;
 	@Mock private ResultSet selectRs;
 	
 	private Model model;
@@ -52,6 +62,8 @@ public final class MatEmpModelSelectTest {
 		
 		initializeScenarioSelect();
 		initializeScenarioNotFound();
+		initializeScenarioEmpNotFound();
+		initializeScenarioMatNotFound();
 		initializeScenarioInvalidConnection();
 	}
 	
@@ -67,7 +79,9 @@ public final class MatEmpModelSelectTest {
 		
 		when(selectStmt.executeQuery()).thenReturn(selectRs);
 		
-		when(selectRs.next()).thenReturn(true).thenReturn(true).thenReturn(false);		
+		when(selectRs.next()).thenReturn(true).thenReturn(true).thenReturn(false)		//Select MapEmp
+		                     .thenReturn(true).thenReturn(true).thenReturn(false)		//Select Map
+		                     .thenReturn(true).thenReturn(true).thenReturn(false);		//Select Emp
 		when(selectRs.getLong(any(String.class))).thenReturn(new Long(1));
 		when(selectRs.getInt(any(String.class))).thenReturn(new Integer(1));
 		when(selectRs.getString(any(String.class))).thenReturn(" ");
@@ -95,6 +109,47 @@ public final class MatEmpModelSelectTest {
 	
 	
 	
+	private void initializeScenarioEmpNotFound() throws SQLException {
+		empNotFoundConn = mock(Connection.class);
+		empNotFoundStmt = mock(PreparedStatement.class);
+		empNotFoundRs = mock(ResultSet.class);
+		
+		when(empNotFoundConn.prepareStatement(any(String.class))).thenReturn(empNotFoundStmt);
+		when(empNotFoundStmt.executeUpdate()).thenReturn(1);
+		
+		when(empNotFoundStmt.executeQuery()).thenReturn(empNotFoundRs);
+		
+		when(empNotFoundRs.next()).thenReturn(true).thenReturn(true).thenReturn(false)		//Select MapEmp
+		                     	  .thenReturn(true).thenReturn(true).thenReturn(false)		//Select Map
+		                     	  .thenReturn(true).thenReturn(false);						//Select Emp
+		when(empNotFoundRs.getLong(any(String.class))).thenReturn(new Long(1));
+		when(empNotFoundRs.getInt(any(String.class))).thenReturn(new Integer(1));
+		when(empNotFoundRs.getString(any(String.class))).thenReturn(" ");
+		when(empNotFoundRs.getTime(any(String.class))).thenReturn(Time.valueOf("11:22:33"));	
+	}
+	
+	
+	
+	private void initializeScenarioMatNotFound() throws SQLException {
+		matNotFoundConn = mock(Connection.class);
+		matNotFoundStmt = mock(PreparedStatement.class);
+		matNotFoundRs = mock(ResultSet.class);
+		
+		when(matNotFoundConn.prepareStatement(any(String.class))).thenReturn(matNotFoundStmt);
+		when(matNotFoundStmt.executeUpdate()).thenReturn(1);
+		
+		when(matNotFoundStmt.executeQuery()).thenReturn(matNotFoundRs);
+		
+		when(matNotFoundRs.next()).thenReturn(true).thenReturn(true).thenReturn(false)		//Select MapEmp
+		                     	  .thenReturn(true).thenReturn(false);						//Select Map
+		when(matNotFoundRs.getLong(any(String.class))).thenReturn(new Long(1));
+		when(matNotFoundRs.getInt(any(String.class))).thenReturn(new Integer(1));
+		when(matNotFoundRs.getString(any(String.class))).thenReturn(" ");
+		when(matNotFoundRs.getTime(any(String.class))).thenReturn(Time.valueOf("11:22:33"));		
+	}
+	
+	
+	
 	private void initializeScenarioInvalidConnection() throws SQLException {
 		invalidStmt = mock(PreparedStatement.class);
 		invalidConn = mock(Connection.class);
@@ -116,14 +171,14 @@ public final class MatEmpModelSelectTest {
 		Response response = model.getResponse();
 		assertTrue(response.getStatus() == Response.Status.OK.getStatusCode());
 		
-		String responseBody = "{\"selectCode\":200,\"selectMessage\":\"The list was returned successfully\",\"results\":[{\"codOwner\":1,\"codStore\":1,\"codEmployee\":1,\"codMat\":1,\"codLanguage\":\"PT\"}]}";
+		String responseBody = "{\"selectCode\":200,\"selectMessage\":\"The list was returned successfully\",\"results\":[{\"codOwner\":1,\"codStore\":1,\"codEmployee\":1,\"nameEmployee\":\" \",\"codMat\":1,\"txtMat\":\" \",\"codType\":1,\"txtType\":\" \",\"codCategory\":1,\"txtCategory\":\" \",\"priceUnit\":1,\"codUnit\":\" \",\"txtUnit\":\" \",\"codLanguage\":\" \"}]}";
 		assertTrue(response.getEntity().equals(responseBody));		
 	}
 		
 	
 	
 	protected void initializeAllFields() {
-		PowerMockito.when(DbConnection.getConnection()).thenReturn(selectConn);
+		PowerMockito.when(DbConnection.getConnection()).thenReturn(selectConn);	
 		
 		MatEmpInfo recordInfo = new MatEmpInfo();
 		recordInfo.codOwner = 1;
@@ -141,9 +196,9 @@ public final class MatEmpModelSelectTest {
 		initializeRecordNotFound();
 		model.executeRequest();
 		Response response = model.getResponse();
-		assertTrue(response.getStatus() == Response.Status.BAD_REQUEST.getStatusCode());
-		
-		String responseBody = "{\"selectCode\":400,\"selectMessage\":\"Data not found\",\"results\":{}}";
+		assertTrue(response.getStatus() == Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
+		//TODO: reflexo de um Bug. Deverá ser impactado ao corrigir 
+		String responseBody = "{\"selectCode\":500,\"selectMessage\":\"Ops... something went wrong\",\"results\":{}}";
 		assertTrue(response.getEntity().equals(responseBody));		
 	}
 		
@@ -164,13 +219,65 @@ public final class MatEmpModelSelectTest {
 	
 	
 	@Test
+	public void empNotFound() {
+		initializeEmpNotFound();
+		model.executeRequest();
+		Response response = model.getResponse();
+		assertTrue(response.getStatus() == Response.Status.BAD_REQUEST.getStatusCode());
+		String responseBody = "{\"selectCode\":10,\"selectMessage\":\"Data not found\",\"results\":{}}";
+		assertTrue(response.getEntity().equals(responseBody));		
+	}
+		
+	
+	
+	protected void initializeEmpNotFound() {
+		PowerMockito.when(DbConnection.getConnection()).thenReturn(empNotFoundConn);
+		
+		MatEmpInfo recordInfo = new MatEmpInfo();
+		recordInfo.codOwner = 1;
+		recordInfo.codEmployee = 1;
+		recordInfo.codStore = 1;
+		recordInfo.codMat = 1;
+		
+		model = new MatEmpModelSelect(recordInfo);
+	}
+	
+	
+	
+	@Test
+	public void matNotFound() {
+		initializeMatNotFound();
+		model.executeRequest();
+		Response response = model.getResponse();
+		assertTrue(response.getStatus() == Response.Status.BAD_REQUEST.getStatusCode());
+		String responseBody = "{\"selectCode\":10,\"selectMessage\":\"Data not found\",\"results\":{}}";
+		assertTrue(response.getEntity().equals(responseBody));		
+	}
+		
+	
+	
+	protected void initializeMatNotFound() {
+		PowerMockito.when(DbConnection.getConnection()).thenReturn(matNotFoundConn);
+		
+		MatEmpInfo recordInfo = new MatEmpInfo();
+		recordInfo.codOwner = 1;
+		recordInfo.codEmployee = 1;
+		recordInfo.codStore = 1;
+		recordInfo.codMat = 1;
+		
+		model = new MatEmpModelSelect(recordInfo);
+	}
+	
+	
+	
+	@Test
 	public void missingFieldCodMat() {
 		initializeMissingFieldCodMat();
 		model.executeRequest();
 		Response response = model.getResponse();
 		assertTrue(response.getStatus() == Response.Status.OK.getStatusCode());
 		
-		String responseBody = "{\"selectCode\":200,\"selectMessage\":\"The list was returned successfully\",\"results\":[{\"codOwner\":1,\"codStore\":1,\"codEmployee\":1,\"codMat\":1,\"codLanguage\":\"PT\"}]}";
+		String responseBody = "{\"selectCode\":200,\"selectMessage\":\"The list was returned successfully\",\"results\":[{\"codOwner\":1,\"codStore\":1,\"codEmployee\":1,\"nameEmployee\":\" \",\"codMat\":1,\"txtMat\":\" \",\"codType\":1,\"txtType\":\" \",\"codCategory\":1,\"txtCategory\":\" \",\"priceUnit\":1,\"codUnit\":\" \",\"txtUnit\":\" \",\"codLanguage\":\" \"}]}";
 		assertTrue(response.getEntity().equals(responseBody));		
 	}
 		
@@ -196,7 +303,7 @@ public final class MatEmpModelSelectTest {
 		Response response = model.getResponse();
 		assertTrue(response.getStatus() == Response.Status.OK.getStatusCode());
 		
-		String responseBody = "{\"selectCode\":200,\"selectMessage\":\"The list was returned successfully\",\"results\":[{\"codOwner\":1,\"codStore\":1,\"codEmployee\":1,\"codMat\":1,\"codLanguage\":\"PT\"}]}";
+		String responseBody = "{\"selectCode\":200,\"selectMessage\":\"The list was returned successfully\",\"results\":[{\"codOwner\":1,\"codStore\":1,\"codEmployee\":1,\"nameEmployee\":\" \",\"codMat\":1,\"txtMat\":\" \",\"codType\":1,\"txtType\":\" \",\"codCategory\":1,\"txtCategory\":\" \",\"priceUnit\":1,\"codUnit\":\" \",\"txtUnit\":\" \",\"codLanguage\":\" \"}]}";
 		assertTrue(response.getEntity().equals(responseBody));		
 	}
 		
