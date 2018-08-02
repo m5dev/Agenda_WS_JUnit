@@ -111,7 +111,9 @@ public class MatEmpModelInsertTest {
 		                        .thenReturn(true).thenReturn(false)						//CheckExist
 		                        .thenReturn(true).thenReturn(false)						//CheckSoftDeleted
 		                        														//Insert
-		                        .thenReturn(true).thenReturn(true).thenReturn(false);	//Select
+		                        .thenReturn(true).thenReturn(true).thenReturn(false)	//Select MapEmp
+						        .thenReturn(true).thenReturn(true).thenReturn(false)	//Select Map
+						        .thenReturn(true).thenReturn(true).thenReturn(false);	//Select Emp
 		when(insertNewRs.getLong(any(String.class))).thenReturn(new Long(1));
 		when(insertNewRs.getInt(any(String.class))).thenReturn(new Integer(1));
 		when(insertNewRs.getString(any(String.class))).thenReturn(" ");
@@ -138,7 +140,9 @@ public class MatEmpModelInsertTest {
 		                        		.thenReturn(true).thenReturn(false)						//CheckExist
 		                        		.thenReturn(true).thenReturn(true).thenReturn(false)	//CheckSoftDeleted
 		                        																//Update
-		                        		.thenReturn(true).thenReturn(true).thenReturn(false);	//Select
+				                        .thenReturn(true).thenReturn(true).thenReturn(false)	//Select MapEmp
+								        .thenReturn(true).thenReturn(true).thenReturn(false)	//Select Map
+								        .thenReturn(true).thenReturn(true).thenReturn(false);	//Select Emp
 		when(insertSoftDeletedRs.getLong(any(String.class))).thenReturn(new Long(1));
 		when(insertSoftDeletedRs.getInt(any(String.class))).thenReturn(new Integer(1));
 		when(insertSoftDeletedRs.getString(any(String.class))).thenReturn(" ");
@@ -320,7 +324,7 @@ public class MatEmpModelInsertTest {
 		Response response = model.getResponse();
 		assertTrue(response.getStatus() == Response.Status.OK.getStatusCode());
 		
-		String responseBody = "{\"selectCode\":200,\"selectMessage\":\"The list was returned successfully\",\"results\":[{\"codOwner\":1,\"codStore\":1,\"codEmployee\":1,\"codMat\":1,\"codType\":-1,\"codCategory\":-1,\"priceUnit\":-1,\"codLanguage\":\" \"}]}";
+		String responseBody = "{\"selectCode\":200,\"selectMessage\":\"The list was returned successfully\",\"results\":[{\"codOwner\":1,\"codStore\":1,\"codEmployee\":1,\"nameEmployee\":\" \",\"codMat\":1,\"txtMat\":\" \",\"codType\":1,\"txtType\":\" \",\"codCategory\":1,\"txtCategory\":\" \",\"priceUnit\":1,\"codUnit\":\" \",\"txtUnit\":\" \",\"codLanguage\":\" \"}]}";
 		assertTrue(response.getEntity().equals(responseBody));		
 	}
 		
@@ -466,7 +470,7 @@ public class MatEmpModelInsertTest {
 		Response response = model.getResponse();
 		assertTrue(response.getStatus() == Response.Status.OK.getStatusCode());
 		
-		String responseBody = "{\"selectCode\":200,\"selectMessage\":\"The list was returned successfully\",\"results\":[{\"codOwner\":1,\"codStore\":1,\"codEmployee\":1,\"codMat\":1,\"codType\":-1,\"codCategory\":-1,\"priceUnit\":-1,\"codLanguage\":\" \"}]}";
+		String responseBody = "{\"selectCode\":200,\"selectMessage\":\"The list was returned successfully\",\"results\":[{\"codOwner\":1,\"codStore\":1,\"codEmployee\":1,\"nameEmployee\":\" \",\"codMat\":1,\"txtMat\":\" \",\"codType\":1,\"txtType\":\" \",\"codCategory\":1,\"txtCategory\":\" \",\"priceUnit\":1,\"codUnit\":\" \",\"txtUnit\":\" \",\"codLanguage\":\" \"}]}";
 		assertTrue(response.getEntity().equals(responseBody));		
 	}
 		

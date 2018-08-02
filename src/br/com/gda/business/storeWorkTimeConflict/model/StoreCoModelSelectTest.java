@@ -1,4 +1,4 @@
-package br.com.gda.business.employeWorkTimeConflict.model;
+package br.com.gda.business.storeWorkTimeConflict.model;
 
 import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -26,8 +26,7 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import br.com.gda.business.employeeWorkTimeConflict.info.EmpCoInfo;
-import br.com.gda.business.employeeWorkTimeConflict.model.EmpCoModelSelect;
+import br.com.gda.business.storeWorkTimeConflict.info.StoreCoInfo;
 import br.com.gda.common.DbConnection;
 import br.com.gda.model.Model;
 
@@ -36,7 +35,7 @@ import javax.ws.rs.core.Response;
 
 @PrepareForTest({DbConnection.class})
 @RunWith(PowerMockRunner.class)
-public class EmpCoModelSelectTest {
+public class StoreCoModelSelectTest {
 	@Mock private Connection selectConn;
 	@Mock private PreparedStatement selectStmt;
 	@Mock private ResultSet selectRs;
@@ -45,11 +44,15 @@ public class EmpCoModelSelectTest {
 	@Mock private PreparedStatement notFoundtmt;
 	@Mock private ResultSet notFoundRs;
 	
+	@Mock private Connection swtNotFoundConn;
+	@Mock private PreparedStatement swtNotFoundtmt;
+	@Mock private ResultSet swtNotFoundRs;
+	
 	@Mock private Connection invalidConn;
 	@Mock private PreparedStatement invalidStmt;
 	
 	private Model model;
-	private EmpCoInfo infoRecord;
+	private StoreCoInfo infoRecord;
 	
 	
 	
@@ -59,6 +62,7 @@ public class EmpCoModelSelectTest {
 		
 		initializeScenarioSelect();
 		initializeScenarioRecordNotFound();
+		initializeScenarioSwtNotFound();
 		initializeScenarioInvalidConnection();
 	}
 	
@@ -75,11 +79,16 @@ public class EmpCoModelSelectTest {
 		doNothing().when(selectStmt).setTime(anyInt(), any(Time.class));
 		
 		when(selectStmt.executeQuery()).thenReturn(selectRs);
-		when(selectRs.next()).thenReturn(true).thenReturn(true).thenReturn(false);
+		when(selectRs.next()).thenReturn(true).thenReturn(true).thenReturn(false)			//Check SWT
+		                     .thenReturn(true).thenReturn(true).thenReturn(false)			//Select SWT
+		                     .thenReturn(true).thenReturn(true).thenReturn(false);			//Select Conflict
 		when(selectRs.getLong(any(String.class))).thenReturn(new Long(1));
 		when(selectRs.getInt(any(String.class))).thenReturn(new Integer(1));
 		when(selectRs.getString(any(String.class))).thenReturn(" ");
-		when(selectRs.getTime(any(String.class))).thenReturn(Time.valueOf("11:22:33"));
+		when(selectRs.getTime(any(String.class))).thenReturn(Time.valueOf("09:00:00"))		//Check SWT
+		                                         .thenReturn(Time.valueOf("18:00:00"))  	//Check SWT
+												 .thenReturn(Time.valueOf("09:00:00"))		//Select SWT
+										         .thenReturn(Time.valueOf("18:00:00")); 	//Select SWT
 	}
 	
 	
@@ -92,7 +101,40 @@ public class EmpCoModelSelectTest {
 		when(notFoundConn.prepareStatement(any(String.class))).thenReturn(notFoundtmt);	
 		
 		when(notFoundtmt.executeQuery()).thenReturn(notFoundRs);		
-		when(notFoundRs.next()).thenReturn(false);
+		when(notFoundRs.next()).thenReturn(true).thenReturn(true).thenReturn(false)			//Check SWT
+						       .thenReturn(true).thenReturn(true).thenReturn(false)			//Select SWT
+			                   .thenReturn(true).thenReturn(true).thenReturn(false);		//Select Conflict
+		
+		when(notFoundRs.getLong(any(String.class))).thenReturn(new Long(1));
+		when(notFoundRs.getInt(any(String.class))).thenReturn(new Integer(1));
+		when(notFoundRs.getString(any(String.class))).thenReturn(" ");
+		
+		when(notFoundRs.getTime(any(String.class))).thenReturn(Time.valueOf("09:00:00"))	//Check SWT
+											       .thenReturn(Time.valueOf("18:00:00"))  	//Check SWT
+											       .thenReturn(Time.valueOf("09:00:00"))	//Select SWT
+											       .thenReturn(Time.valueOf("18:00:00")); 	//Select SWT		
+	}
+	
+	
+	
+	private void initializeScenarioSwtNotFound() throws SQLException {
+		swtNotFoundtmt = mock(PreparedStatement.class);						
+		swtNotFoundRs = mock(ResultSet.class);		
+		swtNotFoundConn = mock(Connection.class);
+		
+		when(swtNotFoundConn.prepareStatement(any(String.class))).thenReturn(swtNotFoundtmt);	
+		
+		when(swtNotFoundtmt.executeQuery()).thenReturn(swtNotFoundRs);		
+		when(swtNotFoundRs.next()).thenReturn(false);			//Check SWT
+						          
+		when(swtNotFoundRs.getLong(any(String.class))).thenReturn(new Long(1));
+		when(swtNotFoundRs.getInt(any(String.class))).thenReturn(new Integer(1));
+		when(swtNotFoundRs.getString(any(String.class))).thenReturn(" ");
+		
+		when(swtNotFoundRs.getTime(any(String.class))).thenReturn(Time.valueOf("09:00:00"))		//Check SWT
+											       	  .thenReturn(Time.valueOf("18:00:00"))  	//Check SWT
+											       	  .thenReturn(Time.valueOf("09:00:00"))		//Select SWT
+											       	  .thenReturn(Time.valueOf("18:00:00")); 	//Select SWT		
 	}
 	
 	
@@ -119,7 +161,7 @@ public class EmpCoModelSelectTest {
 		Response response = model.getResponse();
 		assertTrue(response.getStatus() == Response.Status.OK.getStatusCode());
 		
-		String responseBody = "{\"selectCode\":200,\"selectMessage\":\"The list was returned successfully\",\"results\":[{\"codOwner\":1,\"codStore\":1,\"codEmployee\":1,\"codWeekday\":1,\"txtWeekday\":\" \",\"beginTime\":{\"hour\":11,\"minute\":22},\"endTime\":{\"hour\":11,\"minute\":22},\"codTimezone\":\" \",\"codLanguage\":\"PT\"}]}";
+		String responseBody = "{\"selectCode\":200,\"selectMessage\":\"The list was returned successfully\",\"results\":[{\"codOwner\":1,\"codStore\":1,\"codEmployee\":1,\"codWeekday\":1,\"txtWeekday\":\" \",\"beginTime\":{\"hour\":18,\"minute\":0},\"endTime\":{\"hour\":18,\"minute\":0},\"codTimezone\":\" \",\"codLanguage\":\"PT\"}]}";
 		assertTrue(response.getEntity().equals(responseBody));		
 	}
 	
@@ -129,15 +171,15 @@ public class EmpCoModelSelectTest {
 	protected void initializeConflictFound() {
 		PowerMockito.when(DbConnection.getConnection()).thenReturn(selectConn);
 		
-		infoRecord = new EmpCoInfo();
+		infoRecord = new StoreCoInfo();
 		infoRecord.codOwner = 1;
 		infoRecord.codStore = 1;
 		infoRecord.codEmployee = 1;
 		infoRecord.codWeekday = 1;
-		infoRecord.beginTime = LocalTime.of(9, 00);
-		infoRecord.endTime = LocalTime.of(18, 0);
+		infoRecord.beginTime = LocalTime.of(10, 00);
+		infoRecord.endTime = LocalTime.of(17, 0);		
 		
-		model = new EmpCoModelSelect(infoRecord);
+		model = new StoreCoModelSelect(infoRecord);
 	}
 	
 	
@@ -158,15 +200,44 @@ public class EmpCoModelSelectTest {
 	protected void initializeConflictNotFound() {
 		PowerMockito.when(DbConnection.getConnection()).thenReturn(notFoundConn);
 		
-		infoRecord = new EmpCoInfo();
+		infoRecord = new StoreCoInfo();
 		infoRecord.codOwner = 1;
 		infoRecord.codStore = 1;
 		infoRecord.codEmployee = 1;
 		infoRecord.codWeekday = 1;
 		infoRecord.beginTime = LocalTime.of(9, 00);
-		infoRecord.endTime = LocalTime.of(18, 0);
+		infoRecord.endTime = LocalTime.of(18, 0);		
 		
-		model = new EmpCoModelSelect(infoRecord);
+		model = new StoreCoModelSelect(infoRecord);
+	}
+	
+	
+	
+	@Test
+	public void storeWorkTimeNotFound() {
+		initializeSwtNotFound();
+		model.executeRequest();
+		Response response = model.getResponse();
+		assertTrue(response.getStatus() == Response.Status.BAD_REQUEST.getStatusCode());
+		
+		String responseBody = "{\"selectCode\":1110,\"selectMessage\":\"Store's working time not found on DB\",\"results\":{}}";
+		assertTrue(response.getEntity().equals(responseBody));		
+		}
+	
+	
+	
+	protected void initializeSwtNotFound() {
+		PowerMockito.when(DbConnection.getConnection()).thenReturn(swtNotFoundConn);
+		
+		infoRecord = new StoreCoInfo();
+		infoRecord.codOwner = 1;
+		infoRecord.codStore = 1;
+		infoRecord.codEmployee = 1;
+		infoRecord.codWeekday = 1;
+		infoRecord.beginTime = LocalTime.of(9, 00);
+		infoRecord.endTime = LocalTime.of(18, 0);		
+		
+		model = new StoreCoModelSelect(infoRecord);
 	}
 	
 	
@@ -187,15 +258,15 @@ public class EmpCoModelSelectTest {
 	protected void initializeInvalidConnection() {
 		PowerMockito.when(DbConnection.getConnection()).thenReturn(invalidConn);
 		
-		infoRecord = new EmpCoInfo();
+		infoRecord = new StoreCoInfo();
 		infoRecord.codOwner = 1;
 		infoRecord.codStore = 1;
 		infoRecord.codEmployee = 1;
 		infoRecord.codWeekday = 1;
 		infoRecord.beginTime = LocalTime.of(9, 00);
-		infoRecord.endTime = LocalTime.of(18, 0);
+		infoRecord.endTime = LocalTime.of(18, 0);		
 		
-		model = new EmpCoModelSelect(infoRecord);
+		model = new StoreCoModelSelect(infoRecord);
 	}
 	
 	
@@ -214,8 +285,8 @@ public class EmpCoModelSelectTest {
 	
 	
 	protected void initializeNullArgument() {
-		PowerMockito.when(DbConnection.getConnection()).thenReturn(selectConn);		
-		model = new EmpCoModelSelect(null);
+		PowerMockito.when(DbConnection.getConnection()).thenReturn(selectConn);
+		model = new StoreCoModelSelect(null);
 	}
 	
 	
@@ -236,27 +307,6 @@ public class EmpCoModelSelectTest {
 	protected void initializeMissingFieldCodWeekday() {
 		initializeConflictFound();
 		infoRecord.codWeekday = -1;
-	}
-	
-	
-	
-	@Test
-	public void missingFieldCodEmployee() {
-		initializeMissingFieldCodEmployee();
-		model.executeRequest();
-		Response response = model.getResponse();
-		assertTrue(response.getStatus() == Response.Status.BAD_REQUEST.getStatusCode());
-		
-		String responseBody = "{\"selectCode\":1,\"selectMessage\":\"Mandatory field is empty\",\"results\":{}}";
-		assertTrue(response.getEntity().equals(responseBody));
-	}
-	
-	
-	
-	
-	protected void initializeMissingFieldCodEmployee() {
-		initializeConflictFound();
-		infoRecord.codEmployee = -1;
 	}
 	
 	

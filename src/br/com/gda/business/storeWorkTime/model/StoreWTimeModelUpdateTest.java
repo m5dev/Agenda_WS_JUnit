@@ -101,8 +101,8 @@ public class StoreWTimeModelUpdateTest {
 							 .thenReturn(true).thenReturn(true).thenReturn(false)	// Check Weekday
 							 .thenReturn(true).thenReturn(true).thenReturn(false)	// Check Exist
 							 .thenReturn(true).thenReturn(true).thenReturn(false)	// Check Conflict - Store WorkTime
-							 .thenReturn(true).thenReturn(true).thenReturn(false)	// Check Conflict - Time Range - Part 1
-							 .thenReturn(true).thenReturn(true).thenReturn(false)	// Check Conflict - Time Range - Part 2
+							 .thenReturn(true).thenReturn(true).thenReturn(false)	// Check Conflict - Time Range - Get SWT
+							 .thenReturn(true).thenReturn(true).thenReturn(false)	// Check Conflict - Time Range - Check SWT
 							 .thenReturn(true).thenReturn(false)					// Check Conflict - Return time overlapping
 							 														// Update
 							 .thenReturn(true).thenReturn(true).thenReturn(false);	// Select
@@ -110,8 +110,6 @@ public class StoreWTimeModelUpdateTest {
 		when(updateRs.getInt(any(String.class))).thenReturn(new Integer(1));
 		when(updateRs.getString(any(String.class))).thenReturn(" ");
 		when(updateRs.getTime(any(String.class))).thenReturn(Time.valueOf("08:00:00")).thenReturn(Time.valueOf("18:00:00"))
-										         .thenReturn(Time.valueOf("08:00:00")).thenReturn(Time.valueOf("18:00:00"))
-										         .thenReturn(Time.valueOf("08:00:00")).thenReturn(Time.valueOf("18:00:00"))
 										         .thenReturn(Time.valueOf("08:00:00")).thenReturn(Time.valueOf("18:00:00"))
 										         .thenReturn(Time.valueOf("11:22:33"));
 	}
@@ -135,10 +133,10 @@ public class StoreWTimeModelUpdateTest {
 							   .thenReturn(true).thenReturn(true).thenReturn(false)		// Check Store
 							   .thenReturn(true).thenReturn(true).thenReturn(false)		// Check Weekday
 							   .thenReturn(true).thenReturn(true).thenReturn(false)		// Check Exist
-							   .thenReturn(true).thenReturn(true).thenReturn(false)		// Check Conflict - Store WorkTime
-							   .thenReturn(true).thenReturn(true).thenReturn(false)		// Check Conflict - Time Range - Part 1
-							   .thenReturn(true).thenReturn(true).thenReturn(false) 	// Check Conflict - Time Range - Part 2
-							   .thenReturn(true).thenReturn(true).thenReturn(false);	// Check Conflict - Return time overlapping 
+							   .thenReturn(true).thenReturn(true).thenReturn(false)	// Check Conflict - Store WorkTime
+							   .thenReturn(true).thenReturn(true).thenReturn(false)	// Check Conflict - Time Range - Get SWT
+							   .thenReturn(true).thenReturn(true).thenReturn(false)	// Check Conflict - Time Range - Check SWT
+							   .thenReturn(true).thenReturn(true).thenReturn(false);					// Check Conflict - Return time overlapping
 		when(conflictRs.getLong(any(String.class))).thenReturn(new Long(1));
 		when(conflictRs.getInt(any(String.class))).thenReturn(new Integer(1));
 		when(conflictRs.getString(any(String.class))).thenReturn(" ");

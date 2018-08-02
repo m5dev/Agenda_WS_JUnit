@@ -15,6 +15,7 @@ import br.com.gda.business.store.StoreSuiteTest;
 import br.com.gda.business.storeEmployee.StoreEmpSuiteTest;
 import br.com.gda.business.storeLeaveDate.StoreLDateSuiteTest;
 import br.com.gda.business.storeWorkTime.StoreWTimeSuiteTest;
+import br.com.gda.business.storeWorkTimeConflict.model.StoreCoModelSuiteTest;
 import br.com.gda.common.CommonSuiteTest;
 import br.com.gda.model.ModelSuiteTest;
 
@@ -30,6 +31,7 @@ import br.com.gda.model.ModelSuiteTest;
 			   StoreWTimeSuiteTest.class,
 			   ModelSuiteTest.class,
 			   EmpCoModelSuiteTest.class,
+			   StoreCoModelSuiteTest.class,
 			   CusSuiteTest.class,
 			   CommonSuiteTest.class})
 public class AllSuiteTest {

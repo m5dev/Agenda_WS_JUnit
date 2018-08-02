@@ -196,9 +196,8 @@ public final class MatEmpModelSelectTest {
 		initializeRecordNotFound();
 		model.executeRequest();
 		Response response = model.getResponse();
-		assertTrue(response.getStatus() == Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
-		//TODO: reflexo de um Bug. Deverá ser impactado ao corrigir 
-		String responseBody = "{\"selectCode\":500,\"selectMessage\":\"Ops... something went wrong\",\"results\":{}}";
+		assertTrue(response.getStatus() == Response.Status.BAD_REQUEST.getStatusCode());
+		String responseBody = "{\"selectCode\":10,\"selectMessage\":\"Data not found\",\"results\":{}}";
 		assertTrue(response.getEntity().equals(responseBody));		
 	}
 		

@@ -221,9 +221,9 @@ public class StoreEmpModelInsertTest {
 		initializeEwtConflict();
 		model.executeRequest();
 		Response response = model.getResponse();
-		assertTrue(response.getStatus() == Response.Status.BAD_REQUEST.getStatusCode());
+		assertTrue(response.getStatus() == Response.Status.OK.getStatusCode());
 		
-		String responseBody = "{\"selectCode\":1003,\"selectMessage\":\"Employee's working time range conflict\",\"results\":{}}";
+		String responseBody = "{\"selectCode\":200,\"selectMessage\":\"The list was returned successfully\",\"results\":[{\"codOwner\":1,\"codStore\":1,\"nameStore\":\" \",\"codEmployee\":1,\"nameEmployee\":\" \",\"codPositionStore\":1,\"txtPositionStore\":\" \",\"codLanguage\":\"PT\"}]}";
 		assertTrue(response.getEntity().equals(responseBody));		
 	}
 		
