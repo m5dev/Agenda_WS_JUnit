@@ -9,8 +9,10 @@ import br.com.gda.business.employeWorkTimeConflict.model.EmpCoModelSuiteTest;
 import br.com.gda.business.employee.EmpSuiteTest;
 import br.com.gda.business.employeeLeaveDate.EmpLDateSuiteTest;
 import br.com.gda.business.employeeWorkTime.EmpWTimeSuiteTest;
+import br.com.gda.business.masterData.MasterDataSuiteTest;
 import br.com.gda.business.material.MatSuiteTest;
 import br.com.gda.business.materialEmployee.MatEmpSuiteTest;
+import br.com.gda.business.planningTime.PlanSuiteTest;
 import br.com.gda.business.store.StoreSuiteTest;
 import br.com.gda.business.storeEmployee.StoreEmpSuiteTest;
 import br.com.gda.business.storeLeaveDate.StoreLDateSuiteTest;
@@ -33,6 +35,8 @@ import br.com.gda.model.ModelSuiteTest;
 			   EmpCoModelSuiteTest.class,
 			   StoreCoModelSuiteTest.class,
 			   CusSuiteTest.class,
+			   MasterDataSuiteTest.class,
+			   PlanSuiteTest.class,
 			   CommonSuiteTest.class})
 public class AllSuiteTest {
 
