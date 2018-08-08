@@ -12,11 +12,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 
-import br.com.gda.sql.SqlStmtExecOption;
 import br.com.gda.business.employeeWorkTime.dao.EmpWTimeInsertSingle;
 import br.com.gda.business.employeeWorkTime.info.EmpWTimeInfo;
 import br.com.gda.common.Common;
-import br.com.gda.sql.SqlStmt;
+import br.com.gda.dao.DaoStmt;
+import br.com.gda.dao.DaoStmtExecOption;
 
 import static org.mockito.Mockito.*;
 
@@ -27,7 +27,7 @@ public class EmpWTimeStmtInsertSingleTest {
 	@Mock private PreparedStatement validStmt;
 	@Mock private PreparedStatement invalidStmt;
 	@Mock private ResultSet rs;
-	private SqlStmtExecOption<EmpWTimeInfo> option;
+	private DaoStmtExecOption<EmpWTimeInfo> option;
 	private EmpWTimeInfo workingTime;
 	
 	
@@ -60,7 +60,7 @@ public class EmpWTimeStmtInsertSingleTest {
 	@Test
 	public void ordinaryUsage() throws SQLException {
 		initializeToPass();
-		SqlStmt<EmpWTimeInfo> insertStatement = new EmpWTimeInsertSingle(option.conn, option.recordInfo, option.schemaName);
+		DaoStmt<EmpWTimeInfo> insertStatement = new EmpWTimeInsertSingle(option.conn, option.recordInfo, option.schemaName);
 		
 		assertTrue(insertStatement.checkStmtGeneration());
 		insertStatement.generateStmt();
@@ -75,7 +75,7 @@ public class EmpWTimeStmtInsertSingleTest {
 		workingTime.codEmployee = 8;
 		
 		
-		this.option = new SqlStmtExecOption<>();
+		this.option = new DaoStmtExecOption<>();
 		option.conn = this.validConn;
 		option.schemaName = Common.SCHEMA_NAME;
 		option.recordInfo = this.workingTime;
@@ -86,7 +86,7 @@ public class EmpWTimeStmtInsertSingleTest {
 	@Test (expected = NullPointerException.class)
 	public void testNullArgumentOption() throws SQLException {
 		initializeToFailNullArgumentOption();		
-		SqlStmt<EmpWTimeInfo> insertStatement = new EmpWTimeInsertSingle(option.conn, option.recordInfo, option.schemaName);
+		DaoStmt<EmpWTimeInfo> insertStatement = new EmpWTimeInsertSingle(option.conn, option.recordInfo, option.schemaName);
 		
 		assertFalse(insertStatement.checkStmtGeneration());
 		insertStatement.generateStmt();
@@ -101,7 +101,7 @@ public class EmpWTimeStmtInsertSingleTest {
 		workingTime.codEmployee = 8;
 		
 		
-		this.option = new SqlStmtExecOption<>();
+		this.option = new DaoStmtExecOption<>();
 	}
 	
 	
@@ -109,7 +109,7 @@ public class EmpWTimeStmtInsertSingleTest {
 	@Test (expected = NullPointerException.class)
 	public void testNullArgumentOptionConn() throws SQLException {
 		initializeToFailNullArgumentOptionConn();		
-		SqlStmt<EmpWTimeInfo> insertStatement = new EmpWTimeInsertSingle(option.conn, option.recordInfo, option.schemaName);
+		DaoStmt<EmpWTimeInfo> insertStatement = new EmpWTimeInsertSingle(option.conn, option.recordInfo, option.schemaName);
 		
 		assertFalse(insertStatement.checkStmtGeneration());
 		insertStatement.generateStmt();
@@ -124,7 +124,7 @@ public class EmpWTimeStmtInsertSingleTest {
 		workingTime.codEmployee = 8;
 		
 		
-		this.option = new SqlStmtExecOption<>();
+		this.option = new DaoStmtExecOption<>();
 		option.schemaName = Common.SCHEMA_NAME;
 		option.recordInfo = this.workingTime;
 	}
@@ -134,7 +134,7 @@ public class EmpWTimeStmtInsertSingleTest {
 	@Test (expected = SQLException.class)
 	public void testInvalidArgumentOptionConn() throws SQLException {
 		initializeToFailInvalidArgumentOptionConn();		
-		SqlStmt<EmpWTimeInfo> insertStatement = new EmpWTimeInsertSingle(option.conn, option.recordInfo, option.schemaName);
+		DaoStmt<EmpWTimeInfo> insertStatement = new EmpWTimeInsertSingle(option.conn, option.recordInfo, option.schemaName);
 		
 		assertFalse(insertStatement.checkStmtGeneration());
 		insertStatement.generateStmt();
@@ -149,7 +149,7 @@ public class EmpWTimeStmtInsertSingleTest {
 		workingTime.codEmployee = 8;
 		
 		
-		this.option = new SqlStmtExecOption<>();
+		this.option = new DaoStmtExecOption<>();
 		option.schemaName = Common.SCHEMA_NAME;
 		option.recordInfo = this.workingTime;
 		option.conn = invalidConnWithoutStmt;
@@ -175,7 +175,7 @@ public class EmpWTimeStmtInsertSingleTest {
 		workingTime.codEmployee = 8;
 		
 		
-		this.option = new SqlStmtExecOption<>();
+		this.option = new DaoStmtExecOption<>();
 		option.schemaName = Common.SCHEMA_NAME;
 		option.recordInfo = this.workingTime;
 		option.conn = invalidConnWithStmt;
@@ -201,7 +201,7 @@ public class EmpWTimeStmtInsertSingleTest {
 		workingTime.codEmployee = 8;
 		
 		
-		this.option = new SqlStmtExecOption<>();
+		this.option = new DaoStmtExecOption<>();
 		option.conn = this.validConn;
 		option.schemaName = null;
 		option.recordInfo = this.workingTime;

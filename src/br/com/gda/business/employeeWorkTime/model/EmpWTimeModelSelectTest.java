@@ -192,10 +192,10 @@ public class EmpWTimeModelSelectTest {
 		initializeMissingFieldCodEmployee();
 		model.executeRequest();
 		Response response = model.getResponse();
-		assertTrue(response.getStatus() == Response.Status.BAD_REQUEST.getStatusCode());
+		assertTrue(response.getStatus() == Response.Status.OK.getStatusCode());
 		
-		String responseBody = "{\"selectCode\":1,\"selectMessage\":\"Mandatory field is empty\",\"results\":{}}";
-		assertTrue(response.getEntity().equals(responseBody));
+		String responseBody = "{\"selectCode\":200,\"selectMessage\":\"The list was returned successfully\",\"results\":[{\"codOwner\":1,\"codStore\":1,\"codEmployee\":1,\"codWeekday\":1,\"txtWeekday\":\" \",\"beginTime\":{\"hour\":11,\"minute\":22},\"endTime\":{\"hour\":11,\"minute\":22},\"codTimezone\":\" \",\"codLanguage\":\"PT\"}]}";
+		assertTrue(response.getEntity().equals(responseBody));	
 	}
 	
 	
@@ -209,14 +209,36 @@ public class EmpWTimeModelSelectTest {
 	
 	
 	@Test
-	public void missingFieldCodStore() {
-		initializeMissingFieldCodStore();
+	public void missingFieldCodEmployeeAndCodStore() {
+		initializeMissingFieldCodEmployeeAndCodStore();
 		model.executeRequest();
 		Response response = model.getResponse();
 		assertTrue(response.getStatus() == Response.Status.BAD_REQUEST.getStatusCode());
 		
 		String responseBody = "{\"selectCode\":1,\"selectMessage\":\"Mandatory field is empty\",\"results\":{}}";
 		assertTrue(response.getEntity().equals(responseBody));
+	}
+	
+	
+	
+	
+	protected void initializeMissingFieldCodEmployeeAndCodStore() {
+		initializeAllFields();
+		infoRecord.codEmployee = -1;
+		infoRecord.codStore = -1;
+	}
+	
+	
+	
+	@Test
+	public void missingFieldCodStore() {
+		initializeMissingFieldCodStore();
+		model.executeRequest();
+		Response response = model.getResponse();
+		assertTrue(response.getStatus() == Response.Status.OK.getStatusCode());
+		
+		String responseBody = "{\"selectCode\":200,\"selectMessage\":\"The list was returned successfully\",\"results\":[{\"codOwner\":1,\"codStore\":1,\"codEmployee\":1,\"codWeekday\":1,\"txtWeekday\":\" \",\"beginTime\":{\"hour\":11,\"minute\":22},\"endTime\":{\"hour\":11,\"minute\":22},\"codTimezone\":\" \",\"codLanguage\":\"PT\"}]}";
+		assertTrue(response.getEntity().equals(responseBody));	
 	}
 	
 	

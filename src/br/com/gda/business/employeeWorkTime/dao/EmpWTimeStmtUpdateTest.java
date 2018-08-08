@@ -21,11 +21,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 
-import br.com.gda.sql.SqlStmtExecOption;
 import br.com.gda.business.employeeWorkTime.dao.EmpWTimeUpdate;
 import br.com.gda.business.employeeWorkTime.info.EmpWTimeInfo;
 import br.com.gda.common.Common;
-import br.com.gda.sql.SqlStmtExec;
+import br.com.gda.dao.DaoStmtExec;
+import br.com.gda.dao.DaoStmtExecOption;
 
 public class EmpWTimeStmtUpdateTest {
 	@Mock private Connection validConn;
@@ -34,8 +34,8 @@ public class EmpWTimeStmtUpdateTest {
 	@Mock private ResultSet rs;
 	
 	private List<EmpWTimeInfo> workingTimes = new ArrayList<>();
-	private List<SqlStmtExecOption<EmpWTimeInfo>> sqlStatemetOptions = new ArrayList<>();
-	private SqlStmtExec<EmpWTimeInfo> sqlStatemetExecutor;
+	private List<DaoStmtExecOption<EmpWTimeInfo>> sqlStatemetOptions = new ArrayList<>();
+	private DaoStmtExec<EmpWTimeInfo> sqlStatemetExecutor;
 	
 	
 	
@@ -68,7 +68,7 @@ public class EmpWTimeStmtUpdateTest {
 		initializeWorkingTime();			
 			
 		for (EmpWTimeInfo eachInfo : this.workingTimes) {
-			SqlStmtExecOption<EmpWTimeInfo> oneOption = new SqlStmtExecOption<>();			
+			DaoStmtExecOption<EmpWTimeInfo> oneOption = new DaoStmtExecOption<>();			
 			oneOption.conn = this.validConn;
 			oneOption.schemaName = Common.SCHEMA_NAME;
 			oneOption.recordInfo = eachInfo;
@@ -92,7 +92,7 @@ public class EmpWTimeStmtUpdateTest {
 		initializeWorkingTime();			
 			
 		for (EmpWTimeInfo eachInfo : this.workingTimes) {
-			SqlStmtExecOption<EmpWTimeInfo> oneOption = new SqlStmtExecOption<>();			
+			DaoStmtExecOption<EmpWTimeInfo> oneOption = new DaoStmtExecOption<>();			
 			oneOption.conn = this.validConn;
 			oneOption.schemaName = null;
 			oneOption.recordInfo = eachInfo;
@@ -116,7 +116,7 @@ public class EmpWTimeStmtUpdateTest {
 		initializeWorkingTime();			
 			
 		for (EmpWTimeInfo eachInfo : this.workingTimes) {
-			SqlStmtExecOption<EmpWTimeInfo> oneOption = new SqlStmtExecOption<>();			
+			DaoStmtExecOption<EmpWTimeInfo> oneOption = new DaoStmtExecOption<>();			
 			oneOption.conn = null;
 			oneOption.schemaName = Common.SCHEMA_NAME;
 			oneOption.recordInfo = eachInfo;
@@ -141,7 +141,7 @@ public class EmpWTimeStmtUpdateTest {
 		initializeWorkingTime();			
 			
 		for (EmpWTimeInfo eachInfo : this.workingTimes) {
-			SqlStmtExecOption<EmpWTimeInfo> oneOption = new SqlStmtExecOption<>();			
+			DaoStmtExecOption<EmpWTimeInfo> oneOption = new DaoStmtExecOption<>();			
 			oneOption.conn = this.validConn;
 			oneOption.schemaName = Common.SCHEMA_NAME;
 			oneOption.recordInfo = null;
@@ -181,7 +181,7 @@ public class EmpWTimeStmtUpdateTest {
 		initializeWorkingTime();			
 			
 		for (EmpWTimeInfo eachInfo : this.workingTimes) {
-			SqlStmtExecOption<EmpWTimeInfo> oneOption = new SqlStmtExecOption<>();			
+			DaoStmtExecOption<EmpWTimeInfo> oneOption = new DaoStmtExecOption<>();			
 			oneOption.conn = this.invalidConn;
 			oneOption.schemaName = Common.SCHEMA_NAME;
 			oneOption.recordInfo = eachInfo;
