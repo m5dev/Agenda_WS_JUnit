@@ -143,8 +143,8 @@ public class PlanMergerStoreTest {
 		assertTrue(merged.stores.size() == 1);
 		assertTrue(merged.datas.size() == 1);
 		
-		assertTrue(merged.stores.get(0) == storeInfo);
-		assertTrue(merged.datas.get(0) == planInfo.datas.get(0));
+		assertTrue(merged.stores.get(0).equals(storeInfo));
+		assertTrue(merged.datas.get(0).equals(planInfo.datas.get(0)));
 	}
 	
 	
@@ -209,8 +209,8 @@ public class PlanMergerStoreTest {
 		assertTrue(merged.get(0).stores.size() == 1);
 		assertTrue(merged.get(0).datas.size() == 1);
 		
-		assertTrue(merged.get(0).stores.get(0) == storeInfo);
-		assertTrue(merged.get(0).datas.get(0) == planInfoTwo.datas.get(0));
+		assertTrue(merged.get(0).stores.get(0).equals(storeInfo));
+		assertTrue(merged.get(0).datas.get(0).equals(planInfoTwo.datas.get(0)));
 		
 		
 		assertTrue(merged.get(1).materials.isEmpty());
@@ -219,8 +219,8 @@ public class PlanMergerStoreTest {
 		assertTrue(merged.get(1).stores.size() == 1);
 		assertTrue(merged.get(1).datas.size() == 1);
 		
-		assertTrue(merged.get(1).stores.get(0) == storeInfoTwo);
-		assertTrue(merged.get(1).datas.get(0) == planInfoTwo.datas.get(0));
+		assertTrue(merged.get(1).stores.get(0).equals(storeInfoTwo));
+		assertTrue(merged.get(1).datas.get(0).equals(planInfoTwo.datas.get(0)));
 	}
 	
 	
@@ -249,8 +249,8 @@ public class PlanMergerStoreTest {
 		assertTrue(merged.get(0).stores.size() == 1);
 		assertTrue(merged.get(0).datas.size() == 1);
 		
-		assertTrue(merged.get(0).stores.get(0) == storeInfo);
-		assertTrue(merged.get(0).datas.get(0) == planInfoTwo.datas.get(0));
+		assertTrue(merged.get(0).stores.get(0).equals(storeInfo));
+		assertTrue(merged.get(0).datas.get(0).equals(planInfoTwo.datas.get(0)));
 		
 		
 		assertTrue(merged.get(1).materials.isEmpty());
@@ -259,8 +259,8 @@ public class PlanMergerStoreTest {
 		assertTrue(merged.get(1).stores.size() == 1);
 		assertTrue(merged.get(1).datas.size() == 1);
 		
-		assertTrue(merged.get(1).stores.get(0) == storeInfoTwo);
-		assertTrue(merged.get(1).datas.get(0) == planInfoTwo.datas.get(0));
+		assertTrue(merged.get(1).stores.get(0).equals(storeInfoTwo));
+		assertTrue(merged.get(1).datas.get(0).equals(planInfoTwo.datas.get(0)));
 	}
 	
 	
@@ -289,8 +289,8 @@ public class PlanMergerStoreTest {
 		assertTrue(merged.get(0).stores.size() == 1);
 		assertTrue(merged.get(0).datas.size() == 1);
 		
-		assertTrue(merged.get(0).stores.get(0) == storeInfo);
-		assertTrue(merged.get(0).datas.get(0) == planInfo.datas.get(0));
+		assertTrue(merged.get(0).stores.get(0).equals(storeInfo));
+		assertTrue(merged.get(0).datas.get(0).equals(planInfo.datas.get(0)));
 		
 		
 		assertTrue(merged.get(1).materials.isEmpty());
@@ -299,8 +299,8 @@ public class PlanMergerStoreTest {
 		assertTrue(merged.get(1).stores.size() == 1);
 		assertTrue(merged.get(1).datas.size() == 1);
 		
-		assertTrue(merged.get(1).stores.get(0) == storeInfoTwo);
-		assertTrue(merged.get(1).datas.get(0) == planInfo.datas.get(0));
+		assertTrue(merged.get(1).stores.get(0).equals(storeInfoTwo));
+		assertTrue(merged.get(1).datas.get(0).equals(planInfo.datas.get(0)));
 		
 		
 		assertTrue(merged.get(2).materials.isEmpty());
@@ -309,8 +309,8 @@ public class PlanMergerStoreTest {
 		assertTrue(merged.get(2).stores.size() == 1);
 		assertTrue(merged.get(2).datas.size() == 1);
 		
-		assertTrue(merged.get(2).stores.get(0) == storeInfo);
-		assertTrue(merged.get(2).datas.get(0) == planInfoTwo.datas.get(0));
+		assertTrue(merged.get(2).stores.get(0).equals(storeInfo));
+		assertTrue(merged.get(2).datas.get(0).equals(planInfoTwo.datas.get(0)));
 		
 		
 		assertTrue(merged.get(3).materials.isEmpty());
@@ -319,8 +319,8 @@ public class PlanMergerStoreTest {
 		assertTrue(merged.get(3).stores.size() == 1);
 		assertTrue(merged.get(3).datas.size() == 1);
 		
-		assertTrue(merged.get(3).stores.get(0) == storeInfoTwo);
-		assertTrue(merged.get(3).datas.get(0) == planInfoTwo.datas.get(0));
+		assertTrue(merged.get(3).stores.get(0).equals(storeInfoTwo));
+		assertTrue(merged.get(3).datas.get(0).equals(planInfoTwo.datas.get(0)));
 	}
 	
 	

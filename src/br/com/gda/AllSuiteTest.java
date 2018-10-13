@@ -4,6 +4,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
+import br.com.gda.business.amount.model.AmountSuiteTest;
 import br.com.gda.business.customer.CusSuiteTest;
 import br.com.gda.business.employeWorkTimeConflict.model.EmpCoModelSuiteTest;
 import br.com.gda.business.employee.EmpSuiteTest;
@@ -37,6 +38,7 @@ import br.com.gda.model.ModelSuiteTest;
 			   CusSuiteTest.class,
 			   MasterDataSuiteTest.class,
 			   PlanSuiteTest.class,
+			   AmountSuiteTest.class,
 			   CommonSuiteTest.class})
 public class AllSuiteTest {
 
