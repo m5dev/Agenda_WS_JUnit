@@ -1,4 +1,4 @@
-package br.com.gda.business.amount.model.decisionTree;
+package br.com.gda.business.totalAmount.model.action;
 
 import static org.junit.Assert.*;
 
@@ -8,17 +8,18 @@ import java.util.List;
 
 import org.junit.Test;
 
-import br.com.gda.business.amount.info.AmountInfo;
+import br.com.gda.business.totalAmount.info.TotAmountInfo;
+import br.com.gda.business.totalAmount.model.action.VisiTotAmountTwo;
 
-public class VisitorAmountTotalTest {
-	private VisitorAmountTotal visitor;
-	private List<AmountInfo> results;
-	private List<AmountInfo> arguments;
+public class VisiTotAmountTwoTest {
+	private VisiTotAmountTwo visitor;
+	private List<TotAmountInfo> results;
+	private List<TotAmountInfo> arguments;
 	
 	
 	@Test (expected = NullPointerException.class)
 	public void nullArgument() {
-		visitor = new VisitorAmountTotal();
+		visitor = new VisiTotAmountTwo();
 		visitor.executeTransformation(null);
 	}
 	
@@ -26,7 +27,7 @@ public class VisitorAmountTotalTest {
 	
 	@Test
 	public void emptyArgument() {
-		visitor = new VisitorAmountTotal();
+		visitor = new VisiTotAmountTwo();
 		results = visitor.executeTransformation(Collections.emptyList());
 		
 		assertTrue(results.get(0).amount == 0);
@@ -38,18 +39,18 @@ public class VisitorAmountTotalTest {
 	@Test (expected = IllegalArgumentException.class) 
 	public void differentDecimalPlaces() {
 		arguments = new ArrayList<>();
-		AmountInfo eachAmount = new AmountInfo();
+		TotAmountInfo eachAmount = new TotAmountInfo();
 		eachAmount.amount = 1;
 		eachAmount.decimalPlace = 2;
 		arguments.add(eachAmount);
 		
-		eachAmount = new AmountInfo();
+		eachAmount = new TotAmountInfo();
 		eachAmount.amount = 1;
 		eachAmount.decimalPlace = 3;
 		arguments.add(eachAmount);
 		
 		
-		visitor = new VisitorAmountTotal();
+		visitor = new VisiTotAmountTwo();
 		results = visitor.executeTransformation(arguments);
 	}
 	
@@ -58,18 +59,18 @@ public class VisitorAmountTotalTest {
 	@Test
 	public void makeTotal() {
 		arguments = new ArrayList<>();
-		AmountInfo eachAmount = new AmountInfo();
+		TotAmountInfo eachAmount = new TotAmountInfo();
 		eachAmount.amount = 1.11;
 		eachAmount.decimalPlace = 2;
 		arguments.add(eachAmount);
 		
-		eachAmount = new AmountInfo();
+		eachAmount = new TotAmountInfo();
 		eachAmount.amount = 2.22;
 		eachAmount.decimalPlace = 2;
 		arguments.add(eachAmount);
 		
 		
-		visitor = new VisitorAmountTotal();
+		visitor = new VisiTotAmountTwo();
 		results = visitor.executeTransformation(arguments);
 		
 		

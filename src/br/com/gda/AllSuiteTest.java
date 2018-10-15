@@ -4,7 +4,6 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
-import br.com.gda.business.amount.model.AmountSuiteTest;
 import br.com.gda.business.customer.CusSuiteTest;
 import br.com.gda.business.employeWorkTimeConflict.model.EmpCoModelSuiteTest;
 import br.com.gda.business.employee.EmpSuiteTest;
@@ -19,6 +18,7 @@ import br.com.gda.business.storeEmployee.StoreEmpSuiteTest;
 import br.com.gda.business.storeLeaveDate.StoreLDateSuiteTest;
 import br.com.gda.business.storeWorkTime.StoreWTimeSuiteTest;
 import br.com.gda.business.storeWorkTimeConflict.model.StoreCoModelSuiteTest;
+import br.com.gda.business.totalAmount.model.AmountSuiteTest;
 import br.com.gda.common.CommonSuiteTest;
 import br.com.gda.model.ModelSuiteTest;
 
