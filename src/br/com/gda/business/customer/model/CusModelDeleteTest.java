@@ -111,7 +111,7 @@ public class CusModelDeleteTest {
 		Response response = model.getResponse();
 		assertTrue(response.getStatus() == Response.Status.OK.getStatusCode());
 		
-		String responseBody = "{\"selectCode\":200,\"selectMessage\":\"The list was returned successfully\",\"results\":[{\"codOwner\":-1,\"codCustomer\":-1,\"codGender\":-1,\"postalCode\":-1,\"codLanguage\":\"PT\"}]}";
+		String responseBody = "{\"selectCode\":200,\"selectMessage\":\"The list was returned successfully\",\"results\":[{\"codOwner\":-1,\"codCustomer\":-1,\"codGender\":-1,\"postalCode\":-1,\"codCountryPhone1\":-1,\"codLanguage\":\"PT\"}]}";
 		assertTrue(response.getEntity().equals(responseBody));		
 	}
 	

@@ -62,6 +62,14 @@ public class CusModelUpdateTest {
 	@Mock private PreparedStatement invalidGenderStmt;
 	@Mock private ResultSet invalidGenderRs;
 	
+	@Mock private Connection invalidPhone1CountryConn;
+	@Mock private PreparedStatement invalidPhone1CountryStmt;
+	@Mock private ResultSet invalidPhone1CountryRs;
+	
+	@Mock private Connection nullPhone1Conn;
+	@Mock private PreparedStatement nullPhone1Stmt;
+	@Mock private ResultSet nullPhone1Rs;
+	
 	private Model model;
 	
 	
@@ -78,6 +86,8 @@ public class CusModelUpdateTest {
 		initializeScenarioInvalidConnection();
 		initializeScenarioInvalidOwner();
 		initializeScenarioInvalidGender();
+		initializeScenarioInvalidPhone1Country();
+		initializeScenarioNullPhone1();
 	}
 	
 	
@@ -96,9 +106,10 @@ public class CusModelUpdateTest {
 
 		when(updateStmt.executeQuery()).thenReturn(updateRs);
 		when(updateRs.next()).thenReturn(true).thenReturn(true).thenReturn(false)	// Check Owner
-		                      .thenReturn(true).thenReturn(true).thenReturn(false)	// Check Gender
+		                     .thenReturn(true).thenReturn(true).thenReturn(false)	// Check Gender
 		                     .thenReturn(true).thenReturn(true).thenReturn(false)	// Check Exist
 		                     .thenReturn(true).thenReturn(true).thenReturn(false)	// Check EMAIL change
+		                     .thenReturn(true).thenReturn(true).thenReturn(false)	// Check Country Phone 1
 		                     .thenReturn(true).thenReturn(true).thenReturn(false)	// Check CPF change
 		                      														// Update
 		                     .thenReturn(true).thenReturn(true).thenReturn(false);	// Select
@@ -152,6 +163,7 @@ public class CusModelUpdateTest {
 		                        .thenReturn(true).thenReturn(true).thenReturn(false)	// Check Gender
         						.thenReturn(true).thenReturn(true).thenReturn(false)	// Check Exist
 						        .thenReturn(true).thenReturn(true).thenReturn(false)	// Check EMAIL change
+						        .thenReturn(true).thenReturn(true).thenReturn(false)	// Check Country Phone 1
 						        .thenReturn(true).thenReturn(false)						// Check CPF change
 						        .thenReturn(true).thenReturn(false)						// New CPF don't exist
 						         														// Update
@@ -181,6 +193,7 @@ public class CusModelUpdateTest {
 		                              .thenReturn(true).thenReturn(true).thenReturn(false)	// Check Gender
 									  .thenReturn(true).thenReturn(true).thenReturn(false)	// Check Exist
 									  .thenReturn(true).thenReturn(true).thenReturn(false)	// Check EMAIL change
+									  .thenReturn(true).thenReturn(true).thenReturn(false)	// Check Country Phone 1
 									  .thenReturn(true).thenReturn(false)					// Check CPF change
 									  .thenReturn(true).thenReturn(true).thenReturn(false);	// New CPF already exist
 		when(cpfAlreadyTakenRs.getLong(any(String.class))).thenReturn(new Long(1));
@@ -259,6 +272,52 @@ public class CusModelUpdateTest {
 	
 	
 	
+	private void initializeScenarioInvalidPhone1Country() throws SQLException {
+		invalidPhone1CountryConn = mock(Connection.class);
+		invalidPhone1CountryStmt = mock(PreparedStatement.class);
+		invalidPhone1CountryRs = mock(ResultSet.class);
+		
+		when(invalidPhone1CountryConn.prepareStatement(any(String.class))).thenReturn(invalidPhone1CountryStmt);
+		when(invalidPhone1CountryStmt.executeUpdate()).thenReturn(1);
+		
+		when(invalidPhone1CountryStmt.executeQuery()).thenReturn(invalidPhone1CountryRs);
+		when(invalidPhone1CountryRs.next()).thenReturn(true).thenReturn(true).thenReturn(false)		// Check Owner
+								           .thenReturn(true).thenReturn(true).thenReturn(false)		// Check Gender
+								           .thenReturn(true).thenReturn(true).thenReturn(false)		// Check Exist
+								           .thenReturn(true).thenReturn(true).thenReturn(false)		// Check EMAIL change
+								           .thenReturn(true).thenReturn(false);						// Check Country Phone 1
+		when(invalidPhone1CountryRs.getLong(any(String.class))).thenReturn(new Long(1));
+		when(invalidPhone1CountryRs.getInt(any(String.class))).thenReturn(new Integer(1));
+		when(invalidPhone1CountryRs.getString(any(String.class))).thenReturn(" ");
+		when(invalidPhone1CountryRs.getTime(any(String.class))).thenReturn(Time.valueOf("11:22:33"));		
+	}
+	
+	
+	
+	private void initializeScenarioNullPhone1() throws SQLException {
+		nullPhone1Conn = mock(Connection.class);
+		nullPhone1Stmt = mock(PreparedStatement.class);
+		nullPhone1Rs = mock(ResultSet.class);
+		
+		when(nullPhone1Conn.prepareStatement(any(String.class))).thenReturn(nullPhone1Stmt);
+		when(nullPhone1Stmt.executeUpdate()).thenReturn(1);
+		
+		when(nullPhone1Stmt.executeQuery()).thenReturn(nullPhone1Rs);
+		when(nullPhone1Rs.next()).thenReturn(true).thenReturn(true).thenReturn(false)	// Check Owner
+						         .thenReturn(true).thenReturn(true).thenReturn(false)	// Check Gender
+						         .thenReturn(true).thenReturn(true).thenReturn(false)	// Check Exist
+						         .thenReturn(true).thenReturn(true).thenReturn(false)	// Check EMAIL change
+						         .thenReturn(true).thenReturn(true).thenReturn(false)	// Check CPF change
+						         														// Update
+						        .thenReturn(true).thenReturn(true).thenReturn(false);	// Select
+		when(nullPhone1Rs.getLong(any(String.class))).thenReturn(new Long(1));
+		when(nullPhone1Rs.getInt(any(String.class))).thenReturn(new Integer(1));
+		when(nullPhone1Rs.getString(any(String.class))).thenReturn(" ");
+		when(nullPhone1Rs.getTime(any(String.class))).thenReturn(Time.valueOf("11:22:33"));		
+	}
+	
+	
+	
 	@Test
 	public void updateRecord() {
 		initializeUpdateRecord();
@@ -266,7 +325,7 @@ public class CusModelUpdateTest {
 		Response response = model.getResponse();
 		assertTrue(response.getStatus() == Response.Status.OK.getStatusCode());
 		
-		String responseBody = "{\"selectCode\":200,\"selectMessage\":\"The list was returned successfully\",\"results\":[{\"codOwner\":1,\"codCustomer\":1,\"cpf\":\" \",\"name\":\" \",\"codGender\":1,\"txtGender\":\" \",\"email\":\" \",\"address1\":\" \",\"address2\":\" \",\"postalCode\":1,\"city\":\" \",\"codCountry\":\" \",\"txtCountry\":\" \",\"stateProvince\":\" \",\"phone\":\" \",\"codLanguage\":\"PT\"}]}";
+		String responseBody = "{\"selectCode\":200,\"selectMessage\":\"The list was returned successfully\",\"results\":[{\"codOwner\":1,\"codCustomer\":1,\"cpf\":\" \",\"name\":\" \",\"codGender\":1,\"txtGender\":\" \",\"email\":\" \",\"address1\":\" \",\"address2\":\" \",\"postalCode\":1,\"city\":\" \",\"codCountry\":\" \",\"txtCountry\":\" \",\"stateProvince\":\" \",\"codCountryPhone1\":1,\"phoneNumber1\":\" \",\"codLanguage\":\"PT\"}]}";
 		assertTrue(response.getEntity().equals(responseBody));		
 	}
 		
@@ -280,7 +339,7 @@ public class CusModelUpdateTest {
 	
 	
 	protected String incomingDataOrdinaryUsage() {
-		return "[{\"codOwner\": 8, \"codCustomer\": 28, \"cpf\": \"43498631764\", \"name\": \"Grazi 1\", \"codGender\": 2, \"birthDate\": {\"year\": 1984, \"month\": 8, \"day\": 16}, \"email\": \"dummy14@dummy.com\", \"address1\": \"Rua Dummy\", \"address2\": \"Ap 100\", \"postalCode\": 20735060, \"city\": \"Rio de Janeiro\", \"codCountry\": \"BR\", \"stateProvince\": \"RJ\", \"phone\": \"2125922592\"}]";
+		return "[{\"codOwner\": 8, \"codCustomer\": 28, \"cpf\": \"43498631764\", \"name\": \"Grazi 1\", \"codGender\": 2, \"birthDate\": {\"year\": 1984, \"month\": 8, \"day\": 16}, \"email\": \"dummy14@dummy.com\", \"address1\": \"Rua Dummy\", \"address2\": \"Ap 100\", \"postalCode\": 20735060, \"city\": \"Rio de Janeiro\", \"codCountry\": \"BR\", \"stateProvince\": \"RJ\",\"codCountryPhone1\":55, \"phoneNumber1\": \"2125922592\"}]";
 	}
 	
 	
@@ -306,7 +365,7 @@ public class CusModelUpdateTest {
 	
 	
 	protected String incomingDataMissingFieldCodOwner() {
-		return "[{\"codCustomer\": 28, \"cpf\": \"43498631764\", \"name\": \"Grazi 1\", \"codGender\": 2, \"birthDate\": {\"year\": 1984, \"month\": 8, \"day\": 16}, \"email\": \"dummy14@dummy.com\", \"address1\": \"Rua Dummy\", \"address2\": \"Ap 100\", \"postalCode\": 20735060, \"city\": \"Rio de Janeiro\", \"codCountry\": \"BR\", \"stateProvince\": \"RJ\", \"phone\": \"2125922592\"}]";
+		return "[{\"codCustomer\": 28, \"cpf\": \"43498631764\", \"name\": \"Grazi 1\", \"codGender\": 2, \"birthDate\": {\"year\": 1984, \"month\": 8, \"day\": 16}, \"email\": \"dummy14@dummy.com\", \"address1\": \"Rua Dummy\", \"address2\": \"Ap 100\", \"postalCode\": 20735060, \"city\": \"Rio de Janeiro\", \"codCountry\": \"BR\", \"stateProvince\": \"RJ\", \"phoneNumber1\": \"2125922592\"}]";
 	}
 	
 	
@@ -332,7 +391,7 @@ public class CusModelUpdateTest {
 	
 	
 	protected String incomingDataMissingFieldCpf() {
-		return "[{\"codOwner\": 8, \"codCustomer\": 28, \"name\": \"Grazi 1\", \"codGender\": 2, \"birthDate\": {\"year\": 1984, \"month\": 8, \"day\": 16}, \"email\": \"dummy14@dummy.com\", \"address1\": \"Rua Dummy\", \"address2\": \"Ap 100\", \"postalCode\": 20735060, \"city\": \"Rio de Janeiro\", \"codCountry\": \"BR\", \"stateProvince\": \"RJ\", \"phone\": \"2125922592\"}]";
+		return "[{\"codOwner\": 8, \"codCustomer\": 28, \"name\": \"Grazi 1\", \"codGender\": 2, \"birthDate\": {\"year\": 1984, \"month\": 8, \"day\": 16}, \"email\": \"dummy14@dummy.com\", \"address1\": \"Rua Dummy\", \"address2\": \"Ap 100\", \"postalCode\": 20735060, \"city\": \"Rio de Janeiro\", \"codCountry\": \"BR\", \"stateProvince\": \"RJ\", \"phoneNumber1\": \"2125922592\"}]";
 	}
 	
 	
@@ -358,7 +417,7 @@ public class CusModelUpdateTest {
 	
 	
 	protected String incomingDataMissingFieldName() {
-		return "[{\"codOwner\": 8, \"codCustomer\": 28, \"cpf\": \"43498631764\", \"codGender\": 2, \"birthDate\": {\"year\": 1984, \"month\": 8, \"day\": 16}, \"email\": \"dummy14@dummy.com\", \"address1\": \"Rua Dummy\", \"address2\": \"Ap 100\", \"postalCode\": 20735060, \"city\": \"Rio de Janeiro\", \"codCountry\": \"BR\", \"stateProvince\": \"RJ\", \"phone\": \"2125922592\"}]";
+		return "[{\"codOwner\": 8, \"codCustomer\": 28, \"cpf\": \"43498631764\", \"codGender\": 2, \"birthDate\": {\"year\": 1984, \"month\": 8, \"day\": 16}, \"email\": \"dummy14@dummy.com\", \"address1\": \"Rua Dummy\", \"address2\": \"Ap 100\", \"postalCode\": 20735060, \"city\": \"Rio de Janeiro\", \"codCountry\": \"BR\", \"stateProvince\": \"RJ\", \"phoneNumber1\": \"2125922592\"}]";
 	}
 	
 	
@@ -384,7 +443,7 @@ public class CusModelUpdateTest {
 	
 	
 	protected String incomingDataMissingFieldEmail() {
-		return "[{\"codOwner\": 8, \"codCustomer\": 28, \"cpf\": \"43498631764\", \"name\": \"Grazi 1\", \"codGender\": 2, \"birthDate\": {\"year\": 1984, \"month\": 8, \"day\": 16}, \"address1\": \"Rua Dummy\", \"address2\": \"Ap 100\", \"postalCode\": 20735060, \"city\": \"Rio de Janeiro\", \"codCountry\": \"BR\", \"stateProvince\": \"RJ\", \"phone\": \"2125922592\"}]";
+		return "[{\"codOwner\": 8, \"codCustomer\": 28, \"cpf\": \"43498631764\", \"name\": \"Grazi 1\", \"codGender\": 2, \"birthDate\": {\"year\": 1984, \"month\": 8, \"day\": 16}, \"address1\": \"Rua Dummy\", \"address2\": \"Ap 100\", \"postalCode\": 20735060, \"city\": \"Rio de Janeiro\", \"codCountry\": \"BR\", \"stateProvince\": \"RJ\", \"phoneNumber1\": \"2125922592\"}]";
 	}
 	
 	
@@ -410,7 +469,7 @@ public class CusModelUpdateTest {
 	
 	
 	protected String incomingDataMissingFieldCodCustomer() {
-		return "[{\"codOwner\": 8, \"cpf\": \"43498631764\", \"name\": \"Grazi 1\", \"codGender\": 2, \"birthDate\": {\"year\": 1984, \"month\": 8, \"day\": 16}, \"email\": \"dummy14@dummy.com\", \"address1\": \"Rua Dummy\", \"address2\": \"Ap 100\", \"postalCode\": 20735060, \"city\": \"Rio de Janeiro\", \"codCountry\": \"BR\", \"stateProvince\": \"RJ\", \"phone\": \"2125922592\"}]";
+		return "[{\"codOwner\": 8, \"cpf\": \"43498631764\", \"name\": \"Grazi 1\", \"codGender\": 2, \"birthDate\": {\"year\": 1984, \"month\": 8, \"day\": 16}, \"email\": \"dummy14@dummy.com\", \"address1\": \"Rua Dummy\", \"address2\": \"Ap 100\", \"postalCode\": 20735060, \"city\": \"Rio de Janeiro\", \"codCountry\": \"BR\", \"stateProvince\": \"RJ\", \"phoneNumber1\": \"2125922592\"}]";
 	}
 	
 	
@@ -436,7 +495,7 @@ public class CusModelUpdateTest {
 	
 	
 	protected String incomingDataInvalidCpf() {
-		return "[{\"codOwner\": 8, \"codCustomer\": 28, \"cpf\": \"43498631765\", \"name\": \"Grazi 1\", \"codGender\": 2, \"birthDate\": {\"year\": 1984, \"month\": 8, \"day\": 16}, \"email\": \"dummy14@dummy.com\", \"address1\": \"Rua Dummy\", \"address2\": \"Ap 100\", \"postalCode\": 20735060, \"city\": \"Rio de Janeiro\", \"codCountry\": \"BR\", \"stateProvince\": \"RJ\", \"phone\": \"2125922592\"}]";
+		return "[{\"codOwner\": 8, \"codCustomer\": 28, \"cpf\": \"43498631765\", \"name\": \"Grazi 1\", \"codGender\": 2, \"birthDate\": {\"year\": 1984, \"month\": 8, \"day\": 16}, \"email\": \"dummy14@dummy.com\", \"address1\": \"Rua Dummy\", \"address2\": \"Ap 100\", \"postalCode\": 20735060, \"city\": \"Rio de Janeiro\", \"codCountry\": \"BR\", \"stateProvince\": \"RJ\", \"phoneNumber1\": \"2125922592\"}]";
 	}
 	
 	
@@ -528,7 +587,7 @@ public class CusModelUpdateTest {
 		Response response = model.getResponse();
 		assertTrue(response.getStatus() == Response.Status.OK.getStatusCode());
 		
-		String responseBody = "{\"selectCode\":200,\"selectMessage\":\"The list was returned successfully\",\"results\":[{\"codOwner\":1,\"codCustomer\":1,\"cpf\":\" \",\"name\":\" \",\"codGender\":1,\"txtGender\":\" \",\"email\":\" \",\"address1\":\" \",\"address2\":\" \",\"postalCode\":1,\"city\":\" \",\"codCountry\":\" \",\"txtCountry\":\" \",\"stateProvince\":\" \",\"phone\":\" \",\"codLanguage\":\"PT\"}]}";
+		String responseBody = "{\"selectCode\":200,\"selectMessage\":\"The list was returned successfully\",\"results\":[{\"codOwner\":1,\"codCustomer\":1,\"cpf\":\" \",\"name\":\" \",\"codGender\":1,\"txtGender\":\" \",\"email\":\" \",\"address1\":\" \",\"address2\":\" \",\"postalCode\":1,\"city\":\" \",\"codCountry\":\" \",\"txtCountry\":\" \",\"stateProvince\":\" \",\"codCountryPhone1\":1,\"phoneNumber1\":\" \",\"codLanguage\":\"PT\"}]}";
 		assertTrue(response.getEntity().equals(responseBody));		
 	}
 		
@@ -597,5 +656,207 @@ public class CusModelUpdateTest {
 	protected void initializeinvalidConnection() {
 		PowerMockito.when(DbConnection.getConnection()).thenReturn(invalidConn);
 		model = new CusModelUpdate(incomingDataOrdinaryUsage());
+	}
+	
+	
+	
+	@Test
+	public void invalidPhone1Country() {
+		initializeInvalidPhone1Country();
+		model.executeRequest();
+		Response response = model.getResponse();
+		assertTrue(response.getStatus() == Response.Status.BAD_REQUEST.getStatusCode());
+		
+		String responseBody = "{\"selectCode\":1171,\"selectMessage\":\"Phone Country code not found on DB\",\"results\":{}}";
+		assertTrue(response.getEntity().equals(responseBody));		
+	}
+		
+	
+	
+	protected void initializeInvalidPhone1Country() {
+		PowerMockito.when(DbConnection.getConnection()).thenReturn(invalidPhone1CountryConn);
+		model = new CusModelUpdate(incomingDataOrdinaryUsage());
+	}
+	
+	
+	
+	@Test
+	public void invalidPhone1Area() {
+		initializeInvalidPhone1Area();
+		model.executeRequest();
+		Response response = model.getResponse();
+		assertTrue(response.getStatus() == Response.Status.BAD_REQUEST.getStatusCode());
+		
+		String responseBody = "{\"selectCode\":1558,\"selectMessage\":\"Invalid area code for phone number\",\"results\":{}}";
+		assertTrue(response.getEntity().equals(responseBody));		
+	}
+		
+	
+	
+	protected void initializeInvalidPhone1Area() {
+		PowerMockito.when(DbConnection.getConnection()).thenReturn(updateConn);
+		model = new CusModelUpdate(incomingDataInvalidPhone1Area());
+	}
+	
+	
+	
+	protected String incomingDataInvalidPhone1Area() {
+		return "[{\"codOwner\": 8, \"codCustomer\": 28, \"cpf\": \"43498631764\", \"name\": \"Grazi 1\", \"codGender\": 2, \"birthDate\": {\"year\": 1984, \"month\": 8, \"day\": 16}, \"email\": \"dummy14@dummy.com\", \"address1\": \"Rua Dummy\", \"address2\": \"Ap 100\", \"postalCode\": 20735060, \"city\": \"Rio de Janeiro\", \"codCountry\": \"BR\", \"stateProvince\": \"RJ\",\"codCountryPhone1\":55, \"phoneNumber1\": \"1025922592\"}]";
+	}
+	
+	
+	
+	@Test
+	public void invalidPhone1SmallerLength() {
+		initializeInvalidPhone1SmallerLength();
+		model.executeRequest();
+		Response response = model.getResponse();
+		assertTrue(response.getStatus() == Response.Status.BAD_REQUEST.getStatusCode());
+		
+		String responseBody = "{\"selectCode\":1556,\"selectMessage\":\"Invalid phone length. Area code is expected\",\"results\":{}}";
+		assertTrue(response.getEntity().equals(responseBody));		
+	}
+		
+	
+	
+	protected void initializeInvalidPhone1SmallerLength() {
+		PowerMockito.when(DbConnection.getConnection()).thenReturn(updateConn);
+		model = new CusModelUpdate(incomingDataInvalidPhone1SmallerLength());
+	}
+	
+	
+	
+	protected String incomingDataInvalidPhone1SmallerLength() {
+		return "[{\"codOwner\": 8, \"codCustomer\": 28, \"cpf\": \"43498631764\", \"name\": \"Grazi 1\", \"codGender\": 2, \"birthDate\": {\"year\": 1984, \"month\": 8, \"day\": 16}, \"email\": \"dummy14@dummy.com\", \"address1\": \"Rua Dummy\", \"address2\": \"Ap 100\", \"postalCode\": 20735060, \"city\": \"Rio de Janeiro\", \"codCountry\": \"BR\", \"stateProvince\": \"RJ\",\"codCountryPhone1\":55, \"phoneNumber1\": \"215922592\"}]";
+	}
+	
+	
+	
+	@Test
+	public void invalidPhone1BiggerLength() {
+		initializeInvalidPhone1BiggerLength();
+		model.executeRequest();
+		Response response = model.getResponse();
+		assertTrue(response.getStatus() == Response.Status.BAD_REQUEST.getStatusCode());
+		
+		String responseBody = "{\"selectCode\":1554,\"selectMessage\":\"Phone number is invalid\",\"results\":{}}";
+		assertTrue(response.getEntity().equals(responseBody));		
+	}
+		
+	
+	
+	protected void initializeInvalidPhone1BiggerLength() {
+		PowerMockito.when(DbConnection.getConnection()).thenReturn(updateConn);
+		model = new CusModelUpdate(incomingDataInvalidPhone1BiggerLength());
+	}
+	
+	
+	
+	protected String incomingDataInvalidPhone1BiggerLength() {
+		return "[{\"codOwner\": 8, \"codCustomer\": 28, \"cpf\": \"43498631764\", \"name\": \"Grazi 1\", \"codGender\": 2, \"birthDate\": {\"year\": 1984, \"month\": 8, \"day\": 16}, \"email\": \"dummy14@dummy.com\", \"address1\": \"Rua Dummy\", \"address2\": \"Ap 100\", \"postalCode\": 20735060, \"city\": \"Rio de Janeiro\", \"codCountry\": \"BR\", \"stateProvince\": \"RJ\",\"codCountryPhone1\":55, \"phoneNumber1\": \"21225922592\"}]";
+	}
+	
+	
+	
+	@Test
+	public void invalidPhone1Mobile() {
+		initializeInvalidPhone1Mobile();
+		model.executeRequest();
+		Response response = model.getResponse();
+		assertTrue(response.getStatus() == Response.Status.BAD_REQUEST.getStatusCode());
+		
+		String responseBody = "{\"selectCode\":1554,\"selectMessage\":\"Phone number is invalid\",\"results\":{}}";
+		assertTrue(response.getEntity().equals(responseBody));		
+	}
+		
+	
+	
+	protected void initializeInvalidPhone1Mobile() {
+		PowerMockito.when(DbConnection.getConnection()).thenReturn(updateConn);
+		model = new CusModelUpdate(incomingDataInvalidPhone1Mobile());
+	}
+	
+	
+	
+	protected String incomingDataInvalidPhone1Mobile() {
+		return "[{\"codOwner\": 8, \"codCustomer\": 28, \"cpf\": \"43498631764\", \"name\": \"Grazi 1\", \"codGender\": 2, \"birthDate\": {\"year\": 1984, \"month\": 8, \"day\": 16}, \"email\": \"dummy14@dummy.com\", \"address1\": \"Rua Dummy\", \"address2\": \"Ap 100\", \"postalCode\": 20735060, \"city\": \"Rio de Janeiro\", \"codCountry\": \"BR\", \"stateProvince\": \"RJ\",\"codCountryPhone1\":55, \"phoneNumber1\": \"2195922592\"}]";
+	}
+	
+	
+	
+	@Test
+	public void invalidPhone1Sequence() {
+		initializeInvalidPhone1Sequence();
+		model.executeRequest();
+		Response response = model.getResponse();
+		assertTrue(response.getStatus() == Response.Status.BAD_REQUEST.getStatusCode());
+		
+		String responseBody = "{\"selectCode\":1559,\"selectMessage\":\"Invalid sequence for phone number\",\"results\":{}}";
+		assertTrue(response.getEntity().equals(responseBody));		
+	}
+		
+	
+	
+	protected void initializeInvalidPhone1Sequence() {
+		PowerMockito.when(DbConnection.getConnection()).thenReturn(updateConn);
+		model = new CusModelUpdate(incomingDataInvalidPhone1Sequence());
+	}
+	
+	
+	
+	protected String incomingDataInvalidPhone1Sequence() {
+		return "[{\"codOwner\": 8, \"codCustomer\": 28, \"cpf\": \"43498631764\", \"name\": \"Grazi 1\", \"codGender\": 2, \"birthDate\": {\"year\": 1984, \"month\": 8, \"day\": 16}, \"email\": \"dummy14@dummy.com\", \"address1\": \"Rua Dummy\", \"address2\": \"Ap 100\", \"postalCode\": 20735060, \"city\": \"Rio de Janeiro\", \"codCountry\": \"BR\", \"stateProvince\": \"RJ\",\"codCountryPhone1\":55, \"phoneNumber1\": \"2111111111\"}]";
+	}
+	
+	
+	
+	@Test
+	public void invalidPhone1NullNumber() {
+		initializeInvalidPhone1NullNumber();
+		model.executeRequest();
+		Response response = model.getResponse();
+		assertTrue(response.getStatus() == Response.Status.BAD_REQUEST.getStatusCode());
+		
+		String responseBody = "{\"selectCode\":1,\"selectMessage\":\"Mandatory field is empty\",\"results\":{}}";
+		assertTrue(response.getEntity().equals(responseBody));		
+	}
+		
+	
+	
+	protected void initializeInvalidPhone1NullNumber() {
+		PowerMockito.when(DbConnection.getConnection()).thenReturn(updateConn);
+		model = new CusModelUpdate(incomingDataInvalidPhone1NullNumber());
+	}
+	
+	
+	
+	protected String incomingDataInvalidPhone1NullNumber() {
+		return "[{\"codOwner\": 8, \"codCustomer\": 28, \"cpf\": \"43498631764\", \"name\": \"Grazi 1\", \"codGender\": 2, \"birthDate\": {\"year\": 1984, \"month\": 8, \"day\": 16}, \"email\": \"dummy14@dummy.com\", \"address1\": \"Rua Dummy\", \"address2\": \"Ap 100\", \"postalCode\": 20735060, \"city\": \"Rio de Janeiro\", \"codCountry\": \"BR\", \"stateProvince\": \"RJ\",\"codCountryPhone1\":55}]";
+	}
+	
+	
+	
+	@Test
+	public void insertNullPhone() {
+		initializeInsertNullPhone();
+		model.executeRequest();
+		Response response = model.getResponse();
+		assertTrue(response.getStatus() == Response.Status.OK.getStatusCode());
+		
+		String responseBody = "{\"selectCode\":200,\"selectMessage\":\"The list was returned successfully\",\"results\":[{\"codOwner\":1,\"codCustomer\":1,\"cpf\":\" \",\"name\":\" \",\"codGender\":1,\"txtGender\":\" \",\"email\":\" \",\"address1\":\" \",\"address2\":\" \",\"postalCode\":1,\"city\":\" \",\"codCountry\":\" \",\"txtCountry\":\" \",\"stateProvince\":\" \",\"codCountryPhone1\":1,\"phoneNumber1\":\" \",\"codLanguage\":\"PT\"}]}";
+		assertTrue(response.getEntity().equals(responseBody));		
+	}
+		
+	
+	
+	protected void initializeInsertNullPhone() {
+		PowerMockito.when(DbConnection.getConnection()).thenReturn(nullPhone1Conn);
+		model = new CusModelUpdate(incomingDataNullPhone());
+	}
+	
+	
+	
+	protected String incomingDataNullPhone() {
+		return "[{\"codOwner\": 8, \"codCustomer\": 28, \"cpf\": \"43498631764\", \"name\": \"Grazi 1\", \"codGender\": 2, \"birthDate\": {\"year\": 1984, \"month\": 8, \"day\": 16}, \"email\": \"dummy14@dummy.com\", \"address1\": \"Rua Dummy\", \"address2\": \"Ap 100\", \"postalCode\": 20735060, \"city\": \"Rio de Janeiro\", \"codCountry\": \"BR\", \"stateProvince\": \"RJ\"}]";
 	}
 }
