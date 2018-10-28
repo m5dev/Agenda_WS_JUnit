@@ -93,7 +93,10 @@ public class CusModelInsertTest {
 		                     .thenReturn(true).thenReturn(false)					// Check Email Exist
 		                     .thenReturn(true).thenReturn(true).thenReturn(false)	// Check Country Phone 1
 		                     .thenReturn(true)										// Insert
-		                     .thenReturn(true).thenReturn(true).thenReturn(false);  // Select
+		                     .thenReturn(true).thenReturn(true).thenReturn(false)   // Select - Customer
+					         .thenReturn(true).thenReturn(true).thenReturn(false)	// Select - Gender
+					         .thenReturn(true).thenReturn(true).thenReturn(false)	// Select - Address
+					         .thenReturn(true).thenReturn(true).thenReturn(false);	// Select - Address - Form
 		when(insertRs.getLong(any(String.class))).thenReturn(new Long(1));
 		when(insertRs.getInt(any(String.class))).thenReturn(new Integer(1));
 		when(insertRs.getString(any(String.class))).thenReturn(" ");
@@ -241,7 +244,7 @@ public class CusModelInsertTest {
 		Response response = model.getResponse();
 		assertTrue(response.getStatus() == Response.Status.OK.getStatusCode());
 		
-		String responseBody = "{\"selectCode\":200,\"selectMessage\":\"The list was returned successfully\",\"results\":[{\"codOwner\":1,\"codCustomer\":1,\"cpf\":\" \",\"name\":\" \",\"codGender\":1,\"txtGender\":\" \",\"email\":\" \",\"address1\":\" \",\"address2\":\" \",\"postalCode\":1,\"city\":\" \",\"codCountry\":\" \",\"txtCountry\":\" \",\"stateProvince\":\" \",\"codCountryPhone1\":1,\"phoneNumber1\":\" \",\"codLanguage\":\"PT\"}]}";
+		String responseBody = "{\"selectCode\":200,\"selectMessage\":\"The list was returned successfully\",\"results\":[{\"codOwner\":1,\"codCustomer\":1,\"cpf\":\" \",\"name\":\" \",\"codGender\":1,\"txtGender\":\" \",\"email\":\" \",\"codCountryPhone1\":1,\"phoneNumber1\":\" \",\"addresses\":[{\"codOwner\":1,\"codAddress\":1,\"codCustomer\":1,\"codStore\":1,\"codEmployee\":-1,\"codCountry\":\" \",\"codState\":\" \",\"city\":\" \",\"district\":\" \",\"street\":\" \",\"streetNumber\":\" \",\"complement\":\" \",\"postalCode\":\" \",\"longitude\":0.0,\"latitude\":0.0,\"line1\":\" \",\"line2\":\" \",\"line3\":\" \",\"line4\":\" \",\"line5\":\" \",\"line6\":\" \",\"line7\":\" \",\"codForm\":\"A00\"}],\"codLanguage\":\"PT\"}]}";
 		assertTrue(response.getEntity().equals(responseBody));		
 	}
 		
@@ -255,7 +258,7 @@ public class CusModelInsertTest {
 	
 	
 	protected String incomingDataOrdinaryUsage() {
-		return "[{\"codOwner\": 8,\"cpf\": \"34284231430\", \"name\": \"Grazi\", \"codGender\": 2, \"birthDate\": {\"year\": 1984, \"month\": 8, \"day\": 16}, \"email\": \"dummy13@dummy.com\", \"address1\": \"Rua Dummy\", \"address2\": \"Ap 100\", \"postalCode\": 20735060, \"city\": \"Rio de Janeiro\", \"codCountry\": \"BR\", \"stateProvince\": \"RJ\",\"codCountryPhone1\":55, \"phoneNumber1\": \"2125922592\"}]";
+		return "[{\"codOwner\": 8,\"cpf\": \"34284231430\", \"name\": \"Grazi\", \"codGender\": 2, \"birthDate\": {\"year\": 1984, \"month\": 8, \"day\": 16}, \"email\": \"dummy13@dummy.com\", \"address1\": \"Rua Dummy\", \"address2\": \"Ap 100\", \"postalCode\": 20735060, \"city1\": \"Rio de Janeiro\", \"codCountry1\": \"BR\", \"codState1\": \"RJ\",\"codCountryPhone1\":55, \"phoneNumber1\": \"2125922592\"}]";
 	}
 	
 	
@@ -281,7 +284,7 @@ public class CusModelInsertTest {
 	
 	
 	protected String incomingDataMissingFieldOwner() {
-		return "[{\"cpf\": \"34284231430\", \"name\": \"Grazi\", \"codGender\": 2, \"birthDate\": {\"year\": 1984, \"month\": 8, \"day\": 16}, \"email\": \"dummy13@dummy.com\", \"address1\": \"Rua Dummy\", \"address2\": \"Ap 100\", \"postalCode\": 20735060, \"city\": \"Rio de Janeiro\", \"codCountry\": \"BR\", \"stateProvince\": \"RJ\", \"phoneNumber1\": \"2125922592\"}]";
+		return "[{\"cpf\": \"34284231430\", \"name\": \"Grazi\", \"codGender\": 2, \"birthDate\": {\"year\": 1984, \"month\": 8, \"day\": 16}, \"email\": \"dummy13@dummy.com\", \"address1\": \"Rua Dummy\", \"address2\": \"Ap 100\", \"postalCode\": 20735060, \"city1\": \"Rio de Janeiro\", \"codCountry1\": \"BR\", \"codState1\": \"RJ\", \"phoneNumber1\": \"2125922592\"}]";
 	}
 	
 	
@@ -307,7 +310,7 @@ public class CusModelInsertTest {
 	
 	
 	protected String incomingDataMissingFieldCpf() {
-		return "[{\"codOwner\": 8, \"name\": \"Grazi\", \"codGender\": 2, \"birthDate\": {\"year\": 1984, \"month\": 8, \"day\": 16}, \"email\": \"dummy13@dummy.com\", \"address1\": \"Rua Dummy\", \"address2\": \"Ap 100\", \"postalCode\": 20735060, \"city\": \"Rio de Janeiro\", \"codCountry\": \"BR\", \"stateProvince\": \"RJ\", \"phoneNumber1\": \"2125922592\"}]";
+		return "[{\"codOwner\": 8, \"name\": \"Grazi\", \"codGender\": 2, \"birthDate\": {\"year\": 1984, \"month\": 8, \"day\": 16}, \"email\": \"dummy13@dummy.com\", \"address1\": \"Rua Dummy\", \"address2\": \"Ap 100\", \"postalCode\": 20735060, \"city1\": \"Rio de Janeiro\", \"codCountry1\": \"BR\", \"codState1\": \"RJ\", \"phoneNumber1\": \"2125922592\"}]";
 	}
 	
 	
@@ -333,7 +336,7 @@ public class CusModelInsertTest {
 	
 	
 	protected String incomingDataMissingFieldName() {
-		return "[{\"codOwner\": 8,\"cpf\": \"34284231430\", \"codGender\": 2, \"birthDate\": {\"year\": 1984, \"month\": 8, \"day\": 16}, \"email\": \"dummy13@dummy.com\", \"address1\": \"Rua Dummy\", \"address2\": \"Ap 100\", \"postalCode\": 20735060, \"city\": \"Rio de Janeiro\", \"codCountry\": \"BR\", \"stateProvince\": \"RJ\", \"phoneNumber1\": \"2125922592\"}]";
+		return "[{\"codOwner\": 8,\"cpf\": \"34284231430\", \"codGender\": 2, \"birthDate\": {\"year\": 1984, \"month\": 8, \"day\": 16}, \"email\": \"dummy13@dummy.com\", \"address1\": \"Rua Dummy\", \"address2\": \"Ap 100\", \"postalCode\": 20735060, \"city1\": \"Rio de Janeiro\", \"codCountry1\": \"BR\", \"codState1\": \"RJ\", \"phoneNumber1\": \"2125922592\"}]";
 	}
 	
 	
@@ -359,7 +362,7 @@ public class CusModelInsertTest {
 	
 	
 	protected String incomingDataMissingFieldEmail() {
-		return "[{\"codOwner\": 8,\"cpf\": \"34284231430\", \"name\": \"Grazi\", \"codGender\": 2, \"birthDate\": {\"year\": 1984, \"month\": 8, \"day\": 16}, \"address1\": \"Rua Dummy\", \"address2\": \"Ap 100\", \"postalCode\": 20735060, \"city\": \"Rio de Janeiro\", \"codCountry\": \"BR\", \"stateProvince\": \"RJ\", \"phoneNumber1\": \"2125922592\"}]";
+		return "[{\"codOwner\": 8,\"cpf\": \"34284231430\", \"name\": \"Grazi\", \"codGender\": 2, \"birthDate\": {\"year\": 1984, \"month\": 8, \"day\": 16}, \"address1\": \"Rua Dummy\", \"address2\": \"Ap 100\", \"postalCode\": 20735060, \"city1\": \"Rio de Janeiro\", \"codCountry1\": \"BR\", \"codState1\": \"RJ\", \"phoneNumber1\": \"2125922592\"}]";
 	}
 	
 	
@@ -385,7 +388,7 @@ public class CusModelInsertTest {
 	
 	
 	protected String incomingDataFieldCodCustomer() {
-		return "[{\"codCustomer\": 8, \"codOwner\": 8,\"cpf\": \"34284231430\", \"name\": \"Grazi\", \"codGender\": 2, \"birthDate\": {\"year\": 1984, \"month\": 8, \"day\": 16}, \"email\": \"dummy13@dummy.com\", \"address1\": \"Rua Dummy\", \"address2\": \"Ap 100\", \"postalCode\": 20735060, \"city\": \"Rio de Janeiro\", \"codCountry\": \"BR\", \"stateProvince\": \"RJ\", \"phoneNumber1\": \"2125922592\"}]";
+		return "[{\"codCustomer\": 8, \"codOwner\": 8,\"cpf\": \"34284231430\", \"name\": \"Grazi\", \"codGender\": 2, \"birthDate\": {\"year\": 1984, \"month\": 8, \"day\": 16}, \"email\": \"dummy13@dummy.com\", \"address1\": \"Rua Dummy\", \"address2\": \"Ap 100\", \"postalCode\": 20735060, \"city1\": \"Rio de Janeiro\", \"codCountry1\": \"BR\", \"codState1\": \"RJ\", \"phoneNumber1\": \"2125922592\"}]";
 	}
 	
 	
@@ -431,7 +434,7 @@ public class CusModelInsertTest {
 	
 	
 	protected String incomingDataInvalidCnpj() {
-		return "[{\"codOwner\": 8,\"cpf\": \"34284231431\", \"name\": \"Grazi\", \"codGender\": 2, \"birthDate\": {\"year\": 1984, \"month\": 8, \"day\": 16}, \"email\": \"dummy13@dummy.com\", \"address1\": \"Rua Dummy\", \"address2\": \"Ap 100\", \"postalCode\": 20735060, \"city\": \"Rio de Janeiro\", \"codCountry\": \"BR\", \"stateProvince\": \"RJ\", \"phoneNumber1\": \"2125922592\"}]";
+		return "[{\"codOwner\": 8,\"cpf\": \"34284231431\", \"name\": \"Grazi\", \"codGender\": 2, \"birthDate\": {\"year\": 1984, \"month\": 8, \"day\": 16}, \"email\": \"dummy13@dummy.com\", \"address1\": \"Rua Dummy\", \"address2\": \"Ap 100\", \"postalCode\": 20735060, \"city1\": \"Rio de Janeiro\", \"codCountry1\": \"BR\", \"codState1\": \"RJ\", \"phoneNumber1\": \"2125922592\"}]";
 	}
 	
 	
@@ -577,7 +580,7 @@ public class CusModelInsertTest {
 	
 	
 	protected String incomingDataInvalidPhone1Area() {
-		return "[{\"codOwner\": 8,\"cpf\": \"34284231430\", \"name\": \"Grazi\", \"codGender\": 2, \"birthDate\": {\"year\": 1984, \"month\": 8, \"day\": 16}, \"email\": \"dummy13@dummy.com\", \"address1\": \"Rua Dummy\", \"address2\": \"Ap 100\", \"postalCode\": 20735060, \"city\": \"Rio de Janeiro\", \"codCountry\": \"BR\", \"stateProvince\": \"RJ\",\"codCountryPhone1\":55, \"phoneNumber1\": \"1025922592\"}]";
+		return "[{\"codOwner\": 8,\"cpf\": \"34284231430\", \"name\": \"Grazi\", \"codGender\": 2, \"birthDate\": {\"year\": 1984, \"month\": 8, \"day\": 16}, \"email\": \"dummy13@dummy.com\", \"address1\": \"Rua Dummy\", \"address2\": \"Ap 100\", \"postalCode\": 20735060, \"city1\": \"Rio de Janeiro\", \"codCountry1\": \"BR\", \"codState1\": \"RJ\",\"codCountryPhone1\":55, \"phoneNumber1\": \"1025922592\"}]";
 	}
 	
 	
@@ -603,7 +606,7 @@ public class CusModelInsertTest {
 	
 	
 	protected String incomingDataInvalidPhone1SmallerLength() {
-		return "[{\"codOwner\": 8,\"cpf\": \"34284231430\", \"name\": \"Grazi\", \"codGender\": 2, \"birthDate\": {\"year\": 1984, \"month\": 8, \"day\": 16}, \"email\": \"dummy13@dummy.com\", \"address1\": \"Rua Dummy\", \"address2\": \"Ap 100\", \"postalCode\": 20735060, \"city\": \"Rio de Janeiro\", \"codCountry\": \"BR\", \"stateProvince\": \"RJ\",\"codCountryPhone1\":55, \"phoneNumber1\": \"215922592\"}]";
+		return "[{\"codOwner\": 8,\"cpf\": \"34284231430\", \"name\": \"Grazi\", \"codGender\": 2, \"birthDate\": {\"year\": 1984, \"month\": 8, \"day\": 16}, \"email\": \"dummy13@dummy.com\", \"address1\": \"Rua Dummy\", \"address2\": \"Ap 100\", \"postalCode\": 20735060, \"city1\": \"Rio de Janeiro\", \"codCountry1\": \"BR\", \"codState1\": \"RJ\",\"codCountryPhone1\":55, \"phoneNumber1\": \"215922592\"}]";
 	}
 	
 	
@@ -629,7 +632,7 @@ public class CusModelInsertTest {
 	
 	
 	protected String incomingDataInvalidPhone1BiggerLength() {
-		return "[{\"codOwner\": 8,\"cpf\": \"34284231430\", \"name\": \"Grazi\", \"codGender\": 2, \"birthDate\": {\"year\": 1984, \"month\": 8, \"day\": 16}, \"email\": \"dummy13@dummy.com\", \"address1\": \"Rua Dummy\", \"address2\": \"Ap 100\", \"postalCode\": 20735060, \"city\": \"Rio de Janeiro\", \"codCountry\": \"BR\", \"stateProvince\": \"RJ\",\"codCountryPhone1\":55, \"phoneNumber1\": \"21225922592\"}]";
+		return "[{\"codOwner\": 8,\"cpf\": \"34284231430\", \"name\": \"Grazi\", \"codGender\": 2, \"birthDate\": {\"year\": 1984, \"month\": 8, \"day\": 16}, \"email\": \"dummy13@dummy.com\", \"address1\": \"Rua Dummy\", \"address2\": \"Ap 100\", \"postalCode\": 20735060, \"city1\": \"Rio de Janeiro\", \"codCountry1\": \"BR\", \"codState1\": \"RJ\",\"codCountryPhone1\":55, \"phoneNumber1\": \"21225922592\"}]";
 	}
 	
 	
@@ -655,7 +658,7 @@ public class CusModelInsertTest {
 	
 	
 	protected String incomingDataInvalidPhone1Mobile() {
-		return "[{\"codOwner\": 8,\"cpf\": \"34284231430\", \"name\": \"Grazi\", \"codGender\": 2, \"birthDate\": {\"year\": 1984, \"month\": 8, \"day\": 16}, \"email\": \"dummy13@dummy.com\", \"address1\": \"Rua Dummy\", \"address2\": \"Ap 100\", \"postalCode\": 20735060, \"city\": \"Rio de Janeiro\", \"codCountry\": \"BR\", \"stateProvince\": \"RJ\",\"codCountryPhone1\":55, \"phoneNumber1\": \"2195939318\"}]";
+		return "[{\"codOwner\": 8,\"cpf\": \"34284231430\", \"name\": \"Grazi\", \"codGender\": 2, \"birthDate\": {\"year\": 1984, \"month\": 8, \"day\": 16}, \"email\": \"dummy13@dummy.com\", \"address1\": \"Rua Dummy\", \"address2\": \"Ap 100\", \"postalCode\": 20735060, \"city1\": \"Rio de Janeiro\", \"codCountry1\": \"BR\", \"codState1\": \"RJ\",\"codCountryPhone1\":55, \"phoneNumber1\": \"2195939318\"}]";
 	}
 	
 	
@@ -681,7 +684,7 @@ public class CusModelInsertTest {
 	
 	
 	protected String incomingDataInvalidPhone1Sequence() {
-		return "[{\"codOwner\": 8,\"cpf\": \"34284231430\", \"name\": \"Grazi\", \"codGender\": 2, \"birthDate\": {\"year\": 1984, \"month\": 8, \"day\": 16}, \"email\": \"dummy13@dummy.com\", \"address1\": \"Rua Dummy\", \"address2\": \"Ap 100\", \"postalCode\": 20735060, \"city\": \"Rio de Janeiro\", \"codCountry\": \"BR\", \"stateProvince\": \"RJ\",\"codCountryPhone1\":55, \"phoneNumber1\": \"2111111111\"}]";
+		return "[{\"codOwner\": 8,\"cpf\": \"34284231430\", \"name\": \"Grazi\", \"codGender\": 2, \"birthDate\": {\"year\": 1984, \"month\": 8, \"day\": 16}, \"email\": \"dummy13@dummy.com\", \"address1\": \"Rua Dummy\", \"address2\": \"Ap 100\", \"postalCode\": 20735060, \"city1\": \"Rio de Janeiro\", \"codCountry1\": \"BR\", \"codState1\": \"RJ\",\"codCountryPhone1\":55, \"phoneNumber1\": \"2111111111\"}]";
 	}
 	
 	
@@ -707,7 +710,7 @@ public class CusModelInsertTest {
 	
 	
 	protected String incomingDataInvalidPhone1NullNumber() {
-		return "[{\"codOwner\": 8,\"cpf\": \"34284231430\", \"name\": \"Grazi\", \"codGender\": 2, \"birthDate\": {\"year\": 1984, \"month\": 8, \"day\": 16}, \"email\": \"dummy13@dummy.com\", \"address1\": \"Rua Dummy\", \"address2\": \"Ap 100\", \"postalCode\": 20735060, \"city\": \"Rio de Janeiro\", \"codCountry\": \"BR\", \"stateProvince\": \"RJ\",\"codCountryPhone1\":55}]";
+		return "[{\"codOwner\": 8,\"cpf\": \"34284231430\", \"name\": \"Grazi\", \"codGender\": 2, \"birthDate\": {\"year\": 1984, \"month\": 8, \"day\": 16}, \"email\": \"dummy13@dummy.com\", \"address1\": \"Rua Dummy\", \"address2\": \"Ap 100\", \"postalCode\": 20735060, \"city1\": \"Rio de Janeiro\", \"codCountry1\": \"BR\", \"codState1\": \"RJ\",\"codCountryPhone1\":55}]";
 	}
 	
 	
@@ -719,7 +722,7 @@ public class CusModelInsertTest {
 		Response response = model.getResponse();
 		assertTrue(response.getStatus() == Response.Status.OK.getStatusCode());
 		
-		String responseBody = "{\"selectCode\":200,\"selectMessage\":\"The list was returned successfully\",\"results\":[{\"codOwner\":1,\"codCustomer\":1,\"cpf\":\" \",\"name\":\" \",\"codGender\":1,\"txtGender\":\" \",\"email\":\" \",\"address1\":\" \",\"address2\":\" \",\"postalCode\":1,\"city\":\" \",\"codCountry\":\" \",\"txtCountry\":\" \",\"stateProvince\":\" \",\"codCountryPhone1\":1,\"phoneNumber1\":\" \",\"codLanguage\":\"PT\"}]}";
+		String responseBody = "{\"selectCode\":200,\"selectMessage\":\"The list was returned successfully\",\"results\":[{\"codOwner\":1,\"codCustomer\":1,\"cpf\":\" \",\"name\":\" \",\"codGender\":1,\"email\":\" \",\"codCountryPhone1\":1,\"phoneNumber1\":\" \",\"addresses\":[],\"codLanguage\":\"PT\"}]}";
 		assertTrue(response.getEntity().equals(responseBody));		
 	}
 		
@@ -733,6 +736,6 @@ public class CusModelInsertTest {
 	
 	
 	protected String incomingDataNullPhone() {
-		return "[{\"codOwner\": 8,\"cpf\": \"34284231430\", \"name\": \"Grazi\", \"codGender\": 2, \"birthDate\": {\"year\": 1984, \"month\": 8, \"day\": 16}, \"email\": \"dummy13@dummy.com\", \"address1\": \"Rua Dummy\", \"address2\": \"Ap 100\", \"postalCode\": 20735060, \"city\": \"Rio de Janeiro\", \"codCountry\": \"BR\", \"stateProvince\": \"RJ\"}]";
+		return "[{\"codOwner\": 8,\"cpf\": \"34284231430\", \"name\": \"Grazi\", \"codGender\": 2, \"birthDate\": {\"year\": 1984, \"month\": 8, \"day\": 16}, \"email\": \"dummy13@dummy.com\", \"address1\": \"Rua Dummy\", \"address2\": \"Ap 100\", \"postalCode\": 20735060, \"city1\": \"Rio de Janeiro\", \"codCountry1\": \"BR\", \"codState1\": \"RJ\"}]";
 	}
 }

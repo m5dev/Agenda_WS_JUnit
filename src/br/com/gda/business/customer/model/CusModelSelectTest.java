@@ -41,6 +41,14 @@ public class CusModelSelectTest {
 	@Mock private PreparedStatement notFoundStmt;
 	@Mock private ResultSet notFoundRs;
 	
+	@Mock private Connection genderNotFoundConn;
+	@Mock private PreparedStatement genderNotFoundStmt;
+	@Mock private ResultSet genderNotFoundRs;
+	
+	@Mock private Connection addressNotFoundConn;
+	@Mock private PreparedStatement addressNotFoundStmt;
+	@Mock private ResultSet addressNotFoundRs;
+	
 	@Mock private Connection invalidConn;
 	@Mock private PreparedStatement invalidStmt;
 	
@@ -54,6 +62,8 @@ public class CusModelSelectTest {
 		
 		initializeScenarioSelect();
 		initializeScenarioNotFound();
+		initializeScenarioGenderNotFound();
+		initializeScenarioAddressNotFound();
 		initializeScenarioInvalidConnection();
 	}
 	
@@ -70,7 +80,10 @@ public class CusModelSelectTest {
 		doNothing().when(selectStmt).setTime(anyInt(), any(Time.class));
 		
 		when(selectStmt.executeQuery()).thenReturn(selectRs);
-		when(selectRs.next()).thenReturn(true).thenReturn(true).thenReturn(false);
+		when(selectRs.next()).thenReturn(true).thenReturn(true).thenReturn(false)		//Customer
+		                     .thenReturn(true).thenReturn(true).thenReturn(false)		//Gender
+		                     .thenReturn(true).thenReturn(true).thenReturn(false)		//Address
+		                     .thenReturn(true).thenReturn(true).thenReturn(false);		//Address - Form
 		when(selectRs.getLong(any(String.class))).thenReturn(new Long(1));
 		when(selectRs.getInt(any(String.class))).thenReturn(new Integer(1));
 		when(selectRs.getString(any(String.class))).thenReturn(" ");
@@ -88,6 +101,51 @@ public class CusModelSelectTest {
 		
 		when(notFoundStmt.executeQuery()).thenReturn(notFoundRs);		
 		when(notFoundRs.next()).thenReturn(false);
+	}
+	
+	
+	
+	private void initializeScenarioGenderNotFound() throws SQLException {
+		genderNotFoundStmt = mock(PreparedStatement.class);
+		genderNotFoundRs = mock(ResultSet.class);
+		genderNotFoundConn = mock(Connection.class);
+		
+		when(genderNotFoundConn.prepareStatement(any(String.class))).thenReturn(genderNotFoundStmt);
+		doNothing().when(genderNotFoundStmt).setString(anyInt(), anyString());
+		doNothing().when(genderNotFoundStmt).setLong(anyInt(), anyLong());
+		doNothing().when(genderNotFoundStmt).setTime(anyInt(), any(Time.class));
+		
+		when(genderNotFoundStmt.executeQuery()).thenReturn(genderNotFoundRs);
+		when(genderNotFoundRs.next()).thenReturn(true).thenReturn(true).thenReturn(false)		//Customer
+				                     .thenReturn(true).thenReturn(false)						//Gender
+				                     .thenReturn(true).thenReturn(true).thenReturn(false)		//Address
+				                     .thenReturn(true).thenReturn(true).thenReturn(false);		//Address - Form
+		when(genderNotFoundRs.getLong(any(String.class))).thenReturn(new Long(1));
+		when(genderNotFoundRs.getInt(any(String.class))).thenReturn(new Integer(1));
+		when(genderNotFoundRs.getString(any(String.class))).thenReturn(" ");
+		when(genderNotFoundRs.getTime(any(String.class))).thenReturn(Time.valueOf("11:22:33"));
+	}
+	
+	
+	
+	private void initializeScenarioAddressNotFound() throws SQLException {
+		addressNotFoundStmt = mock(PreparedStatement.class);
+		addressNotFoundRs = mock(ResultSet.class);
+		addressNotFoundConn = mock(Connection.class);
+		
+		when(addressNotFoundConn.prepareStatement(any(String.class))).thenReturn(addressNotFoundStmt);
+		doNothing().when(addressNotFoundStmt).setString(anyInt(), anyString());
+		doNothing().when(addressNotFoundStmt).setLong(anyInt(), anyLong());
+		doNothing().when(addressNotFoundStmt).setTime(anyInt(), any(Time.class));
+		
+		when(addressNotFoundStmt.executeQuery()).thenReturn(addressNotFoundRs);
+		when(addressNotFoundRs.next()).thenReturn(true).thenReturn(true).thenReturn(false)		//Customer
+				                      .thenReturn(true).thenReturn(true).thenReturn(false)		//Gender
+				                      .thenReturn(true).thenReturn(false);						//Address
+		when(addressNotFoundRs.getLong(any(String.class))).thenReturn(new Long(1));
+		when(addressNotFoundRs.getInt(any(String.class))).thenReturn(new Integer(1));
+		when(addressNotFoundRs.getString(any(String.class))).thenReturn(" ");
+		when(addressNotFoundRs.getTime(any(String.class))).thenReturn(Time.valueOf("11:22:33"));
 	}
 	
 	
@@ -113,7 +171,7 @@ public class CusModelSelectTest {
 		Response response = model.getResponse();
 		assertTrue(response.getStatus() == Response.Status.OK.getStatusCode());
 		
-		String responseBody = "{\"selectCode\":200,\"selectMessage\":\"The list was returned successfully\",\"results\":[{\"codOwner\":1,\"codCustomer\":1,\"cpf\":\" \",\"name\":\" \",\"codGender\":1,\"txtGender\":\" \",\"email\":\" \",\"address1\":\" \",\"address2\":\" \",\"postalCode\":1,\"city\":\" \",\"codCountry\":\" \",\"txtCountry\":\" \",\"stateProvince\":\" \",\"codCountryPhone1\":1,\"phoneNumber1\":\" \",\"codLanguage\":\"PT\"}]}";
+		String responseBody = "{\"selectCode\":200,\"selectMessage\":\"The list was returned successfully\",\"results\":[{\"codOwner\":1,\"codCustomer\":1,\"cpf\":\" \",\"name\":\" \",\"codGender\":1,\"txtGender\":\" \",\"email\":\" \",\"codCountryPhone1\":1,\"phoneNumber1\":\" \",\"addresses\":[{\"codOwner\":1,\"codAddress\":1,\"codCustomer\":1,\"codStore\":1,\"codEmployee\":-1,\"codCountry\":\" \",\"codState\":\" \",\"city\":\" \",\"district\":\" \",\"street\":\" \",\"streetNumber\":\" \",\"complement\":\" \",\"postalCode\":\" \",\"longitude\":0.0,\"latitude\":0.0,\"line1\":\" \",\"line2\":\" \",\"line3\":\" \",\"line4\":\" \",\"line5\":\" \",\"line6\":\" \",\"line7\":\" \",\"codForm\":\"A00\"}],\"codLanguage\":\"PT\"}]}";
 		assertTrue(response.getEntity().equals(responseBody));		
 	}
 	
@@ -226,5 +284,57 @@ public class CusModelSelectTest {
 	protected void initializeNullArgument() {
 		PowerMockito.when(DbConnection.getConnection()).thenReturn(selectConn);
 		model = new CusModelSelect(null);
+	}
+	
+	
+	
+	@Test
+	public void genderNotFound() {
+		initializeGenderNotFound();
+		model.executeRequest();
+		Response response = model.getResponse();
+		assertTrue(response.getStatus() == Response.Status.OK.getStatusCode());
+		
+		String responseBody = "{\"selectCode\":200,\"selectMessage\":\"The list was returned successfully\",\"results\":[{\"codOwner\":1,\"codCustomer\":1,\"cpf\":\" \",\"name\":\" \",\"codGender\":1,\"email\":\" \",\"codCountryPhone1\":1,\"phoneNumber1\":\" \",\"addresses\":[{\"codOwner\":1,\"codAddress\":1,\"codCustomer\":1,\"codStore\":1,\"codEmployee\":-1,\"codCountry\":\" \",\"codState\":\" \",\"city\":\" \",\"district\":\" \",\"street\":\" \",\"streetNumber\":\" \",\"complement\":\" \",\"postalCode\":\" \",\"longitude\":0.0,\"latitude\":0.0,\"line1\":\" \",\"line2\":\" \",\"line3\":\" \",\"line4\":\" \",\"line5\":\" \",\"line6\":\" \",\"line7\":\" \",\"codForm\":\"A00\"}],\"codLanguage\":\"PT\"}]}";
+		assertTrue(response.getEntity().equals(responseBody));
+		
+		}
+	
+	
+	
+	protected void initializeGenderNotFound() {
+		PowerMockito.when(DbConnection.getConnection()).thenReturn(genderNotFoundConn);
+		
+		CusInfo infoRecord = new CusInfo();
+		infoRecord.codOwner = 1;
+		infoRecord.codCustomer = 1;
+		
+		model = new CusModelSelect(infoRecord);
+	}
+	
+	
+	
+	@Test
+	public void addressNotFound() {
+		initializeAddressNotFound();
+		model.executeRequest();
+		Response response = model.getResponse();
+		assertTrue(response.getStatus() == Response.Status.OK.getStatusCode());
+		
+		String responseBody = "{\"selectCode\":200,\"selectMessage\":\"The list was returned successfully\",\"results\":[{\"codOwner\":1,\"codCustomer\":1,\"cpf\":\" \",\"name\":\" \",\"codGender\":1,\"txtGender\":\" \",\"email\":\" \",\"codCountryPhone1\":1,\"phoneNumber1\":\" \",\"addresses\":[],\"codLanguage\":\"PT\"}]}";
+		assertTrue(response.getEntity().equals(responseBody));
+		
+		}
+	
+	
+	
+	protected void initializeAddressNotFound() {
+		PowerMockito.when(DbConnection.getConnection()).thenReturn(addressNotFoundConn);
+		
+		CusInfo infoRecord = new CusInfo();
+		infoRecord.codOwner = 1;
+		infoRecord.codCustomer = 1;
+		
+		model = new CusModelSelect(infoRecord);
 	}
 }
