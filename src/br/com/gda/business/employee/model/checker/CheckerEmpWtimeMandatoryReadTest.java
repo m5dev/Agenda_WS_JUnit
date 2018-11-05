@@ -25,7 +25,7 @@ public class CheckerEmpWtimeMandatoryReadTest {
 		initializeForOrdinaryUsageSuccess();
 		assertTrue(checker.check(recordInfo));
 		assertTrue(checker.getResult());
-		checker.getFailureExplanation();
+		checker.getFailMessage();
 	}
 	
 	
@@ -35,7 +35,7 @@ public class CheckerEmpWtimeMandatoryReadTest {
 		initializeForOrdinaryUsageSuccess();
 		assertTrue(checker.check(recordInfo));
 		assertTrue(checker.getResult());
-		checker.getFailureCode();
+		checker.getFailCode();
 	}
 	
 	

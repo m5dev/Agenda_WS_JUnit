@@ -38,6 +38,10 @@ public class CusModelDeleteTest {
 	@Mock private PreparedStatement deleteStmt;
 	@Mock private ResultSet deleteRs;
 	
+	@Mock private Connection deleteAddressConn;
+	@Mock private PreparedStatement deleteAddressStmt;
+	@Mock private ResultSet deleteAddressRs;
+	
 	@Mock private Connection notFoundConn;
 	@Mock private PreparedStatement notFoundStmt;
 	@Mock private ResultSet notFoundRs;
@@ -54,6 +58,7 @@ public class CusModelDeleteTest {
 		PowerMockito.mockStatic(DbConnection.class);
 		
 		initializeScenarioDelete();
+		initializeScenarioDeleteAddress();
 		initializeScenarioNotFound();
 		initializeScenarioInvalidConnection();
 	}
@@ -73,7 +78,36 @@ public class CusModelDeleteTest {
 		when(deleteStmt.executeUpdate()).thenReturn(1);
 		
 		when(deleteStmt.executeQuery()).thenReturn(deleteRs);		
-		when(deleteRs.next()).thenReturn(true).thenReturn(true).thenReturn(false);
+		when(deleteRs.next()).thenReturn(true).thenReturn(true).thenReturn(false)	// Customer - Check Exist
+		                     .thenReturn(false);									// Address - Check Exist
+	}
+	
+	
+	
+	private void initializeScenarioDeleteAddress() throws SQLException {
+		deleteAddressConn = mock(Connection.class);
+		deleteAddressStmt = mock(PreparedStatement.class);
+		deleteAddressRs = mock(ResultSet.class);
+		
+		when(deleteAddressConn.prepareStatement(any(String.class))).thenReturn(deleteAddressStmt);			
+		doNothing().when(deleteAddressStmt).setString(anyInt(), anyString());
+		doNothing().when(deleteAddressStmt).setLong(anyInt(), anyLong());
+		doNothing().when(deleteAddressStmt).setTime(anyInt(), any(Time.class));		
+		
+		when(deleteAddressStmt.executeUpdate()).thenReturn(1);
+		
+		when(deleteAddressStmt.executeQuery()).thenReturn(deleteAddressRs);		
+		when(deleteAddressRs.next()).thenReturn(true).thenReturn(true).thenReturn(false)	// Customer - Check Exist 
+									.thenReturn(true).thenReturn(true).thenReturn(false)	// Address - Check Exist
+									.thenReturn(true).thenReturn(true).thenReturn(false)	// Address - Select
+									.thenReturn(true).thenReturn(true).thenReturn(false)	// Address Form - Check Country
+									.thenReturn(true).thenReturn(true).thenReturn(false)	// Address Form - Check Exist
+									.thenReturn(true).thenReturn(true).thenReturn(false);	// Address Form - Select
+		
+		when(deleteAddressRs.getLong(any(String.class))).thenReturn(new Long(1));
+		when(deleteAddressRs.getInt(any(String.class))).thenReturn(new Integer(1));
+		when(deleteAddressRs.getString(any(String.class))).thenReturn(" ");
+		when(deleteAddressRs.getTime(any(String.class))).thenReturn(Time.valueOf("11:22:33"));	
 	}
 	
 	
@@ -119,6 +153,31 @@ public class CusModelDeleteTest {
 	
 	protected void initializeDeleteRecord() {
 		PowerMockito.when(DbConnection.getConnection()).thenReturn(deleteConn);
+		
+		CusInfo infoRecord = new CusInfo();
+		infoRecord.codOwner = 1;
+		infoRecord.codCustomer = 1;
+		
+		model = new CusModelDelete(infoRecord);
+	}
+	
+	
+	
+	@Test
+	public void deleteAddress() {
+		initializeDeleteAddress();
+		model.executeRequest();
+		Response response = model.getResponse();
+		assertTrue(response.getStatus() == Response.Status.OK.getStatusCode());
+		
+		String responseBody = "{\"selectCode\":200,\"selectMessage\":\"The list was returned successfully\",\"results\":[{\"codOwner\":-1,\"codCustomer\":-1,\"codGender\":1,\"codCountryPhone1\":-1,\"addresses\":[],\"codLanguage\":\"PT\"}]}";
+		assertTrue(response.getEntity().equals(responseBody));		
+	}
+	
+	
+	
+	protected void initializeDeleteAddress() {
+		PowerMockito.when(DbConnection.getConnection()).thenReturn(deleteAddressConn);
 		
 		CusInfo infoRecord = new CusInfo();
 		infoRecord.codOwner = 1;

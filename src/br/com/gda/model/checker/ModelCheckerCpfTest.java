@@ -6,6 +6,7 @@ import org.junit.Test;
 
 import br.com.gda.common.SystemCode;
 import br.com.gda.common.SystemMessage;
+import br.com.gda.model.checker.common.ModelCheckerCpf;
 
 public final class ModelCheckerCpfTest {
 
@@ -14,8 +15,8 @@ public final class ModelCheckerCpfTest {
 		ModelCheckerCpf checker = new ModelCheckerCpf();
 		checker.check("00000000000");
 		assertFalse(checker.getResult());
-		assertTrue(checker.getFailureCode() == SystemCode.CPF_INVALID);
-		assertTrue(checker.getFailureExplanation().equals(SystemMessage.CPF_INVALID));
+		assertTrue(checker.getFailCode() == SystemCode.CPF_INVALID);
+		assertTrue(checker.getFailMessage().equals(SystemMessage.CPF_INVALID));
 		
 		checker.check("11111111111");
 		assertFalse(checker.getResult());
@@ -55,8 +56,8 @@ public final class ModelCheckerCpfTest {
 		ModelCheckerCpf checker = new ModelCheckerCpf();
 		checker.check("1234567890");
 		assertFalse(checker.getResult());
-		assertTrue(checker.getFailureCode() == SystemCode.CPF_INVALID);
-		assertTrue(checker.getFailureExplanation().equals(SystemMessage.CPF_INVALID));
+		assertTrue(checker.getFailCode() == SystemCode.CPF_INVALID);
+		assertTrue(checker.getFailMessage().equals(SystemMessage.CPF_INVALID));
 		
 		checker.check("123456789012");
 		assertFalse(checker.getResult());
@@ -79,16 +80,16 @@ public final class ModelCheckerCpfTest {
 		ModelCheckerCpf checker = new ModelCheckerCpf();
 		checker.check("1234567890a");
 		assertFalse(checker.getResult());
-		assertTrue(checker.getFailureCode() == SystemCode.CPF_INVALID);
-		assertTrue(checker.getFailureExplanation().equals(SystemMessage.CPF_INVALID));
+		assertTrue(checker.getFailCode() == SystemCode.CPF_INVALID);
+		assertTrue(checker.getFailMessage().equals(SystemMessage.CPF_INVALID));
 		
 		checker.check("a1234567890");
 		assertFalse(checker.getResult());
-		assertTrue(checker.getFailureCode() == SystemCode.CPF_INVALID);
+		assertTrue(checker.getFailCode() == SystemCode.CPF_INVALID);
 		
 		checker.check("123.4567890");
 		assertFalse(checker.getResult());
-		assertTrue(checker.getFailureCode() == SystemCode.CPF_INVALID);
+		assertTrue(checker.getFailCode() == SystemCode.CPF_INVALID);
 	}
 	
 	
@@ -98,8 +99,8 @@ public final class ModelCheckerCpfTest {
 		ModelCheckerCpf checker = new ModelCheckerCpf();
 		checker.check("12345678900");
 		assertFalse(checker.getResult());
-		assertTrue(checker.getFailureCode() == SystemCode.CPF_INVALID);
-		assertTrue(checker.getFailureExplanation().equals(SystemMessage.CPF_INVALID));
+		assertTrue(checker.getFailCode() == SystemCode.CPF_INVALID);
+		assertTrue(checker.getFailMessage().equals(SystemMessage.CPF_INVALID));
 		
 		checker.check("09330403777");
 		assertFalse(checker.getResult());

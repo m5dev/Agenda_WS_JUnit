@@ -32,6 +32,10 @@ public class CusModelInsertTest {
 	@Mock private PreparedStatement insertStmt;
 	@Mock private ResultSet insertRs;
 	
+	@Mock private Connection insertAddressConn;
+	@Mock private PreparedStatement insertAddressStmt;
+	@Mock private ResultSet insertAddressRs;
+	
 	@Mock private Connection cpfAlreadyExistConn;
 	@Mock private PreparedStatement cpfAlreadyExistStmt;
 	@Mock private ResultSet cpfAlreadyExistRs;
@@ -67,6 +71,7 @@ public class CusModelInsertTest {
 		PowerMockito.mockStatic(DbConnection.class);
 		
 		initializeScenarioInsert();
+		initializeScenarioInsertAddress();
 		initializeScenarioInvalidOwner();
 		initializeScenarioInvalidGender();
 		initializeScenarioCpf();
@@ -95,12 +100,49 @@ public class CusModelInsertTest {
 		                     .thenReturn(true)										// Insert
 		                     .thenReturn(true).thenReturn(true).thenReturn(false)   // Select - Customer
 					         .thenReturn(true).thenReturn(true).thenReturn(false)	// Select - Gender
-					         .thenReturn(true).thenReturn(true).thenReturn(false)	// Select - Address
-					         .thenReturn(true).thenReturn(true).thenReturn(false);	// Select - Address - Form
+							 .thenReturn(true).thenReturn(true).thenReturn(false)	// Address - Select
+							 .thenReturn(true).thenReturn(true).thenReturn(false)	// Address Form - Check Country
+							 .thenReturn(true).thenReturn(true).thenReturn(false)	// Address Form - Check Exist
+							 .thenReturn(true).thenReturn(true).thenReturn(false);	// Address Form - Select
 		when(insertRs.getLong(any(String.class))).thenReturn(new Long(1));
 		when(insertRs.getInt(any(String.class))).thenReturn(new Integer(1));
 		when(insertRs.getString(any(String.class))).thenReturn(" ");
 		when(insertRs.getTime(any(String.class))).thenReturn(Time.valueOf("11:22:33"));		
+	}
+	
+	
+	
+	private void initializeScenarioInsertAddress() throws SQLException {
+		insertAddressConn = mock(Connection.class);
+		insertAddressStmt = mock(PreparedStatement.class);
+		insertAddressRs = mock(ResultSet.class);
+		
+		when(insertAddressConn.prepareStatement(any(String.class))).thenReturn(insertAddressStmt);
+		when(insertAddressStmt.executeUpdate()).thenReturn(1);
+		
+		when(insertAddressStmt.executeQuery()).thenReturn(insertAddressRs);
+		when(insertAddressRs.next()).thenReturn(true).thenReturn(true).thenReturn(false)	// Check Owner
+									.thenReturn(true).thenReturn(true).thenReturn(false)	// Check Gender
+									.thenReturn(true).thenReturn(false)						// Check CPF exist
+				                    .thenReturn(true).thenReturn(false)						// Check Email Exist
+				                    .thenReturn(true).thenReturn(true).thenReturn(false)	// Check Country Phone 1
+				                    .thenReturn(true)										// Insert Customer
+				                    .thenReturn(true).thenReturn(true).thenReturn(false)	// Address - Check Country
+									.thenReturn(true).thenReturn(true).thenReturn(false)	// Address Form - Check Country
+									.thenReturn(false)										// Address Form - Check Exist
+									.thenReturn(true)										// Address - Insert		
+									.thenReturn(true).thenReturn(true).thenReturn(false)   	// ???
+									.thenReturn(true).thenReturn(true).thenReturn(false)   	// ???
+				                    .thenReturn(true).thenReturn(true).thenReturn(false)   	// Select - Customer
+							        .thenReturn(true).thenReturn(true).thenReturn(false)	// Select - Gender
+									.thenReturn(true).thenReturn(true).thenReturn(false)	// Address - Select
+									.thenReturn(true).thenReturn(true).thenReturn(false)	// Address Form - Check Country
+									.thenReturn(false)	;									// Address Form - Check Exist
+									//.thenReturn(true).thenReturn(true).thenReturn(false);	// Address Form - Select
+		when(insertAddressRs.getLong(any(String.class))).thenReturn(new Long(1));
+		when(insertAddressRs.getInt(any(String.class))).thenReturn(new Integer(1));
+		when(insertAddressRs.getString(any(String.class))).thenReturn(" ");
+		when(insertAddressRs.getTime(any(String.class))).thenReturn(Time.valueOf("11:22:33"));		
 	}
 	
 	
@@ -244,7 +286,7 @@ public class CusModelInsertTest {
 		Response response = model.getResponse();
 		assertTrue(response.getStatus() == Response.Status.OK.getStatusCode());
 		
-		String responseBody = "{\"selectCode\":200,\"selectMessage\":\"The list was returned successfully\",\"results\":[{\"codOwner\":1,\"codCustomer\":1,\"cpf\":\" \",\"name\":\" \",\"codGender\":1,\"txtGender\":\" \",\"email\":\" \",\"codCountryPhone1\":1,\"phoneNumber1\":\" \",\"addresses\":[{\"codOwner\":1,\"codAddress\":1,\"codCustomer\":1,\"codStore\":1,\"codEmployee\":-1,\"codCountry\":\" \",\"codState\":\" \",\"city\":\" \",\"district\":\" \",\"street\":\" \",\"streetNumber\":\" \",\"complement\":\" \",\"postalCode\":\" \",\"longitude\":0.0,\"latitude\":0.0,\"line1\":\" \",\"line2\":\" \",\"line3\":\" \",\"line4\":\" \",\"line5\":\" \",\"line6\":\" \",\"line7\":\" \",\"codForm\":\"A00\"}],\"codLanguage\":\"PT\"}]}";
+		String responseBody = "{\"selectCode\":200,\"selectMessage\":\"The list was returned successfully\",\"results\":[{\"codOwner\":1,\"codCustomer\":1,\"cpf\":\" \",\"name\":\" \",\"codGender\":1,\"txtGender\":\" \",\"email\":\" \",\"codCountryPhone1\":1,\"phoneNumber1\":\" \",\"addresses\":[{\"codOwner\":1,\"codAddress\":1,\"codCustomer\":1,\"codStore\":1,\"codEmployee\":-1,\"codCountry\":\" \",\"codState\":\" \",\"city\":\" \",\"district\":\" \",\"street\":\" \",\"streetNumber\":\" \",\"complement\":\" \",\"postalCode\":\" \",\"longitude\":0.0,\"latitude\":0.0,\"line1\":\" \",\"line2\":\" \",\"line3\":\" \",\"line4\":\" \",\"line5\":\" \",\"line6\":\" \",\"line7\":\" \",\"codForm\":\" \"}],\"codLanguage\":\"PT\"}]}";
 		assertTrue(response.getEntity().equals(responseBody));		
 	}
 		
@@ -259,6 +301,32 @@ public class CusModelInsertTest {
 	
 	protected String incomingDataOrdinaryUsage() {
 		return "[{\"codOwner\": 8,\"cpf\": \"34284231430\", \"name\": \"Grazi\", \"codGender\": 2, \"birthDate\": {\"year\": 1984, \"month\": 8, \"day\": 16}, \"email\": \"dummy13@dummy.com\", \"address1\": \"Rua Dummy\", \"address2\": \"Ap 100\", \"postalCode\": 20735060, \"city1\": \"Rio de Janeiro\", \"codCountry1\": \"BR\", \"codState1\": \"RJ\",\"codCountryPhone1\":55, \"phoneNumber1\": \"2125922592\"}]";
+	}
+	
+	
+	
+	@Test
+	public void insertAddress() {
+		initializeInsertAddress();
+		model.executeRequest();
+		Response response = model.getResponse();
+		assertTrue(response.getStatus() == Response.Status.OK.getStatusCode());
+		
+		String responseBody = "{\"selectCode\":200,\"selectMessage\":\"The list was returned successfully\",\"results\":[{\"codOwner\":1,\"codCustomer\":1,\"cpf\":\" \",\"name\":\" \",\"codGender\":1,\"txtGender\":\" \",\"email\":\" \",\"codCountryPhone1\":1,\"phoneNumber1\":\" \",\"addresses\":[{\"codOwner\":1,\"codAddress\":1,\"codCustomer\":1,\"codStore\":1,\"codEmployee\":-1,\"codCountry\":\" \",\"codState\":\" \",\"city\":\" \",\"district\":\" \",\"street\":\" \",\"streetNumber\":\" \",\"complement\":\" \",\"postalCode\":\" \",\"longitude\":0.0,\"latitude\":0.0,\"line1\":\" \",\"line2\":\" \",\"line3\":\" \",\"line4\":\" \",\"line5\":\" \",\"line6\":\" \",\"line7\":\" \",\"codForm\":\" \"}],\"codLanguage\":\"PT\"}]}";
+		assertTrue(response.getEntity().equals(responseBody));		
+	}
+		
+	
+	
+	protected void initializeInsertAddress() {
+		PowerMockito.when(DbConnection.getConnection()).thenReturn(insertAddressConn);
+		model = new CusModelInsert(incomingDataInsertAddress());
+	}
+	
+	
+	
+	protected String incomingDataInsertAddress() {
+		return "[{\"codOwner\": 8,\"cpf\": \"34162232504\",\"name\": \"João Décimo Sétimo\",\"codGender\": 2,\"birthDate\": {\"year\": 1984,\"month\": 8,\"day\": 16},\"email\": \"joao17@dummy.com\",\"codCountryPhone1\": 55,\"phoneNumber1\": \"2125922592\",\"addresses\": [{\"codCountry\": \" \",\"line1\": \"Mr A N Address\",\"line2\": \"Allies Computing Ltd\",\"line3\": \"Manor Farm Barns\",\"line4\": \"Fox Road\",\"line5\": \"Framingham Pigot\",\"line6\": \"NORWICH\",\"line7\": \"NR14 7PZ\"}]}]";
 	}
 	
 	

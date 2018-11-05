@@ -6,6 +6,7 @@ import org.junit.Test;
 
 import br.com.gda.common.SystemCode;
 import br.com.gda.common.SystemMessage;
+import br.com.gda.model.checker.common.ModelCheckerCnpj;
 
 public class ModelCheckerCnpjTest {
 	
@@ -14,8 +15,8 @@ public class ModelCheckerCnpjTest {
 		ModelCheckerCnpj checker = new ModelCheckerCnpj();
 		checker.check("00000000000000");
 		assertFalse(checker.getResult());
-		assertTrue(checker.getFailureCode() == SystemCode.CNPJ_INVALID);
-		assertTrue(checker.getFailureExplanation().equals(SystemMessage.CNPJ_INVALID));
+		assertTrue(checker.getFailCode() == SystemCode.CNPJ_INVALID);
+		assertTrue(checker.getFailMessage().equals(SystemMessage.CNPJ_INVALID));
 		
 		checker.check("11111111111111");
 		assertFalse(checker.getResult());
@@ -55,8 +56,8 @@ public class ModelCheckerCnpjTest {
 		ModelCheckerCnpj checker = new ModelCheckerCnpj();
 		checker.check("1234567890");
 		assertFalse(checker.getResult());
-		assertTrue(checker.getFailureCode() == SystemCode.CNPJ_INVALID);
-		assertTrue(checker.getFailureExplanation().equals(SystemMessage.CNPJ_INVALID));
+		assertTrue(checker.getFailCode() == SystemCode.CNPJ_INVALID);
+		assertTrue(checker.getFailMessage().equals(SystemMessage.CNPJ_INVALID));
 		
 		checker.check("123456789012345");
 		assertFalse(checker.getResult());
@@ -79,16 +80,16 @@ public class ModelCheckerCnpjTest {
 		ModelCheckerCnpj checker = new ModelCheckerCnpj();
 		checker.check("0001234567890a");
 		assertFalse(checker.getResult());
-		assertTrue(checker.getFailureCode() == SystemCode.CNPJ_INVALID);
-		assertTrue(checker.getFailureExplanation().equals(SystemMessage.CNPJ_INVALID));
+		assertTrue(checker.getFailCode() == SystemCode.CNPJ_INVALID);
+		assertTrue(checker.getFailMessage().equals(SystemMessage.CNPJ_INVALID));
 		
 		checker.check("a0001234567890");
 		assertFalse(checker.getResult());
-		assertTrue(checker.getFailureCode() == SystemCode.CNPJ_INVALID);
+		assertTrue(checker.getFailCode() == SystemCode.CNPJ_INVALID);
 		
 		checker.check("000123.4567890");
 		assertFalse(checker.getResult());
-		assertTrue(checker.getFailureCode() == SystemCode.CNPJ_INVALID);
+		assertTrue(checker.getFailCode() == SystemCode.CNPJ_INVALID);
 	}
 	
 	
@@ -98,8 +99,8 @@ public class ModelCheckerCnpjTest {
 		ModelCheckerCnpj checker = new ModelCheckerCnpj();
 		checker.check("12345678900123");
 		assertFalse(checker.getResult());
-		assertTrue(checker.getFailureCode() == SystemCode.CNPJ_INVALID);
-		assertTrue(checker.getFailureExplanation().equals(SystemMessage.CNPJ_INVALID));
+		assertTrue(checker.getFailCode() == SystemCode.CNPJ_INVALID);
+		assertTrue(checker.getFailMessage().equals(SystemMessage.CNPJ_INVALID));
 		
 		checker.check("06234152000104");
 		assertFalse(checker.getResult());
