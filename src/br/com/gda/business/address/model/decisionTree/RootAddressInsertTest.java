@@ -2,6 +2,10 @@ package br.com.gda.business.address.model.decisionTree;
 
 import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -22,6 +26,7 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import br.com.gda.business.address.info.AddressInfo;
+import br.com.gda.business.form.dao.FormDbTableColumn;
 import br.com.gda.common.DbConnection;
 import br.com.gda.common.DbSchema;
 import br.com.gda.model.decisionTree.DeciResult;
@@ -33,19 +38,36 @@ import br.com.gda.model.decisionTree.DeciTreeOption;
 public class RootAddressInsertTest {
 	@Mock private Connection insertA00Conn;
 	@Mock private PreparedStatement insertA00Stmt;
-	@Mock private ResultSet inserA00tRs;
+	@Mock private ResultSet insertA00Rs;
 	
 	@Mock private Connection insertA01Conn;
 	@Mock private PreparedStatement insertA01Stmt;
-	@Mock private ResultSet inserA01tRs;
+	@Mock private ResultSet insertA01Rs;
 	
-	@Mock private Connection invalidConn;	
+	@Mock private Connection invalidConn;
+	@Mock private PreparedStatement invalidStmt;
 	
 	
 	@Before
 	public void initializeMockObjects() throws SQLException {
 		PowerMockito.mockStatic(DbConnection.class);
 		initializeScenarioInsertA00();
+		initializeScenarioInsertA01();
+		initializeScenarioInvalidConnection();
+	}
+	
+	
+	
+	private void initializeScenarioInvalidConnection() throws SQLException {
+		invalidStmt = mock(PreparedStatement.class);
+		invalidConn = mock(Connection.class);
+		
+		when(invalidConn.prepareStatement(anyString())).thenThrow(new SQLException());
+		doThrow(new SQLException()).when(invalidStmt).setString(anyInt(), anyString());
+		doThrow(new SQLException()).when(invalidStmt).setLong(anyInt(), anyLong());
+		doThrow(new SQLException()).when(invalidStmt).setTime(anyInt(), any(Time.class)); 
+		
+		when(invalidStmt.executeQuery()).thenThrow(new SQLException());
 	}
 	
 	
@@ -53,20 +75,376 @@ public class RootAddressInsertTest {
 	private void initializeScenarioInsertA00() throws SQLException {
 		insertA00Conn = mock(Connection.class);
 		insertA00Stmt = mock(PreparedStatement.class);
-		inserA00tRs = mock(ResultSet.class);
+		insertA00Rs = mock(ResultSet.class);
 		
 		when(insertA00Conn.prepareStatement(any(String.class))).thenReturn(insertA00Stmt);
 		when(insertA00Stmt.executeUpdate()).thenReturn(1);
 		
-		when(insertA00Stmt.executeQuery()).thenReturn(inserA00tRs);
-		when(inserA00tRs.next()).thenReturn(true).thenReturn(true).thenReturn(false)	// Check Country
+		when(insertA00Stmt.executeQuery()).thenReturn(insertA00Rs);
+		when(insertA00Rs.next()).thenReturn(true).thenReturn(true).thenReturn(false)	// Check Country
 						  	    .thenReturn(true).thenReturn(true).thenReturn(false)	// Address Form - Check Country
 						  	    .thenReturn(false).thenReturn(false)					// Address Form - Check Exist
 						  	    .thenReturn(true);										// Insert
-		when(inserA00tRs.getLong(any(String.class))).thenReturn(new Long(1));
-		when(inserA00tRs.getInt(any(String.class))).thenReturn(new Integer(1));
-		when(inserA00tRs.getString(any(String.class))).thenReturn(" ");
-		when(inserA00tRs.getTime(any(String.class))).thenReturn(Time.valueOf("11:22:33"));		
+		when(insertA00Rs.getLong(any(String.class))).thenReturn(new Long(1));
+		when(insertA00Rs.getInt(any(String.class))).thenReturn(new Integer(1));
+		when(insertA00Rs.getString(any(String.class))).thenReturn(" ");
+		when(insertA00Rs.getString(any(String.class))).thenReturn(" ");
+		when(insertA00Rs.getTime(any(String.class))).thenReturn(Time.valueOf("11:22:33"));		
+	}
+	
+	
+	
+	private void initializeScenarioInsertA01() throws SQLException {
+		insertA01Conn = mock(Connection.class);
+		insertA01Stmt = mock(PreparedStatement.class);
+		insertA01Rs = mock(ResultSet.class);
+		
+		when(insertA01Conn.prepareStatement(any(String.class))).thenReturn(insertA01Stmt);
+		when(insertA01Stmt.executeUpdate()).thenReturn(1);
+		
+		when(insertA01Stmt.executeQuery()).thenReturn(insertA01Rs);
+		when(insertA01Rs.next()).thenReturn(true).thenReturn(true).thenReturn(false)	// Check Country
+						  	    .thenReturn(true).thenReturn(true).thenReturn(false)	// Address Form - Check Country
+						  	    .thenReturn(true).thenReturn(true).thenReturn(false)	// Address Form - Check Exist
+						  	    .thenReturn(true).thenReturn(true).thenReturn(false)	// Address Form - Select
+						  	    .thenReturn(true).thenReturn(true).thenReturn(false)	// Check State
+						  	    .thenReturn(true);										// Insert
+		when(insertA01Rs.getLong(any(String.class))).thenReturn(new Long(1));
+		when(insertA01Rs.getInt(any(String.class))).thenReturn(new Integer(1));
+		when(insertA01Rs.getString(any(String.class))).thenReturn(" ");
+		when(insertA01Rs.getString(FormDbTableColumn.COL_COD_FORM)).thenReturn("A01");
+		when(insertA01Rs.getTime(any(String.class))).thenReturn(Time.valueOf("11:22:33"));		
+	}
+	
+	
+	
+	@Test
+	public void missingReferenceMulti1() {
+		DeciTree<AddressInfo> tree = initializeMissingReferenceMulti1();
+		tree.makeDecision();
+		DeciResult<AddressInfo> result = tree.getDecisionResult();		
+		
+		assertFalse(result.isSuccess());
+		assertTrue(result.getFailCode() == 1607);
+		assertTrue(result.getFailMessage().equals("Address has multiple references"));	
+	}
+	
+	
+	
+	private DeciTree<AddressInfo> initializeMissingReferenceMulti1() {
+		DeciTreeOption<AddressInfo> option = new DeciTreeOption<>();
+		
+		option.recordInfos = buildAddressesMissingReferenceMulti1();
+		option.conn = insertA00Conn;
+		option.schemaName = DbSchema.getDefaultSchemaName();
+		
+		return new RootAddressInsert(option);
+	}
+	
+	
+	
+	private List<AddressInfo> buildAddressesMissingReferenceMulti1() {
+		AddressInfo address = new AddressInfo();
+		
+		address.codOwner = 1;
+		address.codCustomer = 1;
+		address.codStore = 1;
+		address.codEmployee = -1;
+		address.codCountry = "X";
+		address.line1 = "X";
+		address.line2 = "X";
+		address.line3 = "X";
+		address.line4 = "X";
+		address.line5 = "X";
+		address.line6 = "X";
+		address.line7 = "X";
+		
+		List<AddressInfo> addresses = new ArrayList<>();
+		addresses.add(address);
+		return addresses;
+	}
+	
+	
+	
+	@Test
+	public void missingReferenceMulti2() {
+		DeciTree<AddressInfo> tree = initializeMissingReferenceMulti2();
+		tree.makeDecision();
+		DeciResult<AddressInfo> result = tree.getDecisionResult();		
+		
+		assertFalse(result.isSuccess());
+		assertTrue(result.getFailCode() == 1607);
+		assertTrue(result.getFailMessage().equals("Address has multiple references"));	
+	}
+	
+	
+	
+	private DeciTree<AddressInfo> initializeMissingReferenceMulti2() {
+		DeciTreeOption<AddressInfo> option = new DeciTreeOption<>();
+		
+		option.recordInfos = buildAddressesMissingReferenceMulti2();
+		option.conn = insertA00Conn;
+		option.schemaName = DbSchema.getDefaultSchemaName();
+		
+		return new RootAddressInsert(option);
+	}
+	
+	
+	
+	private List<AddressInfo> buildAddressesMissingReferenceMulti2() {
+		AddressInfo address = new AddressInfo();
+		
+		address.codOwner = 1;
+		address.codCustomer = 1;
+		address.codStore = -1;
+		address.codEmployee = 1;
+		address.codCountry = "X";
+		address.line1 = "X";
+		address.line2 = "X";
+		address.line3 = "X";
+		address.line4 = "X";
+		address.line5 = "X";
+		address.line6 = "X";
+		address.line7 = "X";
+		
+		List<AddressInfo> addresses = new ArrayList<>();
+		addresses.add(address);
+		return addresses;
+	}		
+	
+	
+	
+	@Test
+	public void missingReferenceMulti3() {
+		DeciTree<AddressInfo> tree = initializeMissingReferenceMulti3();
+		tree.makeDecision();
+		DeciResult<AddressInfo> result = tree.getDecisionResult();		
+		
+		assertFalse(result.isSuccess());
+		assertTrue(result.getFailCode() == 1607);
+		assertTrue(result.getFailMessage().equals("Address has multiple references"));	
+	}
+	
+	
+	
+	private DeciTree<AddressInfo> initializeMissingReferenceMulti3() {
+		DeciTreeOption<AddressInfo> option = new DeciTreeOption<>();
+		
+		option.recordInfos = buildAddressesMissingReferenceMulti3();
+		option.conn = insertA00Conn;
+		option.schemaName = DbSchema.getDefaultSchemaName();
+		
+		return new RootAddressInsert(option);
+	}
+	
+	
+	
+	private List<AddressInfo> buildAddressesMissingReferenceMulti3() {
+		AddressInfo address = new AddressInfo();
+		
+		address.codOwner = 1;
+		address.codCustomer = -1;
+		address.codStore = 1;
+		address.codEmployee = 1;
+		address.codCountry = "X";
+		address.line1 = "X";
+		address.line2 = "X";
+		address.line3 = "X";
+		address.line4 = "X";
+		address.line5 = "X";
+		address.line6 = "X";
+		address.line7 = "X";
+		
+		List<AddressInfo> addresses = new ArrayList<>();
+		addresses.add(address);
+		return addresses;
+	}
+	
+	
+	
+	@Test
+	public void missingReferenceMulti4() {
+		DeciTree<AddressInfo> tree = initializeMissingReferenceMulti4();
+		tree.makeDecision();
+		DeciResult<AddressInfo> result = tree.getDecisionResult();		
+		
+		assertFalse(result.isSuccess());
+		assertTrue(result.getFailCode() == 1607);
+		assertTrue(result.getFailMessage().equals("Address has multiple references"));	
+	}
+	
+	
+	
+	private DeciTree<AddressInfo> initializeMissingReferenceMulti4() {
+		DeciTreeOption<AddressInfo> option = new DeciTreeOption<>();
+		
+		option.recordInfos = buildAddressesMissingReferenceMulti4();
+		option.conn = insertA00Conn;
+		option.schemaName = DbSchema.getDefaultSchemaName();
+		
+		return new RootAddressInsert(option);
+	}
+	
+	
+	
+	private List<AddressInfo> buildAddressesMissingReferenceMulti4() {
+		AddressInfo address = new AddressInfo();
+		
+		address.codOwner = 1;
+		address.codCustomer = 1;
+		address.codStore = 1;
+		address.codEmployee = 1;
+		address.codCountry = "X";
+		address.line1 = "X";
+		address.line2 = "X";
+		address.line3 = "X";
+		address.line4 = "X";
+		address.line5 = "X";
+		address.line6 = "X";
+		address.line7 = "X";
+		
+		List<AddressInfo> addresses = new ArrayList<>();
+		addresses.add(address);
+		return addresses;
+	}
+	
+	
+	
+	@Test
+	public void missingReference() {
+		DeciTree<AddressInfo> tree = initializeMissingReference();
+		tree.makeDecision();
+		DeciResult<AddressInfo> result = tree.getDecisionResult();		
+		
+		assertFalse(result.isSuccess());
+		assertTrue(result.getFailCode() == 1606);
+		assertTrue(result.getFailMessage().equals("No reference added to Address"));	
+	}
+	
+	
+	
+	private DeciTree<AddressInfo> initializeMissingReference() {
+		DeciTreeOption<AddressInfo> option = new DeciTreeOption<>();
+		
+		option.recordInfos = buildAddressesMissingReference();
+		option.conn = insertA00Conn;
+		option.schemaName = DbSchema.getDefaultSchemaName();
+		
+		return new RootAddressInsert(option);
+	}
+	
+	
+	
+	private List<AddressInfo> buildAddressesMissingReference() {
+		AddressInfo address = new AddressInfo();
+		
+		address.codOwner = 1;
+		address.codCustomer = -1;
+		address.codStore = -1;
+		address.codEmployee = -1;
+		address.codCountry = "X";
+		address.line1 = "X";
+		address.line2 = "X";
+		address.line3 = "X";
+		address.line4 = "X";
+		address.line5 = "X";
+		address.line6 = "X";
+		address.line7 = "X";
+		
+		List<AddressInfo> addresses = new ArrayList<>();
+		addresses.add(address);
+		return addresses;
+	}	
+	
+	
+	@Test
+	public void missingFieldCodCountry() {
+		DeciTree<AddressInfo> tree = initializeMissingFieldCodCountry();
+		tree.makeDecision();
+		DeciResult<AddressInfo> result = tree.getDecisionResult();		
+		
+		assertFalse(result.isSuccess());
+		assertTrue(result.getFailCode() == 1);
+		assertTrue(result.getFailMessage().equals("Mandatory field is empty"));	
+	}
+	
+	
+	
+	private DeciTree<AddressInfo> initializeMissingFieldCodCountry() {
+		DeciTreeOption<AddressInfo> option = new DeciTreeOption<>();
+		
+		option.recordInfos = buildAddressesMissingFieldCodCountry();
+		option.conn = insertA00Conn;
+		option.schemaName = DbSchema.getDefaultSchemaName();
+		
+		return new RootAddressInsert(option);
+	}
+	
+	
+	
+	private List<AddressInfo> buildAddressesMissingFieldCodCountry() {
+		AddressInfo address = new AddressInfo();
+		
+		address.codOwner = 1;
+		address.codCustomer = 1;
+		address.codCountry = null;
+		address.line1 = "X";
+		address.line2 = "X";
+		address.line3 = "X";
+		address.line4 = "X";
+		address.line5 = "X";
+		address.line6 = "X";
+		address.line7 = "X";		
+		
+		List<AddressInfo> addresses = new ArrayList<>();
+		addresses.add(address);
+		return addresses;
+	}
+	
+	
+	
+	@Test
+	public void missingFieldCodOwner() {
+		DeciTree<AddressInfo> tree = initializeMissingFieldCodOwner();
+		tree.makeDecision();
+		DeciResult<AddressInfo> result = tree.getDecisionResult();		
+		
+		assertFalse(result.isSuccess());
+		assertTrue(result.getFailCode() == 1);
+		assertTrue(result.getFailMessage().equals("Mandatory field is empty"));	
+	}
+	
+	
+	
+	private DeciTree<AddressInfo> initializeMissingFieldCodOwner() {
+		DeciTreeOption<AddressInfo> option = new DeciTreeOption<>();
+		
+		option.recordInfos = buildAddressesMissingFieldCodOwner();
+		option.conn = insertA00Conn;
+		option.schemaName = DbSchema.getDefaultSchemaName();
+		
+		return new RootAddressInsert(option);
+	}
+	
+	
+	
+	private List<AddressInfo> buildAddressesMissingFieldCodOwner() {
+		AddressInfo address = new AddressInfo();
+		
+		address.codOwner = -1;
+		address.codCustomer = 1;
+		address.codCountry = "X";
+		address.line1 = "X";
+		address.line2 = "X";
+		address.line3 = "X";
+		address.line4 = "X";
+		address.line5 = "X";
+		address.line6 = "X";
+		address.line7 = "X";		
+		
+		List<AddressInfo> addresses = new ArrayList<>();
+		addresses.add(address);
+		return addresses;
 	}
 	
 	
@@ -84,7 +462,7 @@ public class RootAddressInsertTest {
 	
 	
 	
-	protected DeciTree<AddressInfo> initializeA00MissingFieldLine1() {
+	private DeciTree<AddressInfo> initializeA00MissingFieldLine1() {
 		DeciTreeOption<AddressInfo> option = new DeciTreeOption<>();
 		
 		option.recordInfos = buildAddressesA00MissingFieldLine1();
@@ -131,7 +509,7 @@ public class RootAddressInsertTest {
 	
 	
 	
-	protected DeciTree<AddressInfo> initializeA00MissingFieldCountry() {
+	private DeciTree<AddressInfo> initializeA00MissingFieldCountry() {
 		DeciTreeOption<AddressInfo> option = new DeciTreeOption<>();
 		
 		option.recordInfos = buildAddressesA00MissingFieldCountry();
@@ -161,6 +539,31 @@ public class RootAddressInsertTest {
 		addresses.add(address);
 		return addresses;
 	}
+	
+	
+	
+	@Test
+	public void invalidConnection() {
+		DeciTree<AddressInfo> tree = initializeInvalidConnection();
+		tree.makeDecision();
+		DeciResult<AddressInfo> result = tree.getDecisionResult();		
+		
+		assertFalse(result.isSuccess());
+		assertTrue(result.getFailCode() == 500);
+		assertTrue(result.getFailMessage().equals("Ops... something went wrong"));	
+	}
+	
+	
+	
+	private DeciTree<AddressInfo> initializeInvalidConnection() {
+		DeciTreeOption<AddressInfo> option = new DeciTreeOption<>();
+		
+		option.recordInfos = buildInsertAddresses();
+		option.conn = invalidConn;
+		option.schemaName = DbSchema.getDefaultSchemaName();
+		
+		return new RootAddressSelect(option);
+	}
 
 	
 	
@@ -178,7 +581,7 @@ public class RootAddressInsertTest {
 		
 	
 	
-	protected DeciTree<AddressInfo> initializeInsertA00() {
+	private DeciTree<AddressInfo> initializeInsertA00() {
 		DeciTreeOption<AddressInfo> option = new DeciTreeOption<>();
 		
 		option.recordInfos = buildInsertAddresses();
@@ -208,4 +611,334 @@ public class RootAddressInsertTest {
 		addresses.add(address);
 		return addresses;
 	}
+	
+	
+	
+	@Test
+	public void insertA01() {
+		DeciTree<AddressInfo> tree = initializeInsertA01();
+		tree.makeDecision();
+		DeciResult<AddressInfo> result = tree.getDecisionResult();		
+		
+		assertTrue(result.isSuccess());
+		
+		AddressInfo address = result.getResultset().get(0);
+		assertTrue(address.codForm.equals("A01"));	
+	}
+		
+	
+	
+	private DeciTree<AddressInfo> initializeInsertA01() {
+		DeciTreeOption<AddressInfo> option = new DeciTreeOption<>();
+		
+		option.recordInfos = buildInsertAddressesA01();
+		option.conn = insertA01Conn;
+		option.schemaName = DbSchema.getDefaultSchemaName();
+		
+		return new RootAddressInsert(option);
+	}
+	
+	
+	
+	private List<AddressInfo> buildInsertAddressesA01() {
+		AddressInfo address = new AddressInfo();
+		
+		
+		address.codOwner = 1;
+		address.codCustomer = 1;
+		address.codCountry = " ";
+		address.codState = "X";
+		address.city = "X";
+		address.district = "X";
+		address.street = "X";
+		address.streetNumber = "X";
+		address.complement = "X";
+		address.postalCode = "X";		
+		
+		List<AddressInfo> addresses = new ArrayList<>();
+		addresses.add(address);
+		return addresses;
+	}
+	
+	
+	
+	@Test
+	public void a01MissingFieldCodState() {
+		DeciTree<AddressInfo> tree = initializeA01MissingFieldCodState();
+		tree.makeDecision();
+		DeciResult<AddressInfo> result = tree.getDecisionResult();	
+
+		assertFalse(result.isSuccess());
+		assertTrue(result.getFailCode() == 1);
+		assertTrue(result.getFailMessage().equals("Mandatory field is empty"));	
+	}
+		
+	
+	
+	private DeciTree<AddressInfo> initializeA01MissingFieldCodState() {
+		DeciTreeOption<AddressInfo> option = new DeciTreeOption<>();
+		
+		option.recordInfos = buildAddressesA01MissingFieldCodStat();
+		option.conn = insertA01Conn;
+		option.schemaName = DbSchema.getDefaultSchemaName();
+		
+		return new RootAddressInsert(option);
+	}
+	
+	
+	
+	private List<AddressInfo> buildAddressesA01MissingFieldCodStat() {
+		AddressInfo address = new AddressInfo();
+		
+		
+		address.codOwner = 1;
+		address.codCustomer = 1;
+		address.codCountry = " ";
+		address.codState = null;
+		address.city = "X";
+		address.district = "X";
+		address.street = "X";
+		address.streetNumber = "X";
+		address.complement = "X";
+		address.postalCode = "X";		
+		
+		List<AddressInfo> addresses = new ArrayList<>();
+		addresses.add(address);
+		return addresses;
+	} 
+	
+	
+	
+	@Test
+	public void a01MissingFieldCodCity() {
+		DeciTree<AddressInfo> tree = initializeA01MissingFieldCodCity();
+		tree.makeDecision();
+		DeciResult<AddressInfo> result = tree.getDecisionResult();	
+
+		assertFalse(result.isSuccess());
+		assertTrue(result.getFailCode() == 1);
+		assertTrue(result.getFailMessage().equals("Mandatory field is empty"));	
+	}
+		
+	
+	
+	private DeciTree<AddressInfo> initializeA01MissingFieldCodCity() {
+		DeciTreeOption<AddressInfo> option = new DeciTreeOption<>();
+		
+		option.recordInfos = buildAddressesA01MissingFieldCodCity();
+		option.conn = insertA01Conn;
+		option.schemaName = DbSchema.getDefaultSchemaName();
+		
+		return new RootAddressInsert(option);
+	}
+	
+	
+	
+	private List<AddressInfo> buildAddressesA01MissingFieldCodCity() {
+		AddressInfo address = new AddressInfo();
+		
+		
+		address.codOwner = 1;
+		address.codCustomer = 1;
+		address.codCountry = " ";
+		address.codState = "X";
+		address.city = null;
+		address.district = "X";
+		address.street = "X";
+		address.streetNumber = "X";
+		address.complement = "X";
+		address.postalCode = "X";		
+		
+		List<AddressInfo> addresses = new ArrayList<>();
+		addresses.add(address);
+		return addresses;
+	} 
+	
+	
+	
+	@Test
+	public void a01MissingFieldDistrict() {
+		DeciTree<AddressInfo> tree = initializeA01MissingFieldDistrict();
+		tree.makeDecision();
+		DeciResult<AddressInfo> result = tree.getDecisionResult();	
+
+		assertFalse(result.isSuccess());
+		assertTrue(result.getFailCode() == 1);
+		assertTrue(result.getFailMessage().equals("Mandatory field is empty"));	
+	}
+		
+	
+	
+	private DeciTree<AddressInfo> initializeA01MissingFieldDistrict() {
+		DeciTreeOption<AddressInfo> option = new DeciTreeOption<>();
+		
+		option.recordInfos = buildAddressesA01MissingFieldDistrict();
+		option.conn = insertA01Conn;
+		option.schemaName = DbSchema.getDefaultSchemaName();
+		
+		return new RootAddressInsert(option);
+	}
+	
+	
+	
+	private List<AddressInfo> buildAddressesA01MissingFieldDistrict() {
+		AddressInfo address = new AddressInfo();
+		
+		
+		address.codOwner = 1;
+		address.codCustomer = 1;
+		address.codCountry = " ";
+		address.codState = "X";
+		address.city = "X";
+		address.district = null;
+		address.street = "X";
+		address.streetNumber = "X";
+		address.complement = "X";
+		address.postalCode = "X";		
+		
+		List<AddressInfo> addresses = new ArrayList<>();
+		addresses.add(address);
+		return addresses;
+	} 
+	
+	
+	
+	@Test
+	public void a01MissingFieldStreet() {
+		DeciTree<AddressInfo> tree = initializeA01MissingFieldStreet();
+		tree.makeDecision();
+		DeciResult<AddressInfo> result = tree.getDecisionResult();	
+
+		assertFalse(result.isSuccess());
+		assertTrue(result.getFailCode() == 1);
+		assertTrue(result.getFailMessage().equals("Mandatory field is empty"));	
+	}
+		
+	
+	
+	private DeciTree<AddressInfo> initializeA01MissingFieldStreet() {
+		DeciTreeOption<AddressInfo> option = new DeciTreeOption<>();
+		
+		option.recordInfos = buildAddressesA01MissingFieldStreet();
+		option.conn = insertA01Conn;
+		option.schemaName = DbSchema.getDefaultSchemaName();
+		
+		return new RootAddressInsert(option);
+	}
+	
+	
+	
+	private List<AddressInfo> buildAddressesA01MissingFieldStreet() {
+		AddressInfo address = new AddressInfo();
+		
+		
+		address.codOwner = 1;
+		address.codCustomer = 1;
+		address.codCountry = " ";
+		address.codState = "X";
+		address.city = "X";
+		address.district = "X";
+		address.street = null;
+		address.streetNumber = "X";
+		address.complement = "X";
+		address.postalCode = "X";		
+		
+		List<AddressInfo> addresses = new ArrayList<>();
+		addresses.add(address);
+		return addresses;
+	} 
+	
+	
+	
+	@Test
+	public void a01MissingFieldStreetNumber() {
+		DeciTree<AddressInfo> tree = initializeA01MissingFieldStreetNumber();
+		tree.makeDecision();
+		DeciResult<AddressInfo> result = tree.getDecisionResult();	
+
+		assertFalse(result.isSuccess());
+		assertTrue(result.getFailCode() == 1);
+		assertTrue(result.getFailMessage().equals("Mandatory field is empty"));	
+	}
+		
+	
+	
+	private DeciTree<AddressInfo> initializeA01MissingFieldStreetNumber() {
+		DeciTreeOption<AddressInfo> option = new DeciTreeOption<>();
+		
+		option.recordInfos = buildAddressesA01MissingFieldStreetNumber();
+		option.conn = insertA01Conn;
+		option.schemaName = DbSchema.getDefaultSchemaName();
+		
+		return new RootAddressInsert(option);
+	}
+	
+	
+	
+	private List<AddressInfo> buildAddressesA01MissingFieldStreetNumber() {
+		AddressInfo address = new AddressInfo();
+		
+		
+		address.codOwner = 1;
+		address.codCustomer = 1;
+		address.codCountry = " ";
+		address.codState = "X";
+		address.city = "X";
+		address.district = "X";
+		address.street = "X";
+		address.streetNumber = null;
+		address.complement = "X";
+		address.postalCode = "X";		
+		
+		List<AddressInfo> addresses = new ArrayList<>();
+		addresses.add(address);
+		return addresses;
+	} 
+	
+	
+	
+	@Test
+	public void a01MissingFieldPostalcode() {
+		DeciTree<AddressInfo> tree = initializeA01MissingFieldPostalcode();
+		tree.makeDecision();
+		DeciResult<AddressInfo> result = tree.getDecisionResult();	
+
+		assertFalse(result.isSuccess());
+		assertTrue(result.getFailCode() == 1);
+		assertTrue(result.getFailMessage().equals("Mandatory field is empty"));	
+	}
+		
+	
+	
+	private DeciTree<AddressInfo> initializeA01MissingFieldPostalcode() {
+		DeciTreeOption<AddressInfo> option = new DeciTreeOption<>();
+		
+		option.recordInfos = buildAddressesA01MissingFieldPostalcode();
+		option.conn = insertA01Conn;
+		option.schemaName = DbSchema.getDefaultSchemaName();
+		
+		return new RootAddressInsert(option);
+	}
+	
+	
+	
+	private List<AddressInfo> buildAddressesA01MissingFieldPostalcode() {
+		AddressInfo address = new AddressInfo();
+		
+		
+		address.codOwner = 1;
+		address.codCustomer = 1;
+		address.codCountry = " ";
+		address.codState = "X";
+		address.city = "X";
+		address.district = "X";
+		address.street = "X";
+		address.streetNumber = "X";
+		address.complement = "X";
+		address.postalCode = null;		
+		
+		List<AddressInfo> addresses = new ArrayList<>();
+		addresses.add(address);
+		return addresses;
+	} 
 }
