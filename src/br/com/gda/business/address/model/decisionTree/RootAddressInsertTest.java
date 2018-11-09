@@ -47,6 +47,10 @@ public class RootAddressInsertTest {
 	@Mock private Connection invalidConn;
 	@Mock private PreparedStatement invalidStmt;
 	
+	@Mock private Connection invalidStateConn;
+	@Mock private PreparedStatement invalidStateStmt;
+	@Mock private ResultSet invalidStateRs;
+	
 	@Mock private Connection invalidCountryConn;
 	@Mock private PreparedStatement invalidCountryStmt;
 	@Mock private ResultSet invalidCountryRs;
@@ -59,6 +63,7 @@ public class RootAddressInsertTest {
 		initializeScenarioInsertA01();
 		initializeScenarioInvalidConnection();
 		initializeScenarioInvalidCountry();
+		initializeScenarioInvalidState();
 	}
 	
 	
@@ -138,6 +143,29 @@ public class RootAddressInsertTest {
 		when(insertA01Rs.getString(any(String.class))).thenReturn(" ");
 		when(insertA01Rs.getString(FormDbTableColumn.COL_COD_FORM)).thenReturn("A01");
 		when(insertA01Rs.getTime(any(String.class))).thenReturn(Time.valueOf("11:22:33"));		
+	}
+	
+	
+	
+	private void initializeScenarioInvalidState() throws SQLException {
+		invalidStateConn = mock(Connection.class);
+		invalidStateStmt = mock(PreparedStatement.class);
+		invalidStateRs = mock(ResultSet.class);
+		
+		when(invalidStateConn.prepareStatement(any(String.class))).thenReturn(invalidStateStmt);
+		when(invalidStateStmt.executeUpdate()).thenReturn(1);
+		
+		when(invalidStateStmt.executeQuery()).thenReturn(invalidStateRs);
+		when(invalidStateRs.next()).thenReturn(true).thenReturn(true).thenReturn(false)	// Check Country
+						  	    .thenReturn(true).thenReturn(true).thenReturn(false)	// Address Form - Check Country
+						  	    .thenReturn(true).thenReturn(true).thenReturn(false)	// Address Form - Check Exist
+						  	    .thenReturn(true).thenReturn(true).thenReturn(false)	// Address Form - Select
+						  	    .thenReturn(false);										// Check State
+		when(invalidStateRs.getLong(any(String.class))).thenReturn(new Long(1));
+		when(invalidStateRs.getInt(any(String.class))).thenReturn(new Integer(1));
+		when(invalidStateRs.getString(any(String.class))).thenReturn(" ");
+		when(invalidStateRs.getString(FormDbTableColumn.COL_COD_FORM)).thenReturn("A01");
+		when(invalidStateRs.getTime(any(String.class))).thenReturn(Time.valueOf("11:22:33"));		
 	}
 	
 	
@@ -567,15 +595,10 @@ public class RootAddressInsertTest {
 	
 	
 	
-	@Test
+	@Test(expected = IllegalStateException.class)
 	public void invalidConnection() {
 		DeciTree<AddressInfo> tree = initializeInvalidConnection();
-		tree.makeDecision();
-		DeciResult<AddressInfo> result = tree.getDecisionResult();		
-		
-		assertFalse(result.isSuccess());
-		assertTrue(result.getFailCode() == 500);
-		assertTrue(result.getFailMessage().equals("Ops... something went wrong"));	
+		tree.makeDecision();	
 	}
 	
 	
@@ -587,7 +610,7 @@ public class RootAddressInsertTest {
 		option.conn = invalidConn;
 		option.schemaName = DbSchema.getDefaultSchemaName();
 		
-		return new RootAddressSelect(option);
+		return new RootAddressInsert(option);
 	}
 	
 	
@@ -660,6 +683,31 @@ public class RootAddressInsertTest {
 		List<AddressInfo> addresses = new ArrayList<>();
 		addresses.add(address);
 		return addresses;
+	}
+	
+	
+	
+	@Test
+	public void invalidState() {
+		DeciTree<AddressInfo> tree = initializeInvalidState();
+		tree.makeDecision();
+		DeciResult<AddressInfo> result = tree.getDecisionResult();		
+		
+		assertFalse(result.isSuccess());
+		assertTrue(result.getFailCode() == 1177);
+		assertTrue(result.getFailMessage().equals("State not found on DB"));
+	}
+		
+	
+	
+	private DeciTree<AddressInfo> initializeInvalidState() {
+		DeciTreeOption<AddressInfo> option = new DeciTreeOption<>();
+		
+		option.recordInfos = buildInsertAddressesA01();
+		option.conn = invalidStateConn;
+		option.schemaName = DbSchema.getDefaultSchemaName();
+		
+		return new RootAddressInsert(option);
 	}
 	
 	
@@ -1031,4 +1079,38 @@ public class RootAddressInsertTest {
 		
 		return new RootAddressInsert(option);
 	}
+	
+	
+	
+	@Test(expected = NullPointerException.class)
+	public void nullSchema() {
+		DeciTree<AddressInfo> tree = initializeNullSchema();
+		tree.makeDecision();
+	}
+		
+	
+	
+	private DeciTree<AddressInfo> initializeNullSchema() {
+		DeciTreeOption<AddressInfo> option = new DeciTreeOption<>();
+		
+		option.recordInfos = buildAddressesA01MissingFieldPostalcode();
+		option.conn = insertA01Conn;
+		option.schemaName = null;
+		
+		return new RootAddressInsert(option);
+	}	
+	
+	
+	
+	@Test(expected = NullPointerException.class)
+	public void nullOption() {
+		DeciTree<AddressInfo> tree = initializeNullOption();
+		tree.makeDecision();
+	}
+		
+	
+	
+	private DeciTree<AddressInfo> initializeNullOption() {		
+		return new RootAddressInsert(null);
+	}	
 }
