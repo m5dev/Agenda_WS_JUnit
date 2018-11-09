@@ -6,7 +6,8 @@ import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
 @SuiteClasses({RootAddressInsertTest.class,
-	           RootAddressSelectTest.class})
+	           RootAddressSelectTest.class,
+	           RootAddressUpdateTest.class})
 public class AddressDecisionTreeSuiteTest {
 
 }

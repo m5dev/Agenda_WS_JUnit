@@ -348,4 +348,64 @@ public class RootAddressSelectTest {
 		addresses.add(address);
 		return addresses;
 	}
+	
+	
+	
+	@Test(expected = NullPointerException.class)
+	public void nullRecord() {
+		DeciTree<AddressInfo> tree = initializeNullRecord();
+		tree.makeDecision();	
+	}
+	
+	
+	
+	private DeciTree<AddressInfo> initializeNullRecord() {
+		DeciTreeOption<AddressInfo> option = new DeciTreeOption<>();
+		
+		option.recordInfos = null;
+		option.conn = selectA01Conn;
+		option.schemaName = DbSchema.getDefaultSchemaName();
+		
+		return new RootAddressSelect(option);
+	}
+	
+	
+	
+	@Test(expected = NullPointerException.class)
+	public void nullConnection() {
+		DeciTree<AddressInfo> tree = initializeNullConnection();
+		tree.makeDecision();	
+	}
+	
+	
+	
+	private DeciTree<AddressInfo> initializeNullConnection() {
+		DeciTreeOption<AddressInfo> option = new DeciTreeOption<>();
+		
+		option.recordInfos = buildAddressesSelectA01();
+		option.conn = null;
+		option.schemaName = DbSchema.getDefaultSchemaName();
+		
+		return new RootAddressSelect(option);
+	}
+	
+	
+	
+	@Test(expected = NullPointerException.class)
+	public void nullSchema() {
+		DeciTree<AddressInfo> tree = initializeNullSchema();
+		tree.makeDecision();	
+	}
+	
+	
+	
+	private DeciTree<AddressInfo> initializeNullSchema() {
+		DeciTreeOption<AddressInfo> option = new DeciTreeOption<>();
+		
+		option.recordInfos = buildAddressesSelectA01();
+		option.conn = selectA01Conn;
+		option.schemaName = null;
+		
+		return new RootAddressSelect(option);
+	}
 }

@@ -47,6 +47,10 @@ public class RootAddressInsertTest {
 	@Mock private Connection invalidConn;
 	@Mock private PreparedStatement invalidStmt;
 	
+	@Mock private Connection invalidCountryConn;
+	@Mock private PreparedStatement invalidCountryStmt;
+	@Mock private ResultSet invalidCountryRs;
+	
 	
 	@Before
 	public void initializeMockObjects() throws SQLException {
@@ -54,6 +58,7 @@ public class RootAddressInsertTest {
 		initializeScenarioInsertA00();
 		initializeScenarioInsertA01();
 		initializeScenarioInvalidConnection();
+		initializeScenarioInvalidCountry();
 	}
 	
 	
@@ -68,6 +73,25 @@ public class RootAddressInsertTest {
 		doThrow(new SQLException()).when(invalidStmt).setTime(anyInt(), any(Time.class)); 
 		
 		when(invalidStmt.executeQuery()).thenThrow(new SQLException());
+	}
+	
+	
+	
+	private void initializeScenarioInvalidCountry() throws SQLException {
+		invalidCountryConn = mock(Connection.class);
+		invalidCountryStmt = mock(PreparedStatement.class);
+		invalidCountryRs = mock(ResultSet.class);
+		
+		when(invalidCountryConn.prepareStatement(any(String.class))).thenReturn(invalidCountryStmt);
+		when(invalidCountryStmt.executeUpdate()).thenReturn(1);
+		
+		when(invalidCountryStmt.executeQuery()).thenReturn(invalidCountryRs);
+		when(invalidCountryRs.next()).thenReturn(false);					// Check Country
+		when(invalidCountryRs.getLong(any(String.class))).thenReturn(new Long(1));
+		when(invalidCountryRs.getInt(any(String.class))).thenReturn(new Integer(1));
+		when(invalidCountryRs.getString(any(String.class))).thenReturn(" ");
+		when(invalidCountryRs.getString(any(String.class))).thenReturn(" ");
+		when(invalidCountryRs.getTime(any(String.class))).thenReturn(Time.valueOf("11:22:33"));		
 	}
 	
 	
@@ -357,6 +381,7 @@ public class RootAddressInsertTest {
 	}	
 	
 	
+	
 	@Test
 	public void missingFieldCodCountry() {
 		DeciTree<AddressInfo> tree = initializeMissingFieldCodCountry();
@@ -563,6 +588,31 @@ public class RootAddressInsertTest {
 		option.schemaName = DbSchema.getDefaultSchemaName();
 		
 		return new RootAddressSelect(option);
+	}
+	
+	
+	
+	@Test
+	public void invalidCountry() {
+		DeciTree<AddressInfo> tree = initializeInvalidCountry();
+		tree.makeDecision();
+		DeciResult<AddressInfo> result = tree.getDecisionResult();		
+		
+		assertFalse(result.isSuccess());
+		assertTrue(result.getFailCode() == 1171);
+		assertTrue(result.getFailMessage().equals("Country not found on DB"));	
+	}
+		
+	
+	
+	private DeciTree<AddressInfo> initializeInvalidCountry() {
+		DeciTreeOption<AddressInfo> option = new DeciTreeOption<>();
+		
+		option.recordInfos = buildInsertAddresses();
+		option.conn = invalidCountryConn;
+		option.schemaName = DbSchema.getDefaultSchemaName();
+		
+		return new RootAddressInsert(option);
 	}
 
 	
@@ -941,4 +991,44 @@ public class RootAddressInsertTest {
 		addresses.add(address);
 		return addresses;
 	} 
+	
+	
+	
+	@Test(expected = NullPointerException.class)
+	public void nullRecord() {
+		DeciTree<AddressInfo> tree = initializeNullRecord();
+		tree.makeDecision();
+	}
+		
+	
+	
+	private DeciTree<AddressInfo> initializeNullRecord() {
+		DeciTreeOption<AddressInfo> option = new DeciTreeOption<>();
+		
+		option.recordInfos = null;
+		option.conn = insertA01Conn;
+		option.schemaName = DbSchema.getDefaultSchemaName();
+		
+		return new RootAddressInsert(option);
+	}
+	
+	
+	
+	@Test(expected = NullPointerException.class)
+	public void nullConnection() {
+		DeciTree<AddressInfo> tree = initializeNullConnection();
+		tree.makeDecision();
+	}
+		
+	
+	
+	private DeciTree<AddressInfo> initializeNullConnection() {
+		DeciTreeOption<AddressInfo> option = new DeciTreeOption<>();
+		
+		option.recordInfos = buildAddressesA01MissingFieldPostalcode();
+		option.conn = null;
+		option.schemaName = DbSchema.getDefaultSchemaName();
+		
+		return new RootAddressInsert(option);
+	}
 }
