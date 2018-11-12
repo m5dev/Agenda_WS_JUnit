@@ -1,5 +1,8 @@
 package br.com.gda.business.customer.model;
 
+//TODO: Testar insecao AddressA01
+//TODO: Incluir casos de testes negativos para Address
+
 import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -32,9 +35,9 @@ public class CusModelInsertTest {
 	@Mock private PreparedStatement insertStmt;
 	@Mock private ResultSet insertRs;
 	
-	@Mock private Connection insertAddressConn;
-	@Mock private PreparedStatement insertAddressStmt;
-	@Mock private ResultSet insertAddressRs;
+	@Mock private Connection insertAddressA00Conn;
+	@Mock private PreparedStatement insertAddressA00Stmt;
+	@Mock private ResultSet insertAddressA00Rs;
 	
 	@Mock private Connection cpfAlreadyExistConn;
 	@Mock private PreparedStatement cpfAlreadyExistStmt;
@@ -71,7 +74,7 @@ public class CusModelInsertTest {
 		PowerMockito.mockStatic(DbConnection.class);
 		
 		initializeScenarioInsert();
-		initializeScenarioInsertAddress();
+		initializeScenarioInsertAddressA00();
 		initializeScenarioInvalidOwner();
 		initializeScenarioInvalidGender();
 		initializeScenarioCpf();
@@ -112,37 +115,36 @@ public class CusModelInsertTest {
 	
 	
 	
-	private void initializeScenarioInsertAddress() throws SQLException {
-		insertAddressConn = mock(Connection.class);
-		insertAddressStmt = mock(PreparedStatement.class);
-		insertAddressRs = mock(ResultSet.class);
+	private void initializeScenarioInsertAddressA00() throws SQLException {
+		insertAddressA00Conn = mock(Connection.class);
+		insertAddressA00Stmt = mock(PreparedStatement.class);
+		insertAddressA00Rs = mock(ResultSet.class);
 		
-		when(insertAddressConn.prepareStatement(any(String.class))).thenReturn(insertAddressStmt);
-		when(insertAddressStmt.executeUpdate()).thenReturn(1);
+		when(insertAddressA00Conn.prepareStatement(any(String.class))).thenReturn(insertAddressA00Stmt);
+		when(insertAddressA00Stmt.executeUpdate()).thenReturn(1);
 		
-		when(insertAddressStmt.executeQuery()).thenReturn(insertAddressRs);
-		when(insertAddressRs.next()).thenReturn(true).thenReturn(true).thenReturn(false)	// Check Owner
+		when(insertAddressA00Stmt.executeQuery()).thenReturn(insertAddressA00Rs);
+		when(insertAddressA00Rs.next()).thenReturn(true).thenReturn(true).thenReturn(false)	// Check Owner
 									.thenReturn(true).thenReturn(true).thenReturn(false)	// Check Gender
 									.thenReturn(true).thenReturn(false)						// Check CPF exist
 				                    .thenReturn(true).thenReturn(false)						// Check Email Exist
 				                    .thenReturn(true).thenReturn(true).thenReturn(false)	// Check Country Phone 1
 				                    .thenReturn(true)										// Insert Customer
 				                    .thenReturn(true).thenReturn(true).thenReturn(false)	// Address - Check Country
+				                    .thenReturn(true).thenReturn(true).thenReturn(false)	// Address - Check Limit
 									.thenReturn(true).thenReturn(true).thenReturn(false)	// Address Form - Check Country
-									.thenReturn(false)										// Address Form - Check Exist
-									.thenReturn(true)										// Address - Insert		
-									.thenReturn(true).thenReturn(true).thenReturn(false)   	// ???
-									.thenReturn(true).thenReturn(true).thenReturn(false)   	// ???
+									.thenReturn(false).thenReturn(false)					// Address Form - Check Exist
+									.thenReturn(true)										// Address - Insert	
 				                    .thenReturn(true).thenReturn(true).thenReturn(false)   	// Select - Customer
 							        .thenReturn(true).thenReturn(true).thenReturn(false)	// Select - Gender
 									.thenReturn(true).thenReturn(true).thenReturn(false)	// Address - Select
 									.thenReturn(true).thenReturn(true).thenReturn(false)	// Address Form - Check Country
-									.thenReturn(false)	;									// Address Form - Check Exist
-									//.thenReturn(true).thenReturn(true).thenReturn(false);	// Address Form - Select
-		when(insertAddressRs.getLong(any(String.class))).thenReturn(new Long(1));
-		when(insertAddressRs.getInt(any(String.class))).thenReturn(new Integer(1));
-		when(insertAddressRs.getString(any(String.class))).thenReturn(" ");
-		when(insertAddressRs.getTime(any(String.class))).thenReturn(Time.valueOf("11:22:33"));		
+									.thenReturn(true).thenReturn(true).thenReturn(false)	// Address Form - Check Exist
+									.thenReturn(true).thenReturn(true).thenReturn(false);	// Address Form - Select
+		when(insertAddressA00Rs.getLong(any(String.class))).thenReturn(new Long(1));
+		when(insertAddressA00Rs.getInt(any(String.class))).thenReturn(new Integer(1));
+		when(insertAddressA00Rs.getString(any(String.class))).thenReturn(" ");
+		when(insertAddressA00Rs.getTime(any(String.class))).thenReturn(Time.valueOf("11:22:33"));
 	}
 	
 	
@@ -286,7 +288,7 @@ public class CusModelInsertTest {
 		Response response = model.getResponse();
 		assertTrue(response.getStatus() == Response.Status.OK.getStatusCode());
 		
-		String responseBody = "{\"selectCode\":200,\"selectMessage\":\"The list was returned successfully\",\"results\":[{\"codOwner\":1,\"codCustomer\":1,\"cpf\":\" \",\"name\":\" \",\"codGender\":1,\"txtGender\":\" \",\"email\":\" \",\"codCountryPhone1\":1,\"phoneNumber1\":\" \",\"addresses\":[{\"codOwner\":1,\"codAddress\":1,\"codCustomer\":1,\"codStore\":1,\"codEmployee\":-1,\"codCountry\":\" \",\"codState\":\" \",\"city\":\" \",\"district\":\" \",\"street\":\" \",\"streetNumber\":\" \",\"complement\":\" \",\"postalCode\":\" \",\"longitude\":0.0,\"latitude\":0.0,\"line1\":\" \",\"line2\":\" \",\"line3\":\" \",\"line4\":\" \",\"line5\":\" \",\"line6\":\" \",\"line7\":\" \",\"codForm\":\" \"}],\"codLanguage\":\"PT\"}]}";
+		String responseBody = "{\"selectCode\":200,\"selectMessage\":\"The list was returned successfully\",\"results\":[{\"codOwner\":1,\"codCustomer\":1,\"cpf\":\" \",\"name\":\" \",\"codGender\":1,\"txtGender\":\" \",\"email\":\" \",\"codCountryPhone1\":1,\"phoneNumber1\":\" \",\"addresses\":[{\"codOwner\":1,\"codAddress\":1,\"codCustomer\":1,\"codStore\":1,\"codEmployee\":-1,\"codCountry\":\" \",\"codState\":\" \",\"city\":\" \",\"district\":\" \",\"street\":\" \",\"streetNumber\":\" \",\"complement\":\" \",\"postalCode\":\" \",\"longitude\":0.0,\"latitude\":0.0,\"line1\":\" \",\"line2\":\" \",\"line3\":\" \",\"line4\":\" \",\"line5\":\" \",\"line6\":\" \",\"line7\":\" \",\"codForm\":\" \",\"isDeleted\":false}],\"codLanguage\":\"PT\"}]}";
 		assertTrue(response.getEntity().equals(responseBody));		
 	}
 		
@@ -306,20 +308,21 @@ public class CusModelInsertTest {
 	
 	
 	@Test
-	public void insertAddress() {
-		initializeInsertAddress();
+	public void insertAddressA00() {
+		initializeInsertAddressA00();
 		model.executeRequest();
 		Response response = model.getResponse();
 		assertTrue(response.getStatus() == Response.Status.OK.getStatusCode());
 		
-		String responseBody = "{\"selectCode\":200,\"selectMessage\":\"The list was returned successfully\",\"results\":[{\"codOwner\":1,\"codCustomer\":1,\"cpf\":\" \",\"name\":\" \",\"codGender\":1,\"txtGender\":\" \",\"email\":\" \",\"codCountryPhone1\":1,\"phoneNumber1\":\" \",\"addresses\":[{\"codOwner\":1,\"codAddress\":1,\"codCustomer\":1,\"codStore\":1,\"codEmployee\":-1,\"codCountry\":\" \",\"codState\":\" \",\"city\":\" \",\"district\":\" \",\"street\":\" \",\"streetNumber\":\" \",\"complement\":\" \",\"postalCode\":\" \",\"longitude\":0.0,\"latitude\":0.0,\"line1\":\" \",\"line2\":\" \",\"line3\":\" \",\"line4\":\" \",\"line5\":\" \",\"line6\":\" \",\"line7\":\" \",\"codForm\":\" \"}],\"codLanguage\":\"PT\"}]}";
+		String responseBody = "{\"selectCode\":200,\"selectMessage\":\"The list was returned successfully\",\"results\":[{\"codOwner\":1,\"codCustomer\":1,\"cpf\":\" \",\"name\":\" \",\"codGender\":1,\"txtGender\":\" \",\"email\":\" \",\"codCountryPhone1\":1,\"phoneNumber1\":\" \",\"addresses\":[{\"codOwner\":1,\"codAddress\":1,\"codCustomer\":1,\"codStore\":1,\"codEmployee\":-1,\"codCountry\":\" \",\"codState\":\" \",\"city\":\" \",\"district\":\" \",\"street\":\" \",\"streetNumber\":\" \",\"complement\":\" \",\"postalCode\":\" \",\"longitude\":0.0,\"latitude\":0.0,\"line1\":\" \",\"line2\":\" \",\"line3\":\" \",\"line4\":\" \",\"line5\":\" \",\"line6\":\" \",\"line7\":\" \",\"codForm\":\" \",\"isDeleted\":false}],\"codLanguage\":\"PT\"}]}";
 		assertTrue(response.getEntity().equals(responseBody));		
+		//TODO: esse teste esta ruim. Retornar address form
 	}
 		
 	
 	
-	protected void initializeInsertAddress() {
-		PowerMockito.when(DbConnection.getConnection()).thenReturn(insertAddressConn);
+	protected void initializeInsertAddressA00() {
+		PowerMockito.when(DbConnection.getConnection()).thenReturn(insertAddressA00Conn);
 		model = new CusModelInsert(incomingDataInsertAddress());
 	}
 	

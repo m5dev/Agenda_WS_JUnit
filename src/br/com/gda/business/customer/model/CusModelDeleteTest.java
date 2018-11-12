@@ -102,7 +102,9 @@ public class CusModelDeleteTest {
 									.thenReturn(true).thenReturn(true).thenReturn(false)	// Address - Select
 									.thenReturn(true).thenReturn(true).thenReturn(false)	// Address Form - Check Country
 									.thenReturn(true).thenReturn(true).thenReturn(false)	// Address Form - Check Exist
-									.thenReturn(true).thenReturn(true).thenReturn(false);	// Address Form - Select
+									.thenReturn(true).thenReturn(true).thenReturn(false)	// Address Form - Select
+									.thenReturn(true).thenReturn(true).thenReturn(false);	// Address - Check Exist
+																							// Address - Delete
 		
 		when(deleteAddressRs.getLong(any(String.class))).thenReturn(new Long(1));
 		when(deleteAddressRs.getInt(any(String.class))).thenReturn(new Integer(1));

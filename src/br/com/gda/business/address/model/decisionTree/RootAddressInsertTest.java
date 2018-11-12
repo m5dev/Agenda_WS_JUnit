@@ -55,15 +55,20 @@ public class RootAddressInsertTest {
 	@Mock private PreparedStatement invalidCountryStmt;
 	@Mock private ResultSet invalidCountryRs;
 	
+	@Mock private Connection limitConn;
+	@Mock private PreparedStatement limitStmt;
+	@Mock private ResultSet limitRs;
+	
 	
 	@Before
 	public void initializeMockObjects() throws SQLException {
 		PowerMockito.mockStatic(DbConnection.class);
-		initializeScenarioInsertA00();
-		initializeScenarioInsertA01();
 		initializeScenarioInvalidConnection();
 		initializeScenarioInvalidCountry();
 		initializeScenarioInvalidState();
+		initializeScenarioLimit();
+		initializeScenarioInsertA00();
+		initializeScenarioInsertA01();
 	}
 	
 	
@@ -91,12 +96,59 @@ public class RootAddressInsertTest {
 		when(invalidCountryStmt.executeUpdate()).thenReturn(1);
 		
 		when(invalidCountryStmt.executeQuery()).thenReturn(invalidCountryRs);
-		when(invalidCountryRs.next()).thenReturn(false);					// Check Country
+		when(invalidCountryRs.next()).thenReturn(false);							// Check Country
 		when(invalidCountryRs.getLong(any(String.class))).thenReturn(new Long(1));
 		when(invalidCountryRs.getInt(any(String.class))).thenReturn(new Integer(1));
 		when(invalidCountryRs.getString(any(String.class))).thenReturn(" ");
 		when(invalidCountryRs.getString(any(String.class))).thenReturn(" ");
 		when(invalidCountryRs.getTime(any(String.class))).thenReturn(Time.valueOf("11:22:33"));		
+	}
+	
+	
+	
+	private void initializeScenarioInvalidState() throws SQLException {
+		invalidStateConn = mock(Connection.class);
+		invalidStateStmt = mock(PreparedStatement.class);
+		invalidStateRs = mock(ResultSet.class);
+		
+		when(invalidStateConn.prepareStatement(any(String.class))).thenReturn(invalidStateStmt);
+		when(invalidStateStmt.executeUpdate()).thenReturn(1);
+		
+		when(invalidStateStmt.executeQuery()).thenReturn(invalidStateRs);
+		when(invalidStateRs.next()).thenReturn(true).thenReturn(true).thenReturn(false)		// Check Country
+								   .thenReturn(true).thenReturn(true).thenReturn(false)		// Check Limit
+						  	       .thenReturn(true).thenReturn(true).thenReturn(false)		// Address Form - Check Country
+						  	       .thenReturn(true).thenReturn(true).thenReturn(false)		// Address Form - Check Exist
+						  	       .thenReturn(true).thenReturn(true).thenReturn(false)		// Address Form - Select
+						  	       .thenReturn(false);										// Check State
+		when(invalidStateRs.getLong(any(String.class))).thenReturn(new Long(1));
+		when(invalidStateRs.getInt(any(String.class))).thenReturn(new Integer(1));
+		when(invalidStateRs.getString(any(String.class))).thenReturn(" ");
+		when(invalidStateRs.getString(FormDbTableColumn.COL_COD_FORM)).thenReturn("A01");
+		when(invalidStateRs.getTime(any(String.class))).thenReturn(Time.valueOf("11:22:33"));		
+	}
+	
+	
+	
+	private void initializeScenarioLimit() throws SQLException {
+		limitConn = mock(Connection.class);
+		limitStmt = mock(PreparedStatement.class);
+		limitRs = mock(ResultSet.class);
+		
+		when(limitConn.prepareStatement(any(String.class))).thenReturn(limitStmt);
+		when(limitStmt.executeUpdate()).thenReturn(1);
+		
+		when(limitStmt.executeQuery()).thenReturn(limitRs);
+		when(limitRs.next()).thenReturn(true).thenReturn(true).thenReturn(false)		// Check Country
+						    .thenReturn(true).thenReturn(true).thenReturn(true)			// Check Limit (2 Records)
+						    .thenReturn(true).thenReturn(true).thenReturn(true)			// Check Limit (3 Records)
+						    .thenReturn(true).thenReturn(true).thenReturn(true)			// Check Limit (3 Records)
+						    .thenReturn(true).thenReturn(true).thenReturn(false);		// Check Limit (2 Records)
+		when(limitRs.getLong(any(String.class))).thenReturn(new Long(1));
+		when(limitRs.getInt(any(String.class))).thenReturn(new Integer(1));
+		when(limitRs.getString(any(String.class))).thenReturn(" ");
+		when(limitRs.getString(FormDbTableColumn.COL_COD_FORM)).thenReturn("A01");
+		when(limitRs.getTime(any(String.class))).thenReturn(Time.valueOf("11:22:33"));		
 	}
 	
 	
@@ -111,6 +163,7 @@ public class RootAddressInsertTest {
 		
 		when(insertA00Stmt.executeQuery()).thenReturn(insertA00Rs);
 		when(insertA00Rs.next()).thenReturn(true).thenReturn(true).thenReturn(false)	// Check Country
+								.thenReturn(true).thenReturn(true).thenReturn(false)	// Check Limit
 						  	    .thenReturn(true).thenReturn(true).thenReturn(false)	// Address Form - Check Country
 						  	    .thenReturn(false).thenReturn(false)					// Address Form - Check Exist
 						  	    .thenReturn(true);										// Insert
@@ -133,6 +186,7 @@ public class RootAddressInsertTest {
 		
 		when(insertA01Stmt.executeQuery()).thenReturn(insertA01Rs);
 		when(insertA01Rs.next()).thenReturn(true).thenReturn(true).thenReturn(false)	// Check Country
+								.thenReturn(true).thenReturn(true).thenReturn(false)	// Check Limit
 						  	    .thenReturn(true).thenReturn(true).thenReturn(false)	// Address Form - Check Country
 						  	    .thenReturn(true).thenReturn(true).thenReturn(false)	// Address Form - Check Exist
 						  	    .thenReturn(true).thenReturn(true).thenReturn(false)	// Address Form - Select
@@ -147,27 +201,29 @@ public class RootAddressInsertTest {
 	
 	
 	
-	private void initializeScenarioInvalidState() throws SQLException {
-		invalidStateConn = mock(Connection.class);
-		invalidStateStmt = mock(PreparedStatement.class);
-		invalidStateRs = mock(ResultSet.class);
+	@Test
+	public void limitExceeded() {
+		DeciTree<AddressInfo> tree = initializeLimitExceeded();
+		tree.makeDecision();
+		DeciResult<AddressInfo> result = tree.getDecisionResult();		
 		
-		when(invalidStateConn.prepareStatement(any(String.class))).thenReturn(invalidStateStmt);
-		when(invalidStateStmt.executeUpdate()).thenReturn(1);
-		
-		when(invalidStateStmt.executeQuery()).thenReturn(invalidStateRs);
-		when(invalidStateRs.next()).thenReturn(true).thenReturn(true).thenReturn(false)	// Check Country
-						  	    .thenReturn(true).thenReturn(true).thenReturn(false)	// Address Form - Check Country
-						  	    .thenReturn(true).thenReturn(true).thenReturn(false)	// Address Form - Check Exist
-						  	    .thenReturn(true).thenReturn(true).thenReturn(false)	// Address Form - Select
-						  	    .thenReturn(false);										// Check State
-		when(invalidStateRs.getLong(any(String.class))).thenReturn(new Long(1));
-		when(invalidStateRs.getInt(any(String.class))).thenReturn(new Integer(1));
-		when(invalidStateRs.getString(any(String.class))).thenReturn(" ");
-		when(invalidStateRs.getString(FormDbTableColumn.COL_COD_FORM)).thenReturn("A01");
-		when(invalidStateRs.getTime(any(String.class))).thenReturn(Time.valueOf("11:22:33"));		
+		assertFalse(result.isSuccess());
+		assertTrue(result.getFailCode() == 1610);
+		assertTrue(result.getFailMessage().equals("Address limit exceeded. Delete old addresses before adding new ones"));	
 	}
+		
 	
+	
+	private DeciTree<AddressInfo> initializeLimitExceeded() {
+		DeciTreeOption<AddressInfo> option = new DeciTreeOption<>();
+		
+		option.recordInfos = buildInsertAddresses();
+		option.conn = limitConn;
+		option.schemaName = DbSchema.getDefaultSchemaName();
+		
+		return new RootAddressInsert(option);
+	}
+
 	
 	
 	@Test
