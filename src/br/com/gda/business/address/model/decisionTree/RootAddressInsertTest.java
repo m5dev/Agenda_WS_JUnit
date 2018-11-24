@@ -26,7 +26,7 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import br.com.gda.business.address.info.AddressInfo;
-import br.com.gda.business.form.dao.FormDbTableColumn;
+import br.com.gda.business.form.formAddress.dao.FormAddressDbTableColumn;
 import br.com.gda.common.DbConnection;
 import br.com.gda.common.DbSchema;
 import br.com.gda.model.decisionTree.DeciResult;
@@ -124,7 +124,7 @@ public class RootAddressInsertTest {
 		when(invalidStateRs.getLong(any(String.class))).thenReturn(new Long(1));
 		when(invalidStateRs.getInt(any(String.class))).thenReturn(new Integer(1));
 		when(invalidStateRs.getString(any(String.class))).thenReturn(" ");
-		when(invalidStateRs.getString(FormDbTableColumn.COL_COD_FORM)).thenReturn("A01");
+		when(invalidStateRs.getString(FormAddressDbTableColumn.COL_COD_FORM)).thenReturn("A01");
 		when(invalidStateRs.getTime(any(String.class))).thenReturn(Time.valueOf("11:22:33"));		
 	}
 	
@@ -147,7 +147,7 @@ public class RootAddressInsertTest {
 		when(limitRs.getLong(any(String.class))).thenReturn(new Long(1));
 		when(limitRs.getInt(any(String.class))).thenReturn(new Integer(1));
 		when(limitRs.getString(any(String.class))).thenReturn(" ");
-		when(limitRs.getString(FormDbTableColumn.COL_COD_FORM)).thenReturn("A01");
+		when(limitRs.getString(FormAddressDbTableColumn.COL_COD_FORM)).thenReturn("A01");
 		when(limitRs.getTime(any(String.class))).thenReturn(Time.valueOf("11:22:33"));		
 	}
 	
@@ -195,7 +195,7 @@ public class RootAddressInsertTest {
 		when(insertA01Rs.getLong(any(String.class))).thenReturn(new Long(1));
 		when(insertA01Rs.getInt(any(String.class))).thenReturn(new Integer(1));
 		when(insertA01Rs.getString(any(String.class))).thenReturn(" ");
-		when(insertA01Rs.getString(FormDbTableColumn.COL_COD_FORM)).thenReturn("A01");
+		when(insertA01Rs.getString(FormAddressDbTableColumn.COL_COD_FORM)).thenReturn("A01");
 		when(insertA01Rs.getTime(any(String.class))).thenReturn(Time.valueOf("11:22:33"));		
 	}
 	
@@ -1168,5 +1168,31 @@ public class RootAddressInsertTest {
 	
 	private DeciTree<AddressInfo> initializeNullOption() {		
 		return new RootAddressInsert(null);
+	}	
+	
+	
+	
+	@Test(expected = IllegalArgumentException.class)
+	public void emptyRecords() {
+		DeciTree<AddressInfo> tree = initializeEmptyRecords();
+		tree.makeDecision();
+	}
+		
+	
+	
+	private DeciTree<AddressInfo> initializeEmptyRecords() {
+		DeciTreeOption<AddressInfo> option = new DeciTreeOption<>();
+		
+		option.recordInfos = buildEmptyRecords();
+		option.conn = insertA01Conn;
+		option.schemaName = DbSchema.getDefaultSchemaName();
+		
+		return new RootAddressInsert(option);
+	}
+	
+	
+	
+	private List<AddressInfo> buildEmptyRecords() {
+		return new ArrayList<>();
 	}	
 }

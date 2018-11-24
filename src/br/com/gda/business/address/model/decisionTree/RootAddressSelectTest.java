@@ -26,7 +26,7 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import br.com.gda.business.address.info.AddressInfo;
-import br.com.gda.business.form.dao.FormDbTableColumn;
+import br.com.gda.business.form.formAddress.dao.FormAddressDbTableColumn;
 import br.com.gda.common.DbConnection;
 import br.com.gda.common.DbSchema;
 import br.com.gda.model.decisionTree.DeciResult;
@@ -103,7 +103,7 @@ public class RootAddressSelectTest {
 		when(selectA01Rs.getString(any(String.class))).thenReturn(" ");
 		when(selectA01Rs.getString(any(String.class))).thenReturn(" ");
 		when(selectA01Rs.getTime(any(String.class))).thenReturn(Time.valueOf("11:22:33"));		
-		when(selectA01Rs.getString(FormDbTableColumn.COL_COD_FORM)).thenReturn("A01");
+		when(selectA01Rs.getString(FormAddressDbTableColumn.COL_COD_FORM)).thenReturn("A01");
 	}
 	
 	
@@ -252,8 +252,8 @@ public class RootAddressSelectTest {
 		DeciResult<AddressInfo> result = tree.getDecisionResult();		
 		
 		assertFalse(result.isSuccess());
-		assertTrue(result.getFailCode() == 1);
-		assertTrue(result.getFailMessage().equals("Mandatory field is empty"));	
+		assertTrue(result.getFailCode() == 1606);
+		assertTrue(result.getFailMessage().equals("No reference added to Address"));	
 	}
 	
 	

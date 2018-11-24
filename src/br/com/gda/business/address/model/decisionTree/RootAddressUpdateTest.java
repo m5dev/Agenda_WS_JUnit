@@ -26,7 +26,7 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import br.com.gda.business.address.info.AddressInfo;
-import br.com.gda.business.form.dao.FormDbTableColumn;
+import br.com.gda.business.form.formAddress.dao.FormAddressDbTableColumn;
 import br.com.gda.common.DbConnection;
 import br.com.gda.common.DbSchema;
 import br.com.gda.model.decisionTree.DeciResult;
@@ -115,7 +115,7 @@ public class RootAddressUpdateTest {
 		when(updateA01Rs.getLong(any(String.class))).thenReturn(new Long(1));
 		when(updateA01Rs.getInt(any(String.class))).thenReturn(new Integer(1));
 		when(updateA01Rs.getString(any(String.class))).thenReturn(" ");
-		when(updateA01Rs.getString(FormDbTableColumn.COL_COD_FORM)).thenReturn("A01");
+		when(updateA01Rs.getString(FormAddressDbTableColumn.COL_COD_FORM)).thenReturn("A01");
 		when(updateA01Rs.getTime(any(String.class))).thenReturn(Time.valueOf("11:22:33"));		
 	}
 	
@@ -139,7 +139,7 @@ public class RootAddressUpdateTest {
 		when(invalidStateRs.getLong(any(String.class))).thenReturn(new Long(1));
 		when(invalidStateRs.getInt(any(String.class))).thenReturn(new Integer(1));
 		when(invalidStateRs.getString(any(String.class))).thenReturn(" ");
-		when(invalidStateRs.getString(FormDbTableColumn.COL_COD_FORM)).thenReturn("A01");
+		when(invalidStateRs.getString(FormAddressDbTableColumn.COL_COD_FORM)).thenReturn("A01");
 		when(invalidStateRs.getTime(any(String.class))).thenReturn(Time.valueOf("11:22:33"));		
 	}
 	
