@@ -59,6 +59,10 @@ public class RootPhoneInsertTest {
 	@Mock private PreparedStatement invalidAreaPhoneStmt;
 	@Mock private ResultSet invalidAreaPhoneRs;
 	
+	@Mock private Connection invalidOwnerConn;
+	@Mock private PreparedStatement invalidOwnerStmt;
+	@Mock private ResultSet invalidOwnerRs;
+	
 	
 	
 	@Before
@@ -70,6 +74,7 @@ public class RootPhoneInsertTest {
 		initializeScenarioInvalidCountryPhone();
 		initializeScenarioLimitExceeded();
 		initializeScenarioInvalidAreaPhone();
+		initializeScenarioInvalidOwner();
 	}
 	
 	
@@ -97,7 +102,8 @@ public class RootPhoneInsertTest {
 		when(insertT00Stmt.executeUpdate()).thenReturn(1);
 		
 		when(insertT00Stmt.executeQuery()).thenReturn(insertT00Rs);
-		when(insertT00Rs.next()).thenReturn(true).thenReturn(true).thenReturn(false)	// Check Country Phone
+		when(insertT00Rs.next()).thenReturn(true).thenReturn(true).thenReturn(false)	// Check Owner
+		                        .thenReturn(true).thenReturn(true).thenReturn(false)	// Check Country Phone
 								.thenReturn(true).thenReturn(true).thenReturn(false)	// Check Limit
 								.thenReturn(true).thenReturn(true).thenReturn(false)	// Select Country Phone	
 								.thenReturn(true).thenReturn(true).thenReturn(false)	// Phone Form - Check Country
@@ -121,7 +127,8 @@ public class RootPhoneInsertTest {
 		when(insertT01Stmt.executeUpdate()).thenReturn(1);
 		
 		when(insertT01Stmt.executeQuery()).thenReturn(insertT01Rs);
-		when(insertT01Rs.next()).thenReturn(true).thenReturn(true).thenReturn(false)	// Check Country Phone
+		when(insertT01Rs.next()).thenReturn(true).thenReturn(true).thenReturn(false)	// Check Owner
+		                        .thenReturn(true).thenReturn(true).thenReturn(false)	// Check Country Phone
 								.thenReturn(true).thenReturn(true).thenReturn(false)	// Check Limit
 								.thenReturn(true).thenReturn(true).thenReturn(false)	// Select Country Phone							
 						  	    .thenReturn(true).thenReturn(true).thenReturn(false)	// Phone Form - Check Country
@@ -147,7 +154,8 @@ public class RootPhoneInsertTest {
 		when(limitExceededStmt.executeUpdate()).thenReturn(1);
 		
 		when(limitExceededStmt.executeQuery()).thenReturn(limitExceededRs);
-		when(limitExceededRs.next()).thenReturn(true).thenReturn(true).thenReturn(false)		// Check Country Phone
+		when(limitExceededRs.next()).thenReturn(true).thenReturn(true).thenReturn(false)		// Check Owner
+		                            .thenReturn(true).thenReturn(true).thenReturn(false)		// Check Country Phone
 							        .thenReturn(true).thenReturn(true).thenReturn(true)			// Check Limit (2 Records)
 							        .thenReturn(true).thenReturn(true).thenReturn(true)			// Check Limit (3 Records)
 							        .thenReturn(true).thenReturn(true).thenReturn(true)			// Check Limit (3 Records)
@@ -170,7 +178,8 @@ public class RootPhoneInsertTest {
 		when(invalidCountryPhoneStmt.executeUpdate()).thenReturn(1);
 		
 		when(invalidCountryPhoneStmt.executeQuery()).thenReturn(invalidCountryPhoneRs);
-		when(invalidCountryPhoneRs.next()).thenReturn(false);	// Check Country Phone
+		when(invalidCountryPhoneRs.next()).thenReturn(true).thenReturn(true).thenReturn(false)		// Check Owner
+		                                  .thenReturn(false);										// Check Country Phone
 		when(invalidCountryPhoneRs.getLong(any(String.class))).thenReturn(new Long(1));
 		when(invalidCountryPhoneRs.getInt(any(String.class))).thenReturn(new Integer(1));
 		when(invalidCountryPhoneRs.getString(any(String.class))).thenReturn(" ");
@@ -189,7 +198,8 @@ public class RootPhoneInsertTest {
 		when(invalidAreaPhoneStmt.executeUpdate()).thenReturn(1);
 		
 		when(invalidAreaPhoneStmt.executeQuery()).thenReturn(invalidAreaPhoneRs);
-		when(invalidAreaPhoneRs.next()).thenReturn(true).thenReturn(true).thenReturn(false)	// Check Country Phone
+		when(invalidAreaPhoneRs.next()).thenReturn(true).thenReturn(true).thenReturn(false)	// Check Owner
+		                               .thenReturn(true).thenReturn(true).thenReturn(false)	// Check Country Phone
 									   .thenReturn(true).thenReturn(true).thenReturn(false)	// Check Limit
 									   .thenReturn(true).thenReturn(true).thenReturn(false)	// Select Country Phone							
 							  	       .thenReturn(true).thenReturn(true).thenReturn(false)	// Phone Form - Check Country
@@ -201,6 +211,25 @@ public class RootPhoneInsertTest {
 		when(invalidAreaPhoneRs.getString(any(String.class))).thenReturn(" ");
 		when(invalidAreaPhoneRs.getString(FormPhoneDbTableColumn.COL_COD_FORM)).thenReturn("T01");
 		when(invalidAreaPhoneRs.getTime(any(String.class))).thenReturn(Time.valueOf("11:22:33"));		
+	}
+	
+	
+	
+	private void initializeScenarioInvalidOwner() throws SQLException {
+		invalidOwnerConn = mock(Connection.class);
+		invalidOwnerStmt = mock(PreparedStatement.class);
+		invalidOwnerRs = mock(ResultSet.class);
+		
+		when(invalidOwnerConn.prepareStatement(any(String.class))).thenReturn(invalidOwnerStmt);
+		when(invalidOwnerStmt.executeUpdate()).thenReturn(1);
+		
+		when(invalidOwnerStmt.executeQuery()).thenReturn(invalidOwnerRs);
+		when(invalidOwnerRs.next()).thenReturn(false);								// Check Owner
+		when(invalidOwnerRs.getLong(any(String.class))).thenReturn(new Long(1));
+		when(invalidOwnerRs.getInt(any(String.class))).thenReturn(new Integer(1));
+		when(invalidOwnerRs.getString(any(String.class))).thenReturn(" ");
+		when(invalidOwnerRs.getString(FormPhoneDbTableColumn.COL_COD_FORM)).thenReturn("T01");
+		when(invalidOwnerRs.getTime(any(String.class))).thenReturn(Time.valueOf("11:22:33"));		
 	}
 	
 	
@@ -242,9 +271,9 @@ public class RootPhoneInsertTest {
 		phone.codCountryPhone = 1;
 		phone.complement = "teste";
 		
-		List<PhoneInfo> addresses = new ArrayList<>();
-		addresses.add(phone);
-		return addresses;
+		List<PhoneInfo> phones = new ArrayList<>();
+		phones.add(phone);
+		return phones;
 	}
 	
 	
@@ -286,9 +315,9 @@ public class RootPhoneInsertTest {
 		phone.codCountryPhone = 1;
 		phone.complement = "teste";
 		
-		List<PhoneInfo> addresses = new ArrayList<>();
-		addresses.add(phone);
-		return addresses;
+		List<PhoneInfo> phones = new ArrayList<>();
+		phones.add(phone);
+		return phones;
 	}
 	
 	
@@ -330,9 +359,9 @@ public class RootPhoneInsertTest {
 		phone.codCountryPhone = 1;
 		phone.complement = "teste";
 		
-		List<PhoneInfo> addresses = new ArrayList<>();
-		addresses.add(phone);
-		return addresses;
+		List<PhoneInfo> phones = new ArrayList<>();
+		phones.add(phone);
+		return phones;
 	}
 	
 	
@@ -374,9 +403,9 @@ public class RootPhoneInsertTest {
 		phone.codCountryPhone = 1;
 		phone.complement = "teste";
 		
-		List<PhoneInfo> addresses = new ArrayList<>();
-		addresses.add(phone);
-		return addresses;
+		List<PhoneInfo> phones = new ArrayList<>();
+		phones.add(phone);
+		return phones;
 	}
 	
 	
@@ -418,9 +447,9 @@ public class RootPhoneInsertTest {
 		phone.codCountryPhone = 1;
 		phone.complement = "teste";
 		
-		List<PhoneInfo> addresses = new ArrayList<>();
-		addresses.add(phone);
-		return addresses;
+		List<PhoneInfo> phones = new ArrayList<>();
+		phones.add(phone);
+		return phones;
 	}
 	
 	
@@ -460,9 +489,9 @@ public class RootPhoneInsertTest {
 		phone.codCountryPhone = 1;
 		phone.complement = "teste";
 		
-		List<PhoneInfo> addresses = new ArrayList<>();
-		addresses.add(phone);
-		return addresses;
+		List<PhoneInfo> phones = new ArrayList<>();
+		phones.add(phone);
+		return phones;
 	}
 	
 	
@@ -502,9 +531,9 @@ public class RootPhoneInsertTest {
 		phone.codCountryPhone = 1;
 		phone.complement = "teste";
 		
-		List<PhoneInfo> addresses = new ArrayList<>();
-		addresses.add(phone);
-		return addresses;
+		List<PhoneInfo> phones = new ArrayList<>();
+		phones.add(phone);
+		return phones;
 	}
 	
 	
@@ -544,9 +573,9 @@ public class RootPhoneInsertTest {
 		phone.codCountryPhone = -1;
 		phone.complement = "teste";
 		
-		List<PhoneInfo> addresses = new ArrayList<>();
-		addresses.add(phone);
-		return addresses;
+		List<PhoneInfo> phones = new ArrayList<>();
+		phones.add(phone);
+		return phones;
 	}
 	
 	
@@ -586,9 +615,9 @@ public class RootPhoneInsertTest {
 		phone.codCountryPhone = 1;
 		phone.complement = "teste";
 		
-		List<PhoneInfo> addresses = new ArrayList<>();
-		addresses.add(phone);
-		return addresses;
+		List<PhoneInfo> phones = new ArrayList<>();
+		phones.add(phone);
+		return phones;
 	}
 	
 	
@@ -678,9 +707,9 @@ public class RootPhoneInsertTest {
 		phone.codCountryPhone = 1;
 		phone.complement = "teste";
 		
-		List<PhoneInfo> addresses = new ArrayList<>();
-		addresses.add(phone);
-		return addresses;
+		List<PhoneInfo> phones = new ArrayList<>();
+		phones.add(phone);
+		return phones;
 	}
 	
 	
@@ -720,9 +749,9 @@ public class RootPhoneInsertTest {
 		phone.codCountryPhone = 1;
 		phone.complement = "teste";
 		
-		List<PhoneInfo> addresses = new ArrayList<>();
-		addresses.add(phone);
-		return addresses;
+		List<PhoneInfo> phones = new ArrayList<>();
+		phones.add(phone);
+		return phones;
 	}
 	
 	
@@ -762,9 +791,9 @@ public class RootPhoneInsertTest {
 		phone.codCountryPhone = 1;
 		phone.complement = "teste";
 		
-		List<PhoneInfo> addresses = new ArrayList<>();
-		addresses.add(phone);
-		return addresses;
+		List<PhoneInfo> phones = new ArrayList<>();
+		phones.add(phone);
+		return phones;
 	}
 	
 	
@@ -804,9 +833,9 @@ public class RootPhoneInsertTest {
 		phone.codCountryPhone = 1;
 		phone.complement = "teste";
 		
-		List<PhoneInfo> addresses = new ArrayList<>();
-		addresses.add(phone);
-		return addresses;
+		List<PhoneInfo> phones = new ArrayList<>();
+		phones.add(phone);
+		return phones;
 	}
 	
 	
@@ -846,9 +875,9 @@ public class RootPhoneInsertTest {
 		phone.codCountryPhone = 1;
 		phone.complement = "teste";
 		
-		List<PhoneInfo> addresses = new ArrayList<>();
-		addresses.add(phone);
-		return addresses;
+		List<PhoneInfo> phones = new ArrayList<>();
+		phones.add(phone);
+		return phones;
 	}
 	
 	
@@ -871,6 +900,31 @@ public class RootPhoneInsertTest {
 		
 		option.recordInfos = buildInsertPhonesT01();
 		option.conn = invalidAreaPhoneConn;
+		option.schemaName = DbSchema.getDefaultSchemaName();
+		
+		return new RootPhoneInsert(option);
+	}
+	
+	
+	
+	@Test
+	public void invalidOwner() {
+		DeciTree<PhoneInfo> tree = initializeInvalidOwner();
+		tree.makeDecision();
+		DeciResult<PhoneInfo> result = tree.getDecisionResult();		
+		
+		assertFalse(result.isSuccess());
+		assertTrue(result.getFailCode() == 1251);
+		assertTrue(result.getFailMessage().equals("Owner data not found on DB"));	
+	}
+		
+	
+	
+	private DeciTree<PhoneInfo> initializeInvalidOwner() {
+		DeciTreeOption<PhoneInfo> option = new DeciTreeOption<>();
+		
+		option.recordInfos = buildInsertPhonesT01();
+		option.conn = invalidOwnerConn;
 		option.schemaName = DbSchema.getDefaultSchemaName();
 		
 		return new RootPhoneInsert(option);
@@ -933,6 +987,26 @@ public class RootPhoneInsertTest {
 	
 	
 	@Test(expected = NullPointerException.class)
+	public void nullConnection() {
+		DeciTree<PhoneInfo> tree = initializeNullConnection();
+		tree.makeDecision();
+	}
+		
+	
+	
+	private DeciTree<PhoneInfo> initializeNullConnection() {
+		DeciTreeOption<PhoneInfo> option = new DeciTreeOption<>();
+		
+		option.recordInfos = buildInsertPhonesT01();
+		option.conn = null;
+		option.schemaName = DbSchema.getDefaultSchemaName();
+		
+		return new RootPhoneInsert(option);
+	}
+	
+	
+	
+	@Test(expected = NullPointerException.class)
 	public void nullRecord() {
 		DeciTree<PhoneInfo> tree = initializeNullRecord();
 		tree.makeDecision();
@@ -985,8 +1059,8 @@ public class RootPhoneInsertTest {
 		DeciResult<PhoneInfo> result = tree.getDecisionResult();		
 		
 		assertTrue(result.isSuccess());		
-		PhoneInfo address = result.getResultset().get(0);
-		assertTrue(address.codForm.equals("T01"));	
+		PhoneInfo phone = result.getResultset().get(0);
+		assertTrue(phone.codForm.equals("T01"));	
 	}
 		
 	
@@ -1013,9 +1087,9 @@ public class RootPhoneInsertTest {
 		phone.codCountryPhone = 1;
 		phone.complement = "teste";
 		
-		List<PhoneInfo> addresses = new ArrayList<>();
-		addresses.add(phone);
-		return addresses;
+		List<PhoneInfo> phones = new ArrayList<>();
+		phones.add(phone);
+		return phones;
 	}	
 	
 	
@@ -1055,9 +1129,9 @@ public class RootPhoneInsertTest {
 		phone.codCountryPhone = 1;
 		phone.complement = "teste";
 		
-		List<PhoneInfo> addresses = new ArrayList<>();
-		addresses.add(phone);
-		return addresses;
+		List<PhoneInfo> phones = new ArrayList<>();
+		phones.add(phone);
+		return phones;
 	}	
 	
 	
@@ -1097,9 +1171,9 @@ public class RootPhoneInsertTest {
 		phone.codCountryPhone = 1;
 		phone.complement = "teste";
 		
-		List<PhoneInfo> addresses = new ArrayList<>();
-		addresses.add(phone);
-		return addresses;
+		List<PhoneInfo> phones = new ArrayList<>();
+		phones.add(phone);
+		return phones;
 	}	
 	
 	
@@ -1111,8 +1185,8 @@ public class RootPhoneInsertTest {
 		DeciResult<PhoneInfo> result = tree.getDecisionResult();		
 		
 		assertTrue(result.isSuccess());		
-		PhoneInfo address = result.getResultset().get(0);
-		assertTrue(address.codForm.equals("T00"));	
+		PhoneInfo phone = result.getResultset().get(0);
+		assertTrue(phone.codForm.equals("T00"));	
 	}
 		
 	
@@ -1130,8 +1204,7 @@ public class RootPhoneInsertTest {
 	
 	
 	private List<PhoneInfo> buildInsertPhonesT00() {
-		PhoneInfo phone = new PhoneInfo();
-		
+		PhoneInfo phone = new PhoneInfo();		
 		
 		phone.codOwner = 1;
 		phone.codCustomer = 1;
@@ -1139,8 +1212,8 @@ public class RootPhoneInsertTest {
 		phone.codCountryPhone = 1;
 		phone.complement = "teste";
 		
-		List<PhoneInfo> addresses = new ArrayList<>();
-		addresses.add(phone);
-		return addresses;
+		List<PhoneInfo> phones = new ArrayList<>();
+		phones.add(phone);
+		return phones;
 	}	
 }

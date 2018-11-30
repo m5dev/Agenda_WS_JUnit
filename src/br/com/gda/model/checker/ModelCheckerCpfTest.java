@@ -6,13 +6,13 @@ import org.junit.Test;
 
 import br.com.gda.common.SystemCode;
 import br.com.gda.common.SystemMessage;
-import br.com.gda.model.checker.common.ModelCheckerCpf;
+import br.com.gda.model.checker.common.ModelCheckerCpf_;
 
 public final class ModelCheckerCpfTest {
 
 	@Test
 	public void invalidSequence() {
-		ModelCheckerCpf checker = new ModelCheckerCpf();
+		ModelCheckerCpf_ checker = new ModelCheckerCpf_();
 		checker.check("00000000000");
 		assertFalse(checker.getResult());
 		assertTrue(checker.getFailCode() == SystemCode.CPF_INVALID);
@@ -53,7 +53,7 @@ public final class ModelCheckerCpfTest {
 	
 	@Test
 	public void invalidLength() {
-		ModelCheckerCpf checker = new ModelCheckerCpf();
+		ModelCheckerCpf_ checker = new ModelCheckerCpf_();
 		checker.check("1234567890");
 		assertFalse(checker.getResult());
 		assertTrue(checker.getFailCode() == SystemCode.CPF_INVALID);
@@ -68,7 +68,7 @@ public final class ModelCheckerCpfTest {
 	@Test
 	public void validNull() {
 		String nullValue = null;
-		ModelCheckerCpf checker = new ModelCheckerCpf();
+		ModelCheckerCpf_ checker = new ModelCheckerCpf_();
 		checker.check(nullValue);
 		assertTrue(checker.getResult());
 	}
@@ -77,7 +77,7 @@ public final class ModelCheckerCpfTest {
 	
 	@Test
 	public void invalidLetter() {
-		ModelCheckerCpf checker = new ModelCheckerCpf();
+		ModelCheckerCpf_ checker = new ModelCheckerCpf_();
 		checker.check("1234567890a");
 		assertFalse(checker.getResult());
 		assertTrue(checker.getFailCode() == SystemCode.CPF_INVALID);
@@ -96,7 +96,7 @@ public final class ModelCheckerCpfTest {
 	
 	@Test
 	public void invalidCpf() {
-		ModelCheckerCpf checker = new ModelCheckerCpf();
+		ModelCheckerCpf_ checker = new ModelCheckerCpf_();
 		checker.check("12345678900");
 		assertFalse(checker.getResult());
 		assertTrue(checker.getFailCode() == SystemCode.CPF_INVALID);
@@ -140,7 +140,7 @@ public final class ModelCheckerCpfTest {
 	
 	@Test
 	public void validCpf() {
-		ModelCheckerCpf checker = new ModelCheckerCpf();
+		ModelCheckerCpf_ checker = new ModelCheckerCpf_();
 		checker.check("09330403778");
 		assertTrue(checker.getResult());
 		

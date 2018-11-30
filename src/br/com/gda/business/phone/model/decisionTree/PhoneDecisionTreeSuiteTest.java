@@ -6,6 +6,8 @@ import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
 @SuiteClasses({RootPhoneInsertTest.class,
+			   RootPhoneDeleteTest.class,
+			   RootPhoneSelectTest.class,
 			   RootPhoneUpdateTest.class})
 public class PhoneDecisionTreeSuiteTest {
 

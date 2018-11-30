@@ -13,6 +13,7 @@ import br.com.gda.business.employeeWorkTime.EmpWTimeSuiteTest;
 import br.com.gda.business.masterData.MasterDataSuiteTest;
 import br.com.gda.business.material.MatSuiteTest;
 import br.com.gda.business.materialEmployee.MatEmpSuiteTest;
+import br.com.gda.business.person.PersonSuiteTest;
 import br.com.gda.business.phone.PhoneSuiteTest;
 import br.com.gda.business.planningTime.PlanSuiteTest;
 import br.com.gda.business.store.StoreSuiteTest;
@@ -43,6 +44,7 @@ import br.com.gda.model.ModelSuiteTest;
 			   AmountSuiteTest.class,
 			   AddressSuiteTest.class,
 			   PhoneSuiteTest.class,
+			   PersonSuiteTest.class,
 			   CommonSuiteTest.class})
 public class AllSuiteTest {
 
