@@ -1216,4 +1216,47 @@ public class RootPhoneInsertTest {
 		phones.add(phone);
 		return phones;
 	}	
+	
+	
+	
+	@Test
+	public void techField() {
+		DeciTree<PhoneInfo> tree = initializeTechField();
+		tree.makeDecision();
+		DeciResult<PhoneInfo> result = tree.getDecisionResult();		
+		
+		assertFalse(result.isSuccess());
+		assertTrue(result.getFailCode() == 1573);
+		assertTrue(result.getFailMessage().equals("Phone: technical fields shouldn't be filled"));	
+	}
+		
+	
+	
+	private DeciTree<PhoneInfo> initializeTechField() {
+		DeciTreeOption<PhoneInfo> option = new DeciTreeOption<>();
+		
+		option.recordInfos = buildInsertPhonesTechField();
+		option.conn = insertT01Conn;
+		option.schemaName = DbSchema.getDefaultSchemaName();
+		
+		return new RootPhoneInsert(option);
+	}
+	
+	
+	
+	private List<PhoneInfo> buildInsertPhonesTechField() {
+		PhoneInfo phone = new PhoneInfo();
+		
+		
+		phone.codOwner = 1;
+		phone.codPhone = 1;
+		phone.codCustomer = 1;
+		phone.fullNumber = "2125696969";
+		phone.codCountryPhone = 1;
+		phone.complement = "teste";
+		
+		List<PhoneInfo> phones = new ArrayList<>();
+		phones.add(phone);
+		return phones;
+	}	
 }

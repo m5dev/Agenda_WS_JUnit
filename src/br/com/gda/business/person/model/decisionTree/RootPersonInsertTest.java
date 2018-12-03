@@ -968,4 +968,47 @@ public class RootPersonInsertTest {
 		persons.add(person);
 		return persons;
 	}	
+	
+	
+	
+	@Test
+	public void techField() {
+		DeciTree<PersonInfo> tree = initializeTechField();
+		tree.makeDecision();
+		DeciResult<PersonInfo> result = tree.getDecisionResult();		
+		
+		assertFalse(result.isSuccess());
+		assertTrue(result.getFailCode() == 1772);
+		assertTrue(result.getFailMessage().equals("Person: technical fields shouldn't be filled"));	
+	}
+		
+	
+	
+	private DeciTree<PersonInfo> initializeTechField() {
+		DeciTreeOption<PersonInfo> option = new DeciTreeOption<>();
+		
+		option.recordInfos = buildPersonTechField();
+		option.conn = insertEmptyDocConn;
+		option.schemaName = DbSchema.getDefaultSchemaName();
+		
+		return new RootPersonInsert(option);
+	}
+	
+	
+	
+	private List<PersonInfo> buildPersonTechField() {
+		PersonInfo person = new PersonInfo();		
+		
+		person.codOwner = 1;
+		person.codPerson = 1;
+		person.cpf = null;
+		person.name = "name";
+		person.codGender = 1;
+		person.birthDate = LocalDate.of(2018, 11, 30);
+		person.codEntityCateg = "C";
+		
+		List<PersonInfo> persons = new ArrayList<>();
+		persons.add(person);
+		return persons;
+	}
 }

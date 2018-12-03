@@ -1195,4 +1195,51 @@ public class RootAddressInsertTest {
 	private List<AddressInfo> buildEmptyRecords() {
 		return new ArrayList<>();
 	}	
+	
+	
+	
+	@Test
+	public void techField() {
+		DeciTree<AddressInfo> tree = initializeTechField();
+		tree.makeDecision();
+		DeciResult<AddressInfo> result = tree.getDecisionResult();		
+		
+		assertFalse(result.isSuccess());
+		assertTrue(result.getFailCode() == 1612);
+		assertTrue(result.getFailMessage().equals("Address: technical fields shouldn't be filled"));	
+	}
+	
+	
+	
+	private DeciTree<AddressInfo> initializeTechField() {
+		DeciTreeOption<AddressInfo> option = new DeciTreeOption<>();
+		
+		option.recordInfos = buildAddressesTechField();
+		option.conn = insertA00Conn;
+		option.schemaName = DbSchema.getDefaultSchemaName();
+		
+		return new RootAddressInsert(option);
+	}
+	
+	
+	
+	private List<AddressInfo> buildAddressesTechField() {
+		AddressInfo address = new AddressInfo();
+		
+		address.codOwner = 1;
+		address.codAddress = 1;
+		address.codCustomer = 1;
+		address.codCountry = "BR";
+		address.line1 = "X";
+		address.line2 = "X";
+		address.line3 = "X";
+		address.line4 = "X";
+		address.line5 = "X";
+		address.line6 = "X";
+		address.line7 = "X";		
+		
+		List<AddressInfo> addresses = new ArrayList<>();
+		addresses.add(address);
+		return addresses;
+	}
 }
