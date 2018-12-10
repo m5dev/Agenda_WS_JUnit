@@ -72,7 +72,7 @@ public class CusModelUpdateTest {
 	
 	private Model model;
 	
-	
+	//TODO: testar Delete_Phone e Delete_Address
 	
 	@Before
 	public void initializeMockObjects() throws SQLException {

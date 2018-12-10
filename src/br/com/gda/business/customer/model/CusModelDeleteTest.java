@@ -27,6 +27,8 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import br.com.gda.business.customer.info.CusInfo;
+import br.com.gda.business.form.formAddress.dao.FormAddressDbTableColumn;
+import br.com.gda.business.form.formPhone.dao.FormPhoneDbTableColumn;
 import br.com.gda.common.DbConnection;
 import br.com.gda.model.Model;
 
@@ -38,13 +40,21 @@ public class CusModelDeleteTest {
 	@Mock private PreparedStatement deleteStmt;
 	@Mock private ResultSet deleteRs;
 	
-	@Mock private Connection deleteAddressConn;
-	@Mock private PreparedStatement deleteAddressStmt;
-	@Mock private ResultSet deleteAddressRs;
+	@Mock private Connection deleteNoAddressConn;
+	@Mock private PreparedStatement deleteNoAddressStmt;
+	@Mock private ResultSet deleteNoAddressRs;
+	
+	@Mock private Connection deleteNoPhoneConn;
+	@Mock private PreparedStatement deleteNoPhoneStmt;
+	@Mock private ResultSet deleteNoPhoneRs;
 	
 	@Mock private Connection notFoundConn;
 	@Mock private PreparedStatement notFoundStmt;
 	@Mock private ResultSet notFoundRs;
+	
+	@Mock private Connection deleteNoAddressPhoneConn;
+	@Mock private PreparedStatement deleteNoAddressPhoneStmt;
+	@Mock private ResultSet deleteNoAddressPhoneRs;
 	
 	@Mock private Connection invalidConn;
 	@Mock private PreparedStatement invalidStmt;	
@@ -58,7 +68,9 @@ public class CusModelDeleteTest {
 		PowerMockito.mockStatic(DbConnection.class);
 		
 		initializeScenarioDelete();
-		initializeScenarioDeleteAddress();
+		initializeScenarioDeleteNoAddress();
+		initializeScenarioDeleteNoPhone();
+		initializeScenarioDeleteNoAddressPhone();
 		initializeScenarioNotFound();
 		initializeScenarioInvalidConnection();
 	}
@@ -79,37 +91,132 @@ public class CusModelDeleteTest {
 		
 		when(deleteStmt.executeQuery()).thenReturn(deleteRs);		
 		when(deleteRs.next()).thenReturn(true).thenReturn(true).thenReturn(false)	// Customer - Check Exist
-		                     .thenReturn(false);									// Address - Check Exist
+		                     .thenReturn(true).thenReturn(true).thenReturn(false)	// Customer - Check Person has changed
+		                     .thenReturn(true).thenReturn(true).thenReturn(false)	// Customer - Check Address Exist
+		                     .thenReturn(true).thenReturn(true).thenReturn(false)	// Customer - Merge Address - Select
+		                     .thenReturn(true).thenReturn(true).thenReturn(false)	// Customer - Merge Address - Address Form - Check Country
+		                     .thenReturn(false).thenReturn(false)					// Customer - Merge Address - Address Form - Check Exist
+		                     .thenReturn(true).thenReturn(true).thenReturn(false)	// Address - Delete - Check Exist
+		                     .thenReturn(false)										// Address - Delete - Delete Address	
+		                     .thenReturn(true).thenReturn(true).thenReturn(false)	// Customer - Check Phone Exist
+		                     .thenReturn(true).thenReturn(true).thenReturn(false)	// Customer - Merge Phone - Select Phone
+		                     .thenReturn(true).thenReturn(true).thenReturn(false)	// Customer - Merge Phone - Select CountryPhone
+		                     .thenReturn(true).thenReturn(true).thenReturn(false)	// Customer - Merge Phone - Form - Check Country
+		                     .thenReturn(true).thenReturn(true).thenReturn(false)	// Customer - Merge Phone - Form - Check Exist
+		                     .thenReturn(true).thenReturn(true).thenReturn(false)	// Customer - Merge Phone - Form - Select
+		                     .thenReturn(true).thenReturn(true).thenReturn(false)	// Phone - Delete - Check Exist
+		                     .thenReturn(false)										// Phone - Delete - Delete Phone		                     
+		                     .thenReturn(false)										// Customer - Delete
+		                     .thenReturn(true).thenReturn(true).thenReturn(false);	// Person - Check Exist
+																					// Person - Delete
+		
+		when(deleteRs.getLong(any(String.class))).thenReturn(new Long(1));
+		when(deleteRs.getInt(any(String.class))).thenReturn(new Integer(1));
+		when(deleteRs.getString(any(String.class))).thenReturn(" ");
+		when(deleteRs.getTime(any(String.class))).thenReturn(Time.valueOf("11:22:33"));
+		when(deleteRs.getString(FormAddressDbTableColumn.COL_COD_FORM)).thenReturn("A01");
+		when(deleteRs.getString(FormPhoneDbTableColumn.COL_COD_FORM)).thenReturn("T01");
 	}
 	
 	
 	
-	private void initializeScenarioDeleteAddress() throws SQLException {
-		deleteAddressConn = mock(Connection.class);
-		deleteAddressStmt = mock(PreparedStatement.class);
-		deleteAddressRs = mock(ResultSet.class);
+	private void initializeScenarioDeleteNoPhone() throws SQLException {
+		deleteNoPhoneConn = mock(Connection.class);
+		deleteNoPhoneStmt = mock(PreparedStatement.class);
+		deleteNoPhoneRs = mock(ResultSet.class);
 		
-		when(deleteAddressConn.prepareStatement(any(String.class))).thenReturn(deleteAddressStmt);			
-		doNothing().when(deleteAddressStmt).setString(anyInt(), anyString());
-		doNothing().when(deleteAddressStmt).setLong(anyInt(), anyLong());
-		doNothing().when(deleteAddressStmt).setTime(anyInt(), any(Time.class));		
+		when(deleteNoPhoneConn.prepareStatement(any(String.class))).thenReturn(deleteNoPhoneStmt);			
+		doNothing().when(deleteNoPhoneStmt).setString(anyInt(), anyString());
+		doNothing().when(deleteNoPhoneStmt).setLong(anyInt(), anyLong());
+		doNothing().when(deleteNoPhoneStmt).setTime(anyInt(), any(Time.class));		
 		
-		when(deleteAddressStmt.executeUpdate()).thenReturn(1);
+		when(deleteNoPhoneStmt.executeUpdate()).thenReturn(1);
 		
-		when(deleteAddressStmt.executeQuery()).thenReturn(deleteAddressRs);		
-		when(deleteAddressRs.next()).thenReturn(true).thenReturn(true).thenReturn(false)	// Customer - Check Exist 
-									.thenReturn(true).thenReturn(true).thenReturn(false)	// Address - Check Exist
-									.thenReturn(true).thenReturn(true).thenReturn(false)	// Address - Select
-									.thenReturn(true).thenReturn(true).thenReturn(false)	// Address Form - Check Country
-									.thenReturn(true).thenReturn(true).thenReturn(false)	// Address Form - Check Exist
-									.thenReturn(true).thenReturn(true).thenReturn(false)	// Address Form - Select
-									.thenReturn(true).thenReturn(true).thenReturn(false);	// Address - Check Exist
-																							// Address - Delete
+		when(deleteNoPhoneStmt.executeQuery()).thenReturn(deleteNoPhoneRs);		
+		when(deleteNoPhoneRs.next()).thenReturn(true).thenReturn(true).thenReturn(false)	// Customer - Check Exist
+			                        .thenReturn(true).thenReturn(true).thenReturn(false)	// Customer - Check Person has changed
+			                        .thenReturn(true).thenReturn(true).thenReturn(false)	// Customer - Check Address Exist
+			                        .thenReturn(true).thenReturn(true).thenReturn(false)	// Customer - Merge Address - Select
+			                        .thenReturn(true).thenReturn(true).thenReturn(false)	// Customer - Merge Address - Address Form - Check Country
+			                        .thenReturn(false).thenReturn(false)					// Customer - Merge Address - Address Form - Check Exist
+			                        .thenReturn(true).thenReturn(true).thenReturn(false)	// Address - Delete - Check Exist
+			                        .thenReturn(false)										// Address - Delete - deleteNoPhone Address	
+			                        .thenReturn(false).thenReturn(false)					// Customer - Check Phone Exist		                     
+			                        .thenReturn(false)										// Customer - Delete
+			                        .thenReturn(true).thenReturn(true).thenReturn(false);	// Person - Check Exist
+																							// Person - Delete
 		
-		when(deleteAddressRs.getLong(any(String.class))).thenReturn(new Long(1));
-		when(deleteAddressRs.getInt(any(String.class))).thenReturn(new Integer(1));
-		when(deleteAddressRs.getString(any(String.class))).thenReturn(" ");
-		when(deleteAddressRs.getTime(any(String.class))).thenReturn(Time.valueOf("11:22:33"));	
+		when(deleteNoPhoneRs.getLong(any(String.class))).thenReturn(new Long(1));
+		when(deleteNoPhoneRs.getInt(any(String.class))).thenReturn(new Integer(1));
+		when(deleteNoPhoneRs.getString(any(String.class))).thenReturn(" ");
+		when(deleteNoPhoneRs.getTime(any(String.class))).thenReturn(Time.valueOf("11:22:33"));
+		when(deleteNoPhoneRs.getString(FormAddressDbTableColumn.COL_COD_FORM)).thenReturn("A01");
+	}
+	
+	
+	
+	private void initializeScenarioDeleteNoAddress() throws SQLException {
+		deleteNoAddressConn = mock(Connection.class);
+		deleteNoAddressStmt = mock(PreparedStatement.class);
+		deleteNoAddressRs = mock(ResultSet.class);
+		
+		when(deleteNoAddressConn.prepareStatement(any(String.class))).thenReturn(deleteNoAddressStmt);			
+		doNothing().when(deleteNoAddressStmt).setString(anyInt(), anyString());
+		doNothing().when(deleteNoAddressStmt).setLong(anyInt(), anyLong());
+		doNothing().when(deleteNoAddressStmt).setTime(anyInt(), any(Time.class));		
+		
+		when(deleteNoAddressStmt.executeUpdate()).thenReturn(1);
+		
+		when(deleteNoAddressStmt.executeQuery()).thenReturn(deleteNoAddressRs);		
+		when(deleteNoAddressRs.next()).thenReturn(true).thenReturn(true).thenReturn(false)	// Customer - Check Exist
+				                      .thenReturn(true).thenReturn(true).thenReturn(false)	// Customer - Check Person has changed
+				                      .thenReturn(false).thenReturn(false)					// Customer - Check Address Exist
+				                      .thenReturn(true).thenReturn(true).thenReturn(false)	// Customer - Check Phone Exist
+				                      .thenReturn(true).thenReturn(true).thenReturn(false)	// Customer - Merge Phone - Select Phone
+				                      .thenReturn(true).thenReturn(true).thenReturn(false)	// Customer - Merge Phone - Select CountryPhone
+				                      .thenReturn(true).thenReturn(true).thenReturn(false)	// Customer - Merge Phone - Form - Check Country
+				                      .thenReturn(true).thenReturn(true).thenReturn(false)	// Customer - Merge Phone - Form - Check Exist
+				                      .thenReturn(true).thenReturn(true).thenReturn(false)	// Customer - Merge Phone - Form - Select
+				                      .thenReturn(true).thenReturn(true).thenReturn(false)	// Phone - Delete - Check Exist
+				                      .thenReturn(false)									// Phone - Delete - Delete Phone		                     
+				                      .thenReturn(false)									// Customer - Delete
+				                      .thenReturn(true).thenReturn(true).thenReturn(false);	// Person - Check Exist
+																							// Person - Delete
+		
+		when(deleteNoAddressRs.getLong(any(String.class))).thenReturn(new Long(1));
+		when(deleteNoAddressRs.getInt(any(String.class))).thenReturn(new Integer(1));
+		when(deleteNoAddressRs.getString(any(String.class))).thenReturn(" ");
+		when(deleteNoAddressRs.getTime(any(String.class))).thenReturn(Time.valueOf("11:22:33"));
+		when(deleteNoAddressRs.getString(FormPhoneDbTableColumn.COL_COD_FORM)).thenReturn("T01");
+	}
+	
+	
+	
+	private void initializeScenarioDeleteNoAddressPhone() throws SQLException {
+		deleteNoAddressPhoneConn = mock(Connection.class);
+		deleteNoAddressPhoneStmt = mock(PreparedStatement.class);
+		deleteNoAddressPhoneRs = mock(ResultSet.class);
+		
+		when(deleteNoAddressPhoneConn.prepareStatement(any(String.class))).thenReturn(deleteNoAddressPhoneStmt);			
+		doNothing().when(deleteNoAddressPhoneStmt).setString(anyInt(), anyString());
+		doNothing().when(deleteNoAddressPhoneStmt).setLong(anyInt(), anyLong());
+		doNothing().when(deleteNoAddressPhoneStmt).setTime(anyInt(), any(Time.class));		
+		
+		when(deleteNoAddressPhoneStmt.executeUpdate()).thenReturn(1);
+		
+		when(deleteNoAddressPhoneStmt.executeQuery()).thenReturn(deleteNoAddressPhoneRs);		
+		when(deleteNoAddressPhoneRs.next()).thenReturn(true).thenReturn(true).thenReturn(false)		// Customer - Check Exist
+					                       .thenReturn(true).thenReturn(true).thenReturn(false)		// Customer - Check Person has changed
+					                       .thenReturn(false).thenReturn(false)						// Customer - Check Address Exist
+					                       .thenReturn(false).thenReturn(false)						// Customer - Check Phone Exist                    
+					                       .thenReturn(false)										// Customer - Delete
+					                       .thenReturn(true).thenReturn(true).thenReturn(false);	// Person - Check Exist
+																									// Person - Delete
+		
+		when(deleteNoAddressPhoneRs.getLong(any(String.class))).thenReturn(new Long(1));
+		when(deleteNoAddressPhoneRs.getInt(any(String.class))).thenReturn(new Integer(1));
+		when(deleteNoAddressPhoneRs.getString(any(String.class))).thenReturn(" ");
+		when(deleteNoAddressPhoneRs.getTime(any(String.class))).thenReturn(Time.valueOf("11:22:33"));
 	}
 	
 	
@@ -121,7 +228,7 @@ public class CusModelDeleteTest {
 		
 		when(notFoundConn.prepareStatement(any(String.class))).thenReturn(notFoundStmt);
 		when(notFoundStmt.executeQuery()).thenReturn(notFoundRs);		
-		when(notFoundRs.next()).thenReturn(true).thenReturn(false);
+		when(notFoundRs.next()).thenReturn(false);
 	}
 	
 	
@@ -147,7 +254,7 @@ public class CusModelDeleteTest {
 		Response response = model.getResponse();
 		assertTrue(response.getStatus() == Response.Status.OK.getStatusCode());
 		
-		String responseBody = "{\"selectCode\":200,\"selectMessage\":\"The list was returned successfully\",\"results\":[{\"codOwner\":-1,\"codCustomer\":-1,\"codGender\":1,\"codCountryPhone1\":-1,\"addresses\":[],\"codLanguage\":\"PT\"}]}";
+		String responseBody = "{\"selectCode\":200,\"selectMessage\":\"The list was returned successfully\",\"results\":[{\"codOwner\":-1,\"codCustomer\":-1,\"codPerson\":-1,\"codGender\":1,\"addresses\":[],\"phones\":[],\"codLanguage\":\"PT\"}]}";
 		assertTrue(response.getEntity().equals(responseBody));		
 	}
 	
@@ -159,6 +266,7 @@ public class CusModelDeleteTest {
 		CusInfo infoRecord = new CusInfo();
 		infoRecord.codOwner = 1;
 		infoRecord.codCustomer = 1;
+		infoRecord.codPerson = 1;
 		
 		model = new CusModelDelete(infoRecord);
 	}
@@ -166,24 +274,77 @@ public class CusModelDeleteTest {
 	
 	
 	@Test
-	public void deleteAddress() {
-		initializeDeleteAddress();
+	public void deleteNoPhone() {
+		initializeDeleteNoPhone();
 		model.executeRequest();
 		Response response = model.getResponse();
 		assertTrue(response.getStatus() == Response.Status.OK.getStatusCode());
 		
-		String responseBody = "{\"selectCode\":200,\"selectMessage\":\"The list was returned successfully\",\"results\":[{\"codOwner\":-1,\"codCustomer\":-1,\"codGender\":1,\"codCountryPhone1\":-1,\"addresses\":[],\"codLanguage\":\"PT\"}]}";
+		String responseBody = "{\"selectCode\":200,\"selectMessage\":\"The list was returned successfully\",\"results\":[{\"codOwner\":-1,\"codCustomer\":-1,\"codPerson\":-1,\"codGender\":1,\"addresses\":[],\"phones\":[],\"codLanguage\":\"PT\"}]}";
 		assertTrue(response.getEntity().equals(responseBody));		
 	}
 	
 	
 	
-	protected void initializeDeleteAddress() {
-		PowerMockito.when(DbConnection.getConnection()).thenReturn(deleteAddressConn);
+	protected void initializeDeleteNoPhone() {
+		PowerMockito.when(DbConnection.getConnection()).thenReturn(deleteNoPhoneConn);
 		
 		CusInfo infoRecord = new CusInfo();
 		infoRecord.codOwner = 1;
 		infoRecord.codCustomer = 1;
+		infoRecord.codPerson = 1;
+		
+		model = new CusModelDelete(infoRecord);
+	}
+	
+	
+	
+	@Test
+	public void deleteNoAddress() {
+		initializeDeleteNoAddress();
+		model.executeRequest();
+		Response response = model.getResponse();
+		assertTrue(response.getStatus() == Response.Status.OK.getStatusCode());
+		
+		String responseBody = "{\"selectCode\":200,\"selectMessage\":\"The list was returned successfully\",\"results\":[{\"codOwner\":-1,\"codCustomer\":-1,\"codPerson\":-1,\"codGender\":1,\"addresses\":[],\"phones\":[],\"codLanguage\":\"PT\"}]}";
+		assertTrue(response.getEntity().equals(responseBody));		
+	}
+	
+	
+	
+	protected void initializeDeleteNoAddress() {
+		PowerMockito.when(DbConnection.getConnection()).thenReturn(deleteNoAddressConn);
+		
+		CusInfo infoRecord = new CusInfo();
+		infoRecord.codOwner = 1;
+		infoRecord.codCustomer = 1;
+		infoRecord.codPerson = 1;
+		
+		model = new CusModelDelete(infoRecord);
+	}
+	
+	
+	
+	@Test
+	public void missingFieldCodPerson() {
+		initializeMissingFieldCodPerson();
+		model.executeRequest();
+		Response response = model.getResponse();
+		assertTrue(response.getStatus() == Response.Status.BAD_REQUEST.getStatusCode());
+		
+		String responseBody = "{\"selectCode\":1,\"selectMessage\":\"Mandatory field is empty\",\"results\":{}}";
+		assertTrue(response.getEntity().equals(responseBody));		
+	}
+	
+	
+	
+	protected void initializeMissingFieldCodPerson() {
+		PowerMockito.when(DbConnection.getConnection()).thenReturn(deleteConn);
+		
+		CusInfo infoRecord = new CusInfo();
+		infoRecord.codOwner = 1;
+		infoRecord.codCustomer = 1;
+		infoRecord.codPerson = -1;
 		
 		model = new CusModelDelete(infoRecord);
 	}
@@ -197,7 +358,7 @@ public class CusModelDeleteTest {
 		Response response = model.getResponse();
 		assertTrue(response.getStatus() == Response.Status.BAD_REQUEST.getStatusCode());
 		
-		String responseBody = "{\"selectCode\":6,\"selectMessage\":\"Key field should not be null\",\"results\":{}}";
+		String responseBody = "{\"selectCode\":1,\"selectMessage\":\"Mandatory field is empty\",\"results\":{}}";
 		assertTrue(response.getEntity().equals(responseBody));		
 	}
 	
@@ -207,7 +368,9 @@ public class CusModelDeleteTest {
 		PowerMockito.when(DbConnection.getConnection()).thenReturn(deleteConn);
 		
 		CusInfo infoRecord = new CusInfo();
+		infoRecord.codOwner = -1;
 		infoRecord.codCustomer = 1;
+		infoRecord.codPerson = 1;
 		
 		model = new CusModelDelete(infoRecord);
 	}
@@ -221,7 +384,7 @@ public class CusModelDeleteTest {
 		Response response = model.getResponse();
 		assertTrue(response.getStatus() == Response.Status.BAD_REQUEST.getStatusCode());
 		
-		String responseBody = "{\"selectCode\":6,\"selectMessage\":\"Key field should not be null\",\"results\":{}}";
+		String responseBody = "{\"selectCode\":1,\"selectMessage\":\"Mandatory field is empty\",\"results\":{}}";
 		assertTrue(response.getEntity().equals(responseBody));		
 	}
 	
@@ -232,6 +395,8 @@ public class CusModelDeleteTest {
 		
 		CusInfo infoRecord = new CusInfo();
 		infoRecord.codOwner = 1;
+		infoRecord.codCustomer = -1;
+		infoRecord.codPerson = -1;
 		
 		model = new CusModelDelete(infoRecord);
 	}
@@ -257,6 +422,7 @@ public class CusModelDeleteTest {
 		CusInfo infoRecord = new CusInfo();
 		infoRecord.codOwner = 1;
 		infoRecord.codCustomer = 1;
+		infoRecord.codPerson = 1;
 		
 		model = new CusModelDelete(infoRecord);
 	}
@@ -283,6 +449,7 @@ public class CusModelDeleteTest {
 		CusInfo infoRecord = new CusInfo();
 		infoRecord.codOwner = 1;
 		infoRecord.codCustomer = 1;
+		infoRecord.codPerson = 1;
 		
 		model = new CusModelDelete(infoRecord);
 	}
@@ -305,5 +472,31 @@ public class CusModelDeleteTest {
 	protected void initializeNullArgument() {
 		PowerMockito.when(DbConnection.getConnection()).thenReturn(deleteConn);
 		model = new CusModelDelete(null);
+	}
+	
+	
+	
+	@Test
+	public void deleteNoAddressPhone() {
+		initializeDeleteNoAddressPhone();
+		model.executeRequest();
+		Response response = model.getResponse();
+		assertTrue(response.getStatus() == Response.Status.OK.getStatusCode());
+		
+		String responseBody = "{\"selectCode\":200,\"selectMessage\":\"The list was returned successfully\",\"results\":[{\"codOwner\":-1,\"codCustomer\":-1,\"codPerson\":-1,\"codGender\":1,\"addresses\":[],\"phones\":[],\"codLanguage\":\"PT\"}]}";
+		assertTrue(response.getEntity().equals(responseBody));		
+	}
+	
+	
+	
+	protected void initializeDeleteNoAddressPhone() {
+		PowerMockito.when(DbConnection.getConnection()).thenReturn(deleteNoAddressPhoneConn);
+		
+		CusInfo infoRecord = new CusInfo();
+		infoRecord.codOwner = 1;
+		infoRecord.codCustomer = 1;
+		infoRecord.codPerson = 1;
+		
+		model = new CusModelDelete(infoRecord);
 	}
 }

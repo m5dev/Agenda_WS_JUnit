@@ -70,6 +70,10 @@ public class RootAddressUpsertdelTest {
 	@Mock private PreparedStatement invalidCountryStmt;
 	@Mock private ResultSet invalidCountryRs;
 	
+	@Mock private Connection invalidOwnerConn;
+	@Mock private PreparedStatement invalidOwnerStmt;
+	@Mock private ResultSet invalidOwnerRs;
+	
 	@Mock private Connection invalidStateConn;
 	@Mock private PreparedStatement invalidStateStmt;
 	@Mock private ResultSet invalidStateRs;
@@ -87,6 +91,7 @@ public class RootAddressUpsertdelTest {
 		initializeScenarioUpdateA01();
 		initializeScenarioInvalidConnection();
 		initializeScenarioDontExist();
+		initializeScenarioInvalidOwner();
 		initializeScenarioInvalidCountry();
 		initializeScenarioInvalidState();
 	}
@@ -106,7 +111,8 @@ public class RootAddressUpsertdelTest {
 		when(deleteA00Stmt.executeUpdate()).thenReturn(1);
 		
 		when(deleteA00Stmt.executeQuery()).thenReturn(deleteA00Rs);		
-		when(deleteA00Rs.next()).thenReturn(true).thenReturn(true).thenReturn(false)	// Update - Check Country
+		when(deleteA00Rs.next()).thenReturn(true).thenReturn(true).thenReturn(false)	// Update - Check Owner
+								.thenReturn(true).thenReturn(true).thenReturn(false)	// Update - Check Country
 					  	        .thenReturn(true).thenReturn(true).thenReturn(false)	// Update - Check Exist
 					  	        .thenReturn(true).thenReturn(true).thenReturn(false)	// Update - Address Form - Check Country
 					  	        .thenReturn(false).thenReturn(false)					// Update - Address Form - Check Exist
@@ -135,7 +141,8 @@ public class RootAddressUpsertdelTest {
 		when(deleteA01Stmt.executeUpdate()).thenReturn(1);
 		
 		when(deleteA01Stmt.executeQuery()).thenReturn(deleteA01Rs);		
-		when(deleteA01Rs.next()).thenReturn(true).thenReturn(true).thenReturn(false)	// Update - Check Country
+		when(deleteA01Rs.next()).thenReturn(true).thenReturn(true).thenReturn(false)	// Update - Check Owner
+								.thenReturn(true).thenReturn(true).thenReturn(false)	// Update - Check Country
 								.thenReturn(true).thenReturn(true).thenReturn(false)	// Update - Check Exist
 						  	    .thenReturn(true).thenReturn(true).thenReturn(false)	// Update - Address Form - Check Country
 						  	    .thenReturn(true).thenReturn(true).thenReturn(false)	// Update - Address Form - Check Exist
@@ -167,7 +174,8 @@ public class RootAddressUpsertdelTest {
 		when(notFoundStmt.executeUpdate()).thenReturn(1);
 		
 		when(notFoundStmt.executeQuery()).thenReturn(notFoundRs);		
-		when(notFoundRs.next()).thenReturn(true).thenReturn(true).thenReturn(false)	// Update - Check Country
+		when(notFoundRs.next()).thenReturn(true).thenReturn(true).thenReturn(false)	// Update - Check Owner
+							   .thenReturn(true).thenReturn(true).thenReturn(false)	// Update - Check Country
 						       .thenReturn(false);									// Update - Check Exist
 	}
 	
@@ -182,7 +190,8 @@ public class RootAddressUpsertdelTest {
 		when(updateA00Stmt.executeUpdate()).thenReturn(1);
 		
 		when(updateA00Stmt.executeQuery()).thenReturn(updateA00Rs);
-		when(updateA00Rs.next()).thenReturn(true).thenReturn(true).thenReturn(false)	// Check Country
+		when(updateA00Rs.next()).thenReturn(true).thenReturn(true).thenReturn(false)	// Check Owner
+								.thenReturn(true).thenReturn(true).thenReturn(false)	// Check Country
 						  	    .thenReturn(true).thenReturn(true).thenReturn(false)	// Check Exist
 						  	    .thenReturn(true).thenReturn(true).thenReturn(false)	// Address Form - Check Country
 						  	    .thenReturn(false).thenReturn(false);					// Address Form - Check Exist
@@ -205,7 +214,8 @@ public class RootAddressUpsertdelTest {
 		when(updateA01Stmt.executeUpdate()).thenReturn(1);
 		
 		when(updateA01Stmt.executeQuery()).thenReturn(updateA01Rs);
-		when(updateA01Rs.next()).thenReturn(true).thenReturn(true).thenReturn(false)	// Check Country
+		when(updateA01Rs.next()).thenReturn(true).thenReturn(true).thenReturn(false)	// Check Owner
+								.thenReturn(true).thenReturn(true).thenReturn(false)	// Check Country
 								.thenReturn(true).thenReturn(true).thenReturn(false)	// Check Exist
 						  	    .thenReturn(true).thenReturn(true).thenReturn(false)	// Address Form - Check Country
 						  	    .thenReturn(true).thenReturn(true).thenReturn(false)	// Address Form - Check Exist
@@ -244,7 +254,8 @@ public class RootAddressUpsertdelTest {
 		when(dontExistStmt.executeUpdate()).thenReturn(1);
 		
 		when(dontExistStmt.executeQuery()).thenReturn(dontExistRs);
-		when(dontExistRs.next()).thenReturn(true).thenReturn(true).thenReturn(false)	// Check Country
+		when(dontExistRs.next()).thenReturn(true).thenReturn(true).thenReturn(false)	// Check Owner
+								.thenReturn(true).thenReturn(true).thenReturn(false)	// Check Country
 						  	    .thenReturn(false);										// Check Exist
 		when(dontExistRs.getLong(any(String.class))).thenReturn(new Long(1));
 		when(dontExistRs.getInt(any(String.class))).thenReturn(new Integer(1));
@@ -252,6 +263,25 @@ public class RootAddressUpsertdelTest {
 		when(dontExistRs.getString(any(String.class))).thenReturn(" ");
 		when(dontExistRs.getTime(any(String.class))).thenReturn(Time.valueOf("11:22:33"));		
 	}
+	
+	
+	
+	private void initializeScenarioInvalidOwner() throws SQLException {
+		invalidOwnerConn = mock(Connection.class);
+		invalidOwnerStmt = mock(PreparedStatement.class);
+		invalidOwnerRs = mock(ResultSet.class);
+		
+		when(invalidOwnerConn.prepareStatement(any(String.class))).thenReturn(invalidOwnerStmt);
+		when(invalidOwnerStmt.executeUpdate()).thenReturn(1);
+		
+		when(invalidOwnerStmt.executeQuery()).thenReturn(invalidOwnerRs);
+		when(invalidOwnerRs.next()).thenReturn(false);									// Check Owner
+		when(invalidOwnerRs.getLong(any(String.class))).thenReturn(new Long(1));
+		when(invalidOwnerRs.getInt(any(String.class))).thenReturn(new Integer(1));
+		when(invalidOwnerRs.getString(any(String.class))).thenReturn(" ");
+		when(invalidOwnerRs.getString(any(String.class))).thenReturn(" ");
+		when(invalidOwnerRs.getTime(any(String.class))).thenReturn(Time.valueOf("11:22:33"));		
+	}	
 	
 	
 	
@@ -264,7 +294,8 @@ public class RootAddressUpsertdelTest {
 		when(invalidCountryStmt.executeUpdate()).thenReturn(1);
 		
 		when(invalidCountryStmt.executeQuery()).thenReturn(invalidCountryRs);
-		when(invalidCountryRs.next()).thenReturn(false);					// Check Country
+		when(invalidCountryRs.next()).thenReturn(true).thenReturn(true).thenReturn(false)	// Check Owner
+									 .thenReturn(false);									// Check Country
 		when(invalidCountryRs.getLong(any(String.class))).thenReturn(new Long(1));
 		when(invalidCountryRs.getInt(any(String.class))).thenReturn(new Integer(1));
 		when(invalidCountryRs.getString(any(String.class))).thenReturn(" ");
@@ -283,7 +314,8 @@ public class RootAddressUpsertdelTest {
 		when(invalidStateStmt.executeUpdate()).thenReturn(1);
 		
 		when(invalidStateStmt.executeQuery()).thenReturn(invalidStateRs);
-		when(invalidStateRs.next()).thenReturn(true).thenReturn(true).thenReturn(false)	// Check Country
+		when(invalidStateRs.next()).thenReturn(true).thenReturn(true).thenReturn(false)	// Check Owner
+								   .thenReturn(true).thenReturn(true).thenReturn(false)	// Check Country
 								   .thenReturn(true).thenReturn(true).thenReturn(false)	// Check Exist
 							 	   .thenReturn(true).thenReturn(true).thenReturn(false)	// Address Form - Check Country
 							 	   .thenReturn(true).thenReturn(true).thenReturn(false)	// Address Form - Check Exist
@@ -638,6 +670,31 @@ public class RootAddressUpsertdelTest {
 		
 		return new RootAddressUpsertdel(option);
 	}
+	
+	
+	
+	@Test
+	public void invalidOwner() {
+		DeciTree<AddressInfo> tree = initializeInvalidOwner();
+		tree.makeDecision();
+		DeciResult<AddressInfo> result = tree.getDecisionResult();		
+		
+		assertFalse(result.isSuccess());
+		assertTrue(result.getFailCode() == 1251);
+		assertTrue(result.getFailMessage().equals("Owner data not found on DB"));	
+	}
+		
+	
+	
+	private DeciTree<AddressInfo> initializeInvalidOwner() {
+		DeciTreeOption<AddressInfo> option = new DeciTreeOption<>();
+		
+		option.recordInfos = buildUpdateAddressesA00();
+		option.conn = invalidOwnerConn;
+		option.schemaName = DbSchema.getDefaultSchemaName();
+		
+		return new RootAddressUpsertdel(option);
+	}	
 	
 	
 	

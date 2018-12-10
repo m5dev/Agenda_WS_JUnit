@@ -55,6 +55,10 @@ public class RootAddressInsertTest {
 	@Mock private PreparedStatement invalidCountryStmt;
 	@Mock private ResultSet invalidCountryRs;
 	
+	@Mock private Connection invalidOwnerConn;
+	@Mock private PreparedStatement invalidOwnerStmt;
+	@Mock private ResultSet invalidOwnerRs;
+	
 	@Mock private Connection limitConn;
 	@Mock private PreparedStatement limitStmt;
 	@Mock private ResultSet limitRs;
@@ -64,6 +68,7 @@ public class RootAddressInsertTest {
 	public void initializeMockObjects() throws SQLException {
 		PowerMockito.mockStatic(DbConnection.class);
 		initializeScenarioInvalidConnection();
+		initializeScenarioInvalidOwner();
 		initializeScenarioInvalidCountry();
 		initializeScenarioInvalidState();
 		initializeScenarioLimit();
@@ -87,6 +92,25 @@ public class RootAddressInsertTest {
 	
 	
 	
+	private void initializeScenarioInvalidOwner() throws SQLException {
+		invalidOwnerConn = mock(Connection.class);
+		invalidOwnerStmt = mock(PreparedStatement.class);
+		invalidOwnerRs = mock(ResultSet.class);
+		
+		when(invalidOwnerConn.prepareStatement(any(String.class))).thenReturn(invalidOwnerStmt);
+		when(invalidOwnerStmt.executeUpdate()).thenReturn(1);
+		
+		when(invalidOwnerStmt.executeQuery()).thenReturn(invalidOwnerRs);
+		when(invalidOwnerRs.next()).thenReturn(false);										// Check Owner
+		when(invalidOwnerRs.getLong(any(String.class))).thenReturn(new Long(1));
+		when(invalidOwnerRs.getInt(any(String.class))).thenReturn(new Integer(1));
+		when(invalidOwnerRs.getString(any(String.class))).thenReturn(" ");
+		when(invalidOwnerRs.getString(any(String.class))).thenReturn(" ");
+		when(invalidOwnerRs.getTime(any(String.class))).thenReturn(Time.valueOf("11:22:33"));		
+	}
+	
+	
+	
 	private void initializeScenarioInvalidCountry() throws SQLException {
 		invalidCountryConn = mock(Connection.class);
 		invalidCountryStmt = mock(PreparedStatement.class);
@@ -96,7 +120,8 @@ public class RootAddressInsertTest {
 		when(invalidCountryStmt.executeUpdate()).thenReturn(1);
 		
 		when(invalidCountryStmt.executeQuery()).thenReturn(invalidCountryRs);
-		when(invalidCountryRs.next()).thenReturn(false);							// Check Country
+		when(invalidCountryRs.next()).thenReturn(true).thenReturn(true).thenReturn(false)		// Check Owner
+		                             .thenReturn(false);										// Check Country
 		when(invalidCountryRs.getLong(any(String.class))).thenReturn(new Long(1));
 		when(invalidCountryRs.getInt(any(String.class))).thenReturn(new Integer(1));
 		when(invalidCountryRs.getString(any(String.class))).thenReturn(" ");
@@ -115,7 +140,8 @@ public class RootAddressInsertTest {
 		when(invalidStateStmt.executeUpdate()).thenReturn(1);
 		
 		when(invalidStateStmt.executeQuery()).thenReturn(invalidStateRs);
-		when(invalidStateRs.next()).thenReturn(true).thenReturn(true).thenReturn(false)		// Check Country
+		when(invalidStateRs.next()).thenReturn(true).thenReturn(true).thenReturn(false)		// Check Owner
+								   .thenReturn(true).thenReturn(true).thenReturn(false)		// Check Country
 								   .thenReturn(true).thenReturn(true).thenReturn(false)		// Check Limit
 						  	       .thenReturn(true).thenReturn(true).thenReturn(false)		// Address Form - Check Country
 						  	       .thenReturn(true).thenReturn(true).thenReturn(false)		// Address Form - Check Exist
@@ -139,7 +165,8 @@ public class RootAddressInsertTest {
 		when(limitStmt.executeUpdate()).thenReturn(1);
 		
 		when(limitStmt.executeQuery()).thenReturn(limitRs);
-		when(limitRs.next()).thenReturn(true).thenReturn(true).thenReturn(false)		// Check Country
+		when(limitRs.next()).thenReturn(true).thenReturn(true).thenReturn(false)		// Check Owner
+						    .thenReturn(true).thenReturn(true).thenReturn(false)		// Check Country
 						    .thenReturn(true).thenReturn(true).thenReturn(true)			// Check Limit (2 Records)
 						    .thenReturn(true).thenReturn(true).thenReturn(true)			// Check Limit (3 Records)
 						    .thenReturn(true).thenReturn(true).thenReturn(true)			// Check Limit (3 Records)
@@ -162,7 +189,8 @@ public class RootAddressInsertTest {
 		when(insertA00Stmt.executeUpdate()).thenReturn(1);
 		
 		when(insertA00Stmt.executeQuery()).thenReturn(insertA00Rs);
-		when(insertA00Rs.next()).thenReturn(true).thenReturn(true).thenReturn(false)	// Check Country
+		when(insertA00Rs.next()).thenReturn(true).thenReturn(true).thenReturn(false)	// Check Owner
+							    .thenReturn(true).thenReturn(true).thenReturn(false)	// Check Country
 								.thenReturn(true).thenReturn(true).thenReturn(false)	// Check Limit
 						  	    .thenReturn(true).thenReturn(true).thenReturn(false)	// Address Form - Check Country
 						  	    .thenReturn(false).thenReturn(false)					// Address Form - Check Exist
@@ -185,7 +213,8 @@ public class RootAddressInsertTest {
 		when(insertA01Stmt.executeUpdate()).thenReturn(1);
 		
 		when(insertA01Stmt.executeQuery()).thenReturn(insertA01Rs);
-		when(insertA01Rs.next()).thenReturn(true).thenReturn(true).thenReturn(false)	// Check Country
+		when(insertA01Rs.next()).thenReturn(true).thenReturn(true).thenReturn(false)	// Check Owner
+								.thenReturn(true).thenReturn(true).thenReturn(false)	// Check Country
 								.thenReturn(true).thenReturn(true).thenReturn(false)	// Check Limit
 						  	    .thenReturn(true).thenReturn(true).thenReturn(false)	// Address Form - Check Country
 						  	    .thenReturn(true).thenReturn(true).thenReturn(false)	// Address Form - Check Exist
@@ -258,6 +287,7 @@ public class RootAddressInsertTest {
 		address.codCustomer = 1;
 		address.codStore = 1;
 		address.codEmployee = -1;
+		address.codUser = -1;
 		address.codCountry = "X";
 		address.line1 = "X";
 		address.line2 = "X";
@@ -306,6 +336,7 @@ public class RootAddressInsertTest {
 		address.codCustomer = 1;
 		address.codStore = -1;
 		address.codEmployee = 1;
+		address.codUser = -1;
 		address.codCountry = "X";
 		address.line1 = "X";
 		address.line2 = "X";
@@ -354,6 +385,7 @@ public class RootAddressInsertTest {
 		address.codCustomer = -1;
 		address.codStore = 1;
 		address.codEmployee = 1;
+		address.codUser = -1;
 		address.codCountry = "X";
 		address.line1 = "X";
 		address.line2 = "X";
@@ -402,6 +434,55 @@ public class RootAddressInsertTest {
 		address.codCustomer = 1;
 		address.codStore = 1;
 		address.codEmployee = 1;
+		address.codUser = 1;
+		address.codCountry = "X";
+		address.line1 = "X";
+		address.line2 = "X";
+		address.line3 = "X";
+		address.line4 = "X";
+		address.line5 = "X";
+		address.line6 = "X";
+		address.line7 = "X";
+		
+		List<AddressInfo> addresses = new ArrayList<>();
+		addresses.add(address);
+		return addresses;
+	}
+	
+	
+	@Test
+	public void missingReferenceMulti5() {
+		DeciTree<AddressInfo> tree = initializeMissingReferenceMulti5();
+		tree.makeDecision();
+		DeciResult<AddressInfo> result = tree.getDecisionResult();		
+		
+		assertFalse(result.isSuccess());
+		assertTrue(result.getFailCode() == 1607);
+		assertTrue(result.getFailMessage().equals("Address has multiple references"));	
+	}
+	
+	
+	
+	private DeciTree<AddressInfo> initializeMissingReferenceMulti5() {
+		DeciTreeOption<AddressInfo> option = new DeciTreeOption<>();
+		
+		option.recordInfos = buildAddressesMissingReferenceMulti5();
+		option.conn = insertA00Conn;
+		option.schemaName = DbSchema.getDefaultSchemaName();
+		
+		return new RootAddressInsert(option);
+	}
+	
+	
+	
+	private List<AddressInfo> buildAddressesMissingReferenceMulti5() {
+		AddressInfo address = new AddressInfo();
+		
+		address.codOwner = 1;
+		address.codCustomer = 1;
+		address.codStore = -1;
+		address.codEmployee = -1;
+		address.codUser = 1;
 		address.codCountry = "X";
 		address.line1 = "X";
 		address.line2 = "X";
@@ -418,6 +499,104 @@ public class RootAddressInsertTest {
 	
 	
 	
+	@Test
+	public void missingReferenceMulti6() {
+		DeciTree<AddressInfo> tree = initializeMissingReferenceMulti6();
+		tree.makeDecision();
+		DeciResult<AddressInfo> result = tree.getDecisionResult();		
+		
+		assertFalse(result.isSuccess());
+		assertTrue(result.getFailCode() == 1607);
+		assertTrue(result.getFailMessage().equals("Address has multiple references"));	
+	}
+	
+	
+	
+	private DeciTree<AddressInfo> initializeMissingReferenceMulti6() {
+		DeciTreeOption<AddressInfo> option = new DeciTreeOption<>();
+		
+		option.recordInfos = buildAddressesMissingReferenceMulti6();
+		option.conn = insertA00Conn;
+		option.schemaName = DbSchema.getDefaultSchemaName();
+		
+		return new RootAddressInsert(option);
+	}
+	
+	
+	
+	private List<AddressInfo> buildAddressesMissingReferenceMulti6() {
+		AddressInfo address = new AddressInfo();
+		
+		address.codOwner = 1;
+		address.codCustomer = -1;
+		address.codStore = 1;
+		address.codEmployee = -1;
+		address.codUser = 1;
+		address.codCountry = "X";
+		address.line1 = "X";
+		address.line2 = "X";
+		address.line3 = "X";
+		address.line4 = "X";
+		address.line5 = "X";
+		address.line6 = "X";
+		address.line7 = "X";
+		
+		List<AddressInfo> addresses = new ArrayList<>();
+		addresses.add(address);
+		return addresses;
+	}
+	
+	
+	
+	@Test
+	public void missingReferenceMulti7() {
+		DeciTree<AddressInfo> tree = initializeMissingReferenceMulti7();
+		tree.makeDecision();
+		DeciResult<AddressInfo> result = tree.getDecisionResult();		
+		
+		assertFalse(result.isSuccess());
+		assertTrue(result.getFailCode() == 1607);
+		assertTrue(result.getFailMessage().equals("Address has multiple references"));	
+	}
+	
+	
+	
+	private DeciTree<AddressInfo> initializeMissingReferenceMulti7() {
+		DeciTreeOption<AddressInfo> option = new DeciTreeOption<>();
+		
+		option.recordInfos = buildAddressesMissingReferenceMulti7();
+		option.conn = insertA00Conn;
+		option.schemaName = DbSchema.getDefaultSchemaName();
+		
+		return new RootAddressInsert(option);
+	}
+	
+	
+	
+	private List<AddressInfo> buildAddressesMissingReferenceMulti7() {
+		AddressInfo address = new AddressInfo();
+		
+		address.codOwner = 1;
+		address.codCustomer = -1;
+		address.codStore = -1;
+		address.codEmployee = 1;
+		address.codUser = 1;
+		address.codCountry = "X";
+		address.line1 = "X";
+		address.line2 = "X";
+		address.line3 = "X";
+		address.line4 = "X";
+		address.line5 = "X";
+		address.line6 = "X";
+		address.line7 = "X";
+		
+		List<AddressInfo> addresses = new ArrayList<>();
+		addresses.add(address);
+		return addresses;
+	}
+	
+	
+			
 	@Test
 	public void missingReference() {
 		DeciTree<AddressInfo> tree = initializeMissingReference();
@@ -450,6 +629,7 @@ public class RootAddressInsertTest {
 		address.codCustomer = -1;
 		address.codStore = -1;
 		address.codEmployee = -1;
+		address.codUser = -1;
 		address.codCountry = "X";
 		address.line1 = "X";
 		address.line2 = "X";
@@ -693,6 +873,31 @@ public class RootAddressInsertTest {
 		
 		return new RootAddressInsert(option);
 	}
+	
+	
+	
+	@Test
+	public void invalidOwner() {
+		DeciTree<AddressInfo> tree = initializeInvalidOwner();
+		tree.makeDecision();
+		DeciResult<AddressInfo> result = tree.getDecisionResult();		
+		
+		assertFalse(result.isSuccess());
+		assertTrue(result.getFailCode() == 1251);
+		assertTrue(result.getFailMessage().equals("Owner data not found on DB"));	
+	}
+		
+	
+	
+	private DeciTree<AddressInfo> initializeInvalidOwner() {
+		DeciTreeOption<AddressInfo> option = new DeciTreeOption<>();
+		
+		option.recordInfos = buildInsertAddresses();
+		option.conn = invalidOwnerConn;
+		option.schemaName = DbSchema.getDefaultSchemaName();
+		
+		return new RootAddressInsert(option);
+	}	
 
 	
 	

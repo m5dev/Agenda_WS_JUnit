@@ -267,6 +267,7 @@ public class RootPhoneInsertTest {
 		phone.codCustomer = 1;
 		phone.codStore = 1;
 		phone.codEmployee = -1;
+		phone.codUser = -1;
 		phone.fullNumber = "2125929319";
 		phone.codCountryPhone = 1;
 		phone.complement = "teste";
@@ -311,6 +312,7 @@ public class RootPhoneInsertTest {
 		phone.codCustomer = 1;
 		phone.codStore = -1;
 		phone.codEmployee = 1;
+		phone.codUser = -1;
 		phone.fullNumber = "2125929319";
 		phone.codCountryPhone = 1;
 		phone.complement = "teste";
@@ -355,6 +357,7 @@ public class RootPhoneInsertTest {
 		phone.codCustomer = -1;
 		phone.codStore = 1;
 		phone.codEmployee = 1;
+		phone.codUser = -1;
 		phone.fullNumber = "2125929319";
 		phone.codCountryPhone = 1;
 		phone.complement = "teste";
@@ -399,6 +402,142 @@ public class RootPhoneInsertTest {
 		phone.codCustomer = 1;
 		phone.codStore = 1;
 		phone.codEmployee = 1;
+		phone.codUser = 1;
+		phone.fullNumber = "2125929319";
+		phone.codCountryPhone = 1;
+		phone.complement = "teste";
+		
+		List<PhoneInfo> phones = new ArrayList<>();
+		phones.add(phone);
+		return phones;
+	}
+	
+	
+	
+	@Test
+	public void multiReference5() {
+		DeciTree<PhoneInfo> tree = initializeMultiReference5();
+		tree.makeDecision();
+		DeciResult<PhoneInfo> result = tree.getDecisionResult();		
+		
+		assertFalse(result.isSuccess());
+		assertTrue(result.getFailCode() == 1661);
+		assertTrue(result.getFailMessage().equals("Phone has multiple references"));	
+	}
+		
+	
+	
+	private DeciTree<PhoneInfo> initializeMultiReference5() {
+		DeciTreeOption<PhoneInfo> option = new DeciTreeOption<>();
+		
+		option.recordInfos = buildInsertPhonesMultiReference5();
+		option.conn = insertT01Conn;
+		option.schemaName = DbSchema.getDefaultSchemaName();
+		
+		return new RootPhoneInsert(option);
+	}
+	
+	
+	
+	private List<PhoneInfo> buildInsertPhonesMultiReference5() {
+		PhoneInfo phone = new PhoneInfo();
+		
+		
+		phone.codOwner = 1;
+		phone.codCustomer = 1;
+		phone.codStore = -1;
+		phone.codEmployee = -1;
+		phone.codUser = 1;
+		phone.fullNumber = "2125929319";
+		phone.codCountryPhone = 1;
+		phone.complement = "teste";
+		
+		List<PhoneInfo> phones = new ArrayList<>();
+		phones.add(phone);
+		return phones;
+	}
+	
+	
+	
+	@Test
+	public void multiReference6() {
+		DeciTree<PhoneInfo> tree = initializeMultiReference6();
+		tree.makeDecision();
+		DeciResult<PhoneInfo> result = tree.getDecisionResult();		
+		
+		assertFalse(result.isSuccess());
+		assertTrue(result.getFailCode() == 1661);
+		assertTrue(result.getFailMessage().equals("Phone has multiple references"));	
+	}
+		
+	
+	
+	private DeciTree<PhoneInfo> initializeMultiReference6() {
+		DeciTreeOption<PhoneInfo> option = new DeciTreeOption<>();
+		
+		option.recordInfos = buildInsertPhonesMultiReference6();
+		option.conn = insertT01Conn;
+		option.schemaName = DbSchema.getDefaultSchemaName();
+		
+		return new RootPhoneInsert(option);
+	}
+	
+	
+	
+	private List<PhoneInfo> buildInsertPhonesMultiReference6() {
+		PhoneInfo phone = new PhoneInfo();
+		
+		
+		phone.codOwner = 1;
+		phone.codCustomer = -1;
+		phone.codStore = 1;
+		phone.codEmployee = -1;
+		phone.codUser = 1;
+		phone.fullNumber = "2125929319";
+		phone.codCountryPhone = 1;
+		phone.complement = "teste";
+		
+		List<PhoneInfo> phones = new ArrayList<>();
+		phones.add(phone);
+		return phones;
+	}
+	
+	
+	
+	@Test
+	public void multiReference7() {
+		DeciTree<PhoneInfo> tree = initializeMultiReference7();
+		tree.makeDecision();
+		DeciResult<PhoneInfo> result = tree.getDecisionResult();		
+		
+		assertFalse(result.isSuccess());
+		assertTrue(result.getFailCode() == 1661);
+		assertTrue(result.getFailMessage().equals("Phone has multiple references"));	
+	}
+		
+	
+	
+	private DeciTree<PhoneInfo> initializeMultiReference7() {
+		DeciTreeOption<PhoneInfo> option = new DeciTreeOption<>();
+		
+		option.recordInfos = buildInsertPhonesMultiReference7();
+		option.conn = insertT01Conn;
+		option.schemaName = DbSchema.getDefaultSchemaName();
+		
+		return new RootPhoneInsert(option);
+	}
+	
+	
+	
+	private List<PhoneInfo> buildInsertPhonesMultiReference7() {
+		PhoneInfo phone = new PhoneInfo();
+		
+		
+		phone.codOwner = 1;
+		phone.codCustomer = -1;
+		phone.codStore = -1;
+		phone.codEmployee = 1;
+		phone.codUser = 1;
 		phone.fullNumber = "2125929319";
 		phone.codCountryPhone = 1;
 		phone.complement = "teste";

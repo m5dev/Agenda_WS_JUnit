@@ -73,7 +73,7 @@ public class RootPhoneSelectTest {
 		initializeScenarioCountryPhoneNotFound();
 	}
 	
-	
+	//TODO: Select precisa passar por T00 e T01
 	
 	private void initializeScenarioInvalidConnection() throws SQLException {
 		invalidStmt = mock(PreparedStatement.class);
